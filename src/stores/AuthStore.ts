@@ -8,7 +8,7 @@ import { RouteName, RouteSegment } from '../router/segments'
 const tokensLocalStorageKey = 'tokenPair'
 
 export default class AuthStore {
-  isLoggedIn = false
+  isLoggedIn = true
   id = ''
   email = ''
 

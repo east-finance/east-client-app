@@ -13,13 +13,14 @@ const Container = styled.div`
   width: 376px;
 `
 
-const SignIn = (props: IProps) => {
+const SignUp = (props: IProps) => {
   const { t } = props
   const { api, authStore } = useStores()
   const { router } = useRoute()
 
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
+  const [confirm, setConfirm] = useState('')
 
   const onChangeLogin = (e: any) => {
     console.log('onChangeLogin', e.target.value)
@@ -29,17 +30,19 @@ const SignIn = (props: IProps) => {
     console.log('onChangePassword', e.target.value)
   }
 
-  const onLoginClick = () => {
-    authStore.setLoggedIn(true)
+  const onChangeConfirm = (e: any) => {
+    console.log('onChangeConfirm', e.target.value)
   }
 
   return <Container>
     <Input placeholder={t('auth.login')} onChange={onChangeLogin} />
     <Block24 />
     <Input placeholder={t('auth.password')} type={'password'} onChange={onChangePassword} />
+    <Block24 />
+    <Input placeholder={t('auth.confirm_password')} type={'password'} onChange={onChangeConfirm} />
     <Block marginTop={54} />
-    <Button type={'primary'} onClick={onLoginClick}>Enter</Button>
+    <Button type={'primary'}>{t('auth.enter')}</Button>
   </Container>
 }
 
-export default withTranslation()(SignIn)
+export default withTranslation()(SignUp)

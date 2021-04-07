@@ -32,3 +32,12 @@ url('../fonts/Montserrat-Medium.woff') format('woff');
 url('../fonts/Montserrat-Bold.woff2') format('woff2'),
 url('../fonts/Montserrat-Bold.woff') format('woff');
 }
+
+/* https://fonts.google.com/specimen/Exo */
+/** Exo Regular **/
+@font-face {
+    font-family: 'Exo';
+    font-weight: 300;
+    font-style: normal;
+    src: url('../fonts/Exo-Light.ttf');
+}

@@ -1,10 +1,10 @@
 import React, { FunctionComponent } from 'react'
-import { Layout } from '@wavesenterprise/uikit'
 import { useRoute } from 'react-router5'
 import { observer, Provider } from 'mobx-react'
 import { RouteSegment } from './router/segments'
 import useStores from './hooks/useStores'
 import Auth from './modules/auth/Auth'
+import Account from './modules/account/Account'
 
 const Content: FunctionComponent = observer( () => {
   const { route: { name } } = useRoute()
@@ -13,18 +13,14 @@ const Content: FunctionComponent = observer( () => {
   let content = null
 
   if (authStore.isLoggedIn) {
-    content = <div>Inner content</div>
+    content = <Account />
   } else {
     content = <Auth />
   }
 
-  return <Layout>
-    <Layout.Content>
-      <Provider>
-        {content}
-      </Provider>
-    </Layout.Content>
-  </Layout>
+  return <Provider>
+    {content}
+  </Provider>
 }
 )
 

@@ -10,7 +10,6 @@ import AuthStore from './stores/AuthStore'
 import ConfigStore from './stores/ConfigStore'
 import Content from './Content'
 import theme from './components/theme'
-import { ReactComponent as SpriteContainer } from '@wavesenterprise/uikit/sprite.svg'
 import StyleGlobal from './resources/styles/styles-global'
 import { Api } from './api'
 
@@ -32,7 +31,6 @@ const App: FunctionComponent = () => {
       <I18nextProvider i18n={i18next}>
         <Provider {...stores}>
           <ThemeProvider theme={theme}>
-            <SpriteContainer />
             <StyleGlobal />
             <Content />
           </ThemeProvider>

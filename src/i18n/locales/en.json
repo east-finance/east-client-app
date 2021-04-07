@@ -1,3 +1,9 @@
 {
-  "locale": "en"
+  "locale": "ru",
+  "auth": {
+    "login": "Login",
+    "password": "Password",
+    "confirm_password": "Confirm",
+    "enter": "Enter"
+  }
 }

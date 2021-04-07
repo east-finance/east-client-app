@@ -13,6 +13,7 @@ const StyleGlobal = createGlobalStyle`
     color: #0a0606;
     font-family: Montserrat, Helvetica, Arial, sans-serif;
     font-variant: normal;
+    background: #E6E6E6;
   }
 `
 
