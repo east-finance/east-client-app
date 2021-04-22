@@ -22,41 +22,41 @@ const Content: FunctionComponent = observer( () => {
       //     console.error(error) // displaying the result on the console
       //     /*...processing errors */
       //   })
-      const state = await window.WavesKeeper.publicState()
-      console.log('keeper state', state)
-      const { account: { address, publicKey } } = state
-      const transfer = {
-        type: 'transferV3',
-        tx: {
-          recipient: address,
-          assetId: 'WAVES',
-          amount: '10000',
-          fee: '1000000',
-          attachment: 'Its beautiful!',
-          timestamp: Date.now(),
-          atomicBadge: {
-            trustedSender: address
-          }
-        }
-      }
-      const dockerCall = {
-        type: 'dockerCallV4',
-        tx: {
-          senderPublicKey: publicKey,
-          authorPublicKey: publicKey,
-          contractId: '4pSJoWsaYvT8iCSAxUYdc7LwznFexnBGPRoUJX7Lw3sh',
-          contractVersion: 1,
-          timestamp: Date.now(),
-          params: [],
-          fee: '1000000',
-          atomicBadge: {
-            trustedSender: address
-          }
-        }
-      }
-      const transactions = [transfer, dockerCall]
-      const signedTx = await window.WavesKeeper.signAtomicTransaction({ transactions, fee: '100000' })
-      console.log('signedTx', signedTx)
+      // const state = await window.WavesKeeper.publicState()
+      // console.log('keeper state', state)
+      // const { account: { address, publicKey } } = state
+      // const transfer = {
+      //   type: 'transferV3',
+      //   tx: {
+      //     recipient: address,
+      //     assetId: 'WAVES',
+      //     amount: '10000',
+      //     fee: '1000000',
+      //     attachment: 'Its beautiful!',
+      //     timestamp: Date.now(),
+      //     atomicBadge: {
+      //       trustedSender: address
+      //     }
+      //   }
+      // }
+      // const dockerCall = {
+      //   type: 'dockerCallV4',
+      //   tx: {
+      //     senderPublicKey: publicKey,
+      //     authorPublicKey: publicKey,
+      //     contractId: '4pSJoWsaYvT8iCSAxUYdc7LwznFexnBGPRoUJX7Lw3sh',
+      //     contractVersion: 1,
+      //     timestamp: Date.now(),
+      //     params: [],
+      //     fee: '1000000',
+      //     atomicBadge: {
+      //       trustedSender: address
+      //     }
+      //   }
+      // }
+      // const transactions = [transfer, dockerCall]
+      // const signedTx = await window.WavesKeeper.signAtomicTransaction({ transactions, fee: '100000' })
+      // console.log('signedTx', signedTx)
     }, 1000)
   })
 

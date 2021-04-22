@@ -87,3 +87,12 @@ url('../fonts/Montserrat-Bold.woff') format('woff');
     font-style: normal;
     src: url('../fonts/BrutalTypeExtraBold.ttf');
 }
+
+/* BrutalType */
+
+@font-face {
+    font-family: 'Staatliches';
+    font-weight: 400;
+    font-style: normal;
+    src: url('../fonts/Staatliches-Regular.ttf');
+}

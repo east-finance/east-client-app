@@ -7,9 +7,13 @@ import { buildRouteName, RouteName, RouteSegment } from '../../router/segments'
 import SignIn from './sign-in/SignIn'
 import SignUp from './sign-up/SignUp'
 import gradientBackground from '../../resources/images/gradient-bg1.png'
+import EastLogo from '../../resources/images/east-logo.svg'
 import SignInWallet from './sign-in/SignInWallet'
+import { NavigationLeft } from '../../components/Button'
 
 const Container = styled.div`
+  position: relative;
+  min-width: 400px;
   // margin-top: ${props => props.theme.defaultMarginTop};
   padding-top: ${props => props.theme.defaultMarginTop};
   background-image: url(${gradientBackground});
@@ -17,6 +21,16 @@ const Container = styled.div`
   background-size: 100% 100%;
   height: 100%;
   width: 100%;
+  color: white;
+`
+
+const EastLogoWrapper = styled.div`
+  position: absolute;
+  top: 32px;
+  left: 37px;
+  width: 174px;
+  height: 55px;
+  background-image: url(${EastLogo});
 `
 
 const Title = styled.div`
@@ -28,9 +42,16 @@ const Title = styled.div`
   font-family: BrutalType,Helvetica,Arial,sans-serif;
 `
 
+const NavigationContainer = styled.div`
+  position: absolute;
+  left: 40px;
+  top: 332px;
+`
+
 const Auth: React.FunctionComponent = () =>  {
   const { route: { name: routeName }, router } = useRoute()
   let content = null
+  let title = ''
 
   const tabsProps = {
     defaultActiveId: RouteSegment.signIn,
@@ -52,15 +73,28 @@ const Auth: React.FunctionComponent = () =>  {
     }
   }
   if ([RouteName.SignIn, RouteName.SignUp].includes(routeName)) {
-    content = <Tabs {...tabsProps} />
+    content = <Block marginTop={40}>
+      <Tabs {...tabsProps} />
+    </Block>
+    title = 'Welcome to EAST'
   } else if(routeName === RouteName.SignInWallet) {
-    content = <SignInWallet />
+    content = <div>
+      <NavigationContainer>
+        <NavigationLeft onClick={() => {
+          router.navigate(RouteName.SignIn)
+        }} />
+      </NavigationContainer>
+      <SignInWallet />
+    </div>
+    title = 'Login with WE Wallet'
   } else {
     content = <div>Another auth content</div>
   }
   return <Container>
-    <Title>Welcome to EAST</Title>
-    <Block marginTop={28} />
+    <EastLogoWrapper />
+    {title &&
+      <Title>{title}</Title>
+    }
     {content}
   </Container>
 }

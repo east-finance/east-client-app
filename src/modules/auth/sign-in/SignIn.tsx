@@ -3,10 +3,11 @@ import { Link, useRoute } from 'react-router5'
 import { Block, Block16, Block24, Block32 } from '../../../components/Block'
 import styled from 'styled-components'
 import useStores from '../../../hooks/useStores'
-import { Input } from '../../../components/Input'
+import { Input, InputExplain } from '../../../components/Input'
 import { Button } from '../../../components/Button'
 import WELogo from '../../../resources/images/we-logo-small.svg'
 import { RouteName } from '../../../router/segments'
+import { FormErrors } from '../constants'
 
 const Container = styled.div`
   width: 376px;
@@ -29,6 +30,14 @@ const WELogoWrapper = styled.div`
 
 const LoginInfoText = styled.div`
   margin-left: 8px;
+  font-weight: 300;
+`
+
+const AdditionalText = styled.span`
+  font-weight: 300;
+  font-size: 15px;
+  color: white;
+  cursor: pointer;
 `
 
 const SignIn = () => {
@@ -37,22 +46,43 @@ const SignIn = () => {
 
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
+  const [usernameError, setUsernameError] = useState('')
+  const [passwordError, setPasswordError] = useState('')
 
   const onChangeLogin = (e: any) => {
-    console.log('onChangeLogin', e.target.value)
+    setUsername(e.target.value)
   }
 
   const onChangePassword = (e: any) => {
-    console.log('onChangePassword', e.target.value)
+    setPassword(e.target.value)
+  }
+
+  const validateForm = () => {
+    const usernameErrors = []
+    const passwordErrors = []
+    if (!username) {
+      usernameErrors.push(FormErrors.EnterAnEmail)
+    }
+    if (!password) {
+      passwordErrors.push(FormErrors.EnterAPassword)
+    }
+    setUsernameError(usernameErrors.length ? usernameErrors[0] : '')
+    setPasswordError(passwordErrors.length ? passwordErrors[0] : '')
   }
 
   const onLoginClick = () => {
     // authStore.setLoggedIn(true)
-    router.navigate(RouteName.SignInWallet)
+    // router.navigate(RouteName.SignInWallet)
+    // validateForm()
+    authStore.setLoggedIn(true)
+    router.navigate(RouteName.Account)
   }
 
   return <Container>
     <Input placeholder={'Email'} onChange={onChangeLogin} />
+    {usernameError &&
+      <InputExplain text={usernameError} />
+    }
     <Block16>
       <LoginInfoContainer>
         <WELogoWrapper />
@@ -63,8 +93,14 @@ const SignIn = () => {
       </LoginInfoContainer>
     </Block16>
     <Block24 />
-    <Input placeholder={'Password'} type={'password'} onChange={onChangePassword} />
-    <Block marginTop={54} />
+    <Input autoComplete='new-password' placeholder={'Password'} type={'password'} onChange={onChangePassword} />
+    {passwordError &&
+      <InputExplain text={passwordError} />
+    }
+    <Block16 style={{ 'textAlign': 'right' }}>
+      <AdditionalText>Forgot password</AdditionalText>
+    </Block16>
+    <Block marginTop={65} />
     <Button type={'primary'} onClick={onLoginClick}>Login</Button>
   </Container>
 }

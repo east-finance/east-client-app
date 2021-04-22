@@ -20,3 +20,17 @@ type InputProps = InputHTMLAttributes<HTMLInputElement>
 export const Input = (props: InputProps) => {
   return <InputContainer {...props} />
 }
+
+interface InputExplainProps {
+  text: string
+}
+
+const InputExplainContainer = styled.div`
+  color: red;
+`
+
+export const InputExplain = (props: InputExplainProps) => {
+  return <InputExplainContainer>
+    {props.text}
+  </InputExplainContainer>
+}
