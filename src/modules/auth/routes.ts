@@ -6,5 +6,11 @@ export default {
   children: [{
     name: RouteSegment.signIn,
     path: '/sign-in'
+  }, {
+    name: RouteSegment.signUp,
+    path: '/sign-up'
+  }, {
+    name: RouteSegment.signInWallet,
+    path: '/sign-in-wallet'
   }]
 }

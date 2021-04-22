@@ -36,7 +36,7 @@ export const initI18n = (): void => {
     },
     err => {
       if (err === null) {
-        set3rdPartyLocale(i18n.language)
+        // set3rdPartyLocale(i18n.language)
       }
     }
   )

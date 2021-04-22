@@ -35,13 +35,13 @@ const SignUp = (props: IProps) => {
   }
 
   return <Container>
-    <Input placeholder={t('auth.login')} onChange={onChangeLogin} />
+    <Input placeholder={'Email'} onChange={onChangeLogin} />
     <Block24 />
-    <Input placeholder={t('auth.password')} type={'password'} onChange={onChangePassword} />
+    <Input placeholder={'Password'} type={'password'} onChange={onChangePassword} />
     <Block24 />
-    <Input placeholder={t('auth.confirm_password')} type={'password'} onChange={onChangeConfirm} />
+    <Input placeholder={'Confirm password'} type={'password'} onChange={onChangeConfirm} />
     <Block marginTop={54} />
-    <Button type={'primary'}>{t('auth.enter')}</Button>
+    <Button type={'primary'}>Sign Up</Button>
   </Container>
 }
 

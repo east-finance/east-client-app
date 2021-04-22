@@ -10,6 +10,7 @@ interface TabItem {
 interface TabsProps {
   items: TabItem[];
   defaultActiveId: string;
+  onSelectTab?: (tabId: string) => void;
 }
 
 const TabsContainer = styled.div`
@@ -26,10 +27,11 @@ const TabsTitle = styled.div`
 `
 const TabsTitleItem = styled.div<{isActiveTab: boolean}>`
   font-size: 13px;
-  color: #000000;
-  font-weight: 500;
+  color: white;
+  font-weight: bold;
   cursor: ${props => props.isActiveTab ? 'default' : 'pointer'};
   opacity: ${props => props.isActiveTab ? 1 : 0.4 };
+  user-select: none;
   
   :not(:first-child) {
     margin-left: 16px;
@@ -49,6 +51,9 @@ export const Tabs = (props: TabsProps) => {
 
   const onTitleItemClicked = (id: string) => {
     setActiveTabId(id)
+    if(props.onSelectTab) {
+      props.onSelectTab(id)
+    }
   }
 
   return <TabsContainer>

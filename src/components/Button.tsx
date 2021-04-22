@@ -16,11 +16,12 @@ const ButtonContainer = styled.div<ButtonProps>`
   justify-content: center;
   background: #C4C4C4;
   border-radius: 4px;
-  font-weight: 500;
+  font-weight: 600;
+  font-size: 16px;
   cursor: pointer;
   user-select: none;
 
-  background: ${props => props.type === 'primary' ? 'black' : '#C4C4C4'};
+  background: ${props => props.type === 'primary' ? 'radial-gradient(204.55% 3032.86% at 67.55% 85.45%, rgba(172, 171, 216, 0) 0%, #514EFF 100%), #1D87D6;' : '#C4C4C4'};
   color: ${props => props.type === 'primary' ? 'white' : '#000000'};
 `
 

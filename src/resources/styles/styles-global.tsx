@@ -11,9 +11,13 @@ const StyleGlobal = createGlobalStyle`
     padding: 0;
     font-size: 13px;
     color: #0a0606;
-    font-family: Montserrat, Helvetica, Arial, sans-serif;
+    font-family: Cairo, Helvetica, Arial, sans-serif;
     font-variant: normal;
     background: #E6E6E6;
+  }
+
+  html, body, #root {
+    height: 100%;
   }
 `
 
