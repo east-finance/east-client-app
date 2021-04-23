@@ -62,24 +62,37 @@ const IconExport = styled(IconCommon)`background-image: url(${iconExport});`
 const IconSettings = styled(IconCommon)`background-image: url(${iconSettings});`
 const IconQuestion = styled(IconCommon)`background-image: url(${iconQuestion});`
 
-export const AccountMenu = () => {
+export enum MenuOption {
+  buy = 'buy',
+  batches = 'batches',
+  exchange = 'exchange',
+  transfer = 'transfer',
+  settings = 'settings',
+  faq = 'faq',
+}
+
+interface IProps {
+  onClick: (menuOption: MenuOption) => void
+}
+
+export const AccountMenu = (props: IProps) => {
   return <Container>
-    <MenuItem>
+    <MenuItem onClick={() => props.onClick(MenuOption.buy)}>
       <IconPlus />
     </MenuItem>
-    <MenuItem>
+    <MenuItem onClick={() => props.onClick(MenuOption.batches)}>
       <IconHelm />
     </MenuItem>
-    <MenuItem>
+    <MenuItem onClick={() => props.onClick(MenuOption.exchange)}>
       <IconExchange />
     </MenuItem>
-    <MenuItem>
+    <MenuItem onClick={() => props.onClick(MenuOption.transfer)}>
       <IconExport />
     </MenuItem>
-    <MenuItem>
+    <MenuItem onClick={() => props.onClick(MenuOption.settings)}>
       <IconSettings />
     </MenuItem>
-    <MenuItem>
+    <MenuItem onClick={() => props.onClick(MenuOption.faq)}>
       <IconQuestion />
     </MenuItem>
   </Container>

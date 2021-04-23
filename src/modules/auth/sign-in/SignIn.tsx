@@ -44,8 +44,8 @@ const SignIn = () => {
   const { api, authStore } = useStores()
   const { router } = useRoute()
 
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
+  const [username, setUsername] = useState(localStorage.getItem('test_login'))
+  const [password, setPassword] = useState(localStorage.getItem('test_pass'))
   const [usernameError, setUsernameError] = useState('')
   const [passwordError, setPasswordError] = useState('')
 
@@ -70,12 +70,18 @@ const SignIn = () => {
     setPasswordError(passwordErrors.length ? passwordErrors[0] : '')
   }
 
-  const onLoginClick = () => {
+  const onLoginClick = async () => {
     // authStore.setLoggedIn(true)
     // router.navigate(RouteName.SignInWallet)
     // validateForm()
-    authStore.setLoggedIn(true)
-    router.navigate(RouteName.Account)
+    try {
+      const tokenPair = await api.signIn(username, password)
+      authStore.writeTokenPair(tokenPair)
+      authStore.setLoggedIn(true)
+      router.navigate(RouteName.Account)
+    } catch (e) {
+      console.log('Login error:', e)
+    }
   }
 
   return <Container>

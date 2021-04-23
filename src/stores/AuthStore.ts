@@ -8,7 +8,7 @@ import { RouteName, RouteSegment } from '../router/segments'
 const tokensLocalStorageKey = 'tokenPair'
 
 export default class AuthStore {
-  isLoggedIn = true
+  isLoggedIn = false
   id = ''
   email = ''
 
@@ -25,6 +25,7 @@ export default class AuthStore {
         try {
           const { exp }: JwtPayload = decodeJWT(tokenPair.access_token)
           if (exp && (exp * 1000 - Date.now() > 0)) {
+            await api.setupApi(tokenPair)
             this.setLoggedIn(true)
           } else {
             console.log('JWT tokens expired')

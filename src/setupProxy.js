@@ -23,4 +23,15 @@ module.exports = function(app) {
             }
         })
     );
+
+  app.use(
+    '/nodeAddress',
+    createProxyMiddleware({
+      target: process.env.REACT_APP_NODE_ADDRESS,
+      changeOrigin: true,
+      pathRewrite: {
+        '/nodeAddress': '/'
+      }
+    })
+  );
 };

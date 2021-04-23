@@ -1,10 +1,12 @@
-import React from 'react'
+import React, { useState } from 'react'
 import styled from 'styled-components'
 import useStores from '../../hooks/useStores'
 import { observer } from 'mobx-react'
 import { AccountCard } from './Card'
-import { AccountMenu } from './Menu'
+import { AccountMenu, MenuOption } from './Menu'
 import EastLogo from '../../resources/images/east-logo.svg'
+import { FAQ } from './modals/FAQ'
+import { Settings } from './modals/Settings'
 
 const Container = styled.div`
 
@@ -31,10 +33,31 @@ const EastLogoWrapper = styled.div`
   width: 174px;
   height: 55px;
   background-image: url(${EastLogo});
+  opacity: 0.6;
+`
+
+const ChartContainer = styled.div`
+  position: absolute;
+  top: 0;
+`
+
+const AccountContent = styled.div<{visible: boolean}>`
+  opacity: ${props => props.visible ? 1 : 0};
+  transition: opacity 250ms;
+`
+
+const PrimaryModalContainer = styled.div`
+
 `
 
 const Account = observer( () => {
   const { authStore, configStore: { configLoaded } } = useStores()
+
+  const onCloseModal = () => {
+    setPrimaryModal(null)
+  }
+
+  const [primaryModal, setPrimaryModal] = useState<React.ReactChild | null>(<Settings onClose={onCloseModal} />)
 
   const cardProps = {
     eastAmount: '132,24',
@@ -43,14 +66,31 @@ const Account = observer( () => {
     onClick: () => { console.log('clicked') }
   }
 
+  const onMenuClick = (menuOption: MenuOption) => {
+    switch(menuOption) {
+    case MenuOption.settings: setPrimaryModal(<Settings onClose={onCloseModal} />); break
+    case MenuOption.faq: setPrimaryModal(<FAQ onClose={onCloseModal} />); break
+    }
+  }
+
   return <Container>
-    <EastLogoWrapper />
-    <CardContainer>
-      <AccountCard {...cardProps} />
-    </CardContainer>
-    <MenuContainer>
-      <AccountMenu />
-    </MenuContainer>
+    {primaryModal &&
+      <PrimaryModalContainer>
+        {primaryModal}
+      </PrimaryModalContainer>
+    }
+    <AccountContent visible={!primaryModal}>
+      <ChartContainer>
+        {/*<WestChart />*/}
+      </ChartContainer>
+      <CardContainer>
+        <AccountCard {...cardProps} />
+      </CardContainer>
+      <MenuContainer>
+        <AccountMenu onClick={onMenuClick} />
+      </MenuContainer>
+      <EastLogoWrapper />
+    </AccountContent>
   </Container>
 })
 
