@@ -1,10 +1,12 @@
-import React from 'react'
+import React, { useRef, useState } from 'react'
 import styled from 'styled-components'
-import { PrimaryTitle } from '../../../components/PrimaryTitle'
+import { PrimaryTitle } from '../../../../components/PrimaryTitle'
 import CardBackground from '../../resources/images/card_bg.png'
-import { PrimaryModal } from '../Modal'
-import { Block, Block16 } from '../../../components/Block'
-import { IBatch } from '../../../interfaces'
+import { PrimaryModal } from '../../Modal'
+import { Block, Block16 } from '../../../../components/Block'
+import { IBatch } from '../../../../interfaces'
+import { Pagination } from './Pagination'
+import useScrollHandler from '../../../../hooks/useScrollHandler'
 
 interface IProps {
   onClose: () => void
@@ -36,9 +38,9 @@ const BatchesItemsContainer = styled.div`
   //}
 `
 
-const BatchItem = styled.div<{ background: string }>`
-  width: 153px;
-  min-width: 153px;
+const BatchItem = styled.div<{ background: string, batchWidth: number }>`
+  width: ${props => props.batchWidth}px;
+  min-width: ${props => props.batchWidth}px;
   height: 194px;
   background: ${props => props.background};
   border-radius: 4px;
@@ -83,32 +85,92 @@ const gradients = [{
   background: 'radial-gradient(114.95% 114.95% at 5.23% -14.95%, #FF842C 0%, rgba(255, 255, 255, 0) 100%), linear-gradient(180deg, #F2F2F2 0%, #EDEDED 100%);'
 }]
 
+export const BatchWidth = 153
+const BatchesOnPage = 3
+
 export const Batches = (props: IProps) => {
   const batches: IBatch[] = [{
     eastAmount: 100,
     westAmount: 219,
     usdpAmount: 22,
+    createdAt: Date.now()
   }, {
     eastAmount: 100,
     westAmount: 219,
     usdpAmount: 22,
+    createdAt: Date.now()
   }, {
     eastAmount: 100,
     westAmount: 219,
     usdpAmount: 22,
+    createdAt: Date.now()
   }, {
     eastAmount: 100,
     westAmount: 219,
     usdpAmount: 22,
+    createdAt: Date.now()
   }, {
     eastAmount: 100,
     westAmount: 219,
     usdpAmount: 22,
+    createdAt: Date.now()
   }, {
     eastAmount: 100,
     westAmount: 219,
     usdpAmount: 22,
+    createdAt: Date.now()
+  }, {
+    eastAmount: 100,
+    westAmount: 219,
+    usdpAmount: 22,
+    createdAt: Date.now()
+  }, {
+    eastAmount: 100,
+    westAmount: 219,
+    usdpAmount: 22,
+    createdAt: Date.now()
+  }, {
+    eastAmount: 100,
+    westAmount: 219,
+    usdpAmount: 22,
+    createdAt: Date.now()
+  }, {
+    eastAmount: 100,
+    westAmount: 219,
+    usdpAmount: 22,
+    createdAt: Date.now()
+  }, {
+    eastAmount: 100,
+    westAmount: 219,
+    usdpAmount: 22,
+    createdAt: Date.now()
+  }, {
+    eastAmount: 100,
+    westAmount: 219,
+    usdpAmount: 22,
+    createdAt: Date.now()
   }]
+
+  const [batchesPage, setBatchesPage] = useState(0)
+
+  const containerRef = useRef(null)
+  useScrollHandler(containerRef, (scrollLeft: number) => {
+    setBatchesPage(Math.floor(scrollLeft / (BatchWidth * BatchesOnPage)))
+  })
+
+  const onPageSelected = (page: number) => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    // containerRef.current.scrollLeft = page * (BatchWidth * BatchesOnPage + (16 * (BatchesOnPage - 1)))
+    containerRef.current.scrollTo({
+      top: 0,
+      left: Math.floor(page * ((BatchWidth + 16) * BatchesOnPage + 92)),
+      behavior: 'smooth'
+    })
+
+    setBatchesPage(page)
+  }
+
   return <PrimaryModal {...props}>
     <PrimaryTitle>Batches</PrimaryTitle>
     <Block marginTop={40} />
@@ -116,10 +178,11 @@ export const Batches = (props: IProps) => {
       Batches are roughly like transaction history. Each batch has a vault with blocked WEST and USDp. Read more
     </Description>
     <Block marginTop={72} />
-    <BatchesItemsContainer>
+    <BatchesItemsContainer ref={containerRef}>
       {batches.map((batch, index) => {
         const grad = gradients[index % gradients.length]
-        return <BatchItem key={index} background={grad.background}>
+        return <BatchItem key={index} background={grad.background} batchWidth={BatchWidth} >
+          <BatchTitle>Index {index}</BatchTitle>
           <BatchTitle>{batch.eastAmount} East</BatchTitle>
           <Block16 />
           <BatchText>
@@ -136,6 +199,11 @@ export const Batches = (props: IProps) => {
         </BatchItem>
       })}
     </BatchesItemsContainer>
-    <Block marginTop={72}></Block>
+    <Block marginTop={72} />
+    <Pagination
+      currentPage={batchesPage}
+      totalPages={Math.ceil(batches.length / BatchesOnPage)}
+      onPageSelected={onPageSelected}
+    />
   </PrimaryModal>
 }

@@ -8,4 +8,5 @@ export interface IBatch {
   eastAmount: number,
   westAmount: number,
   usdpAmount: number,
+  createdAt: number
 }

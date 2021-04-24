@@ -7,7 +7,7 @@ import { AccountMenu, MenuOption } from './Menu'
 import EastLogo from '../../resources/images/east-logo.svg'
 import { FAQ } from './modals/FAQ'
 import { Settings } from './modals/Settings'
-import { Batches } from './modals/Batches'
+import { Batches } from './modals/batches/Batches'
 
 const Container = styled.div`
 
