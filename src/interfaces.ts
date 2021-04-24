@@ -3,3 +3,9 @@ export interface ITokenPair {
   refresh_token: string;
   token_type: string;
 }
+
+export interface IBatch {
+  eastAmount: number,
+  westAmount: number,
+  usdpAmount: number,
+}

@@ -58,4 +58,9 @@ export class Api {
     const { data } = await this._apiClient.get(`${NODE_ADDRESS}/transactions/address/3Ng3g5ZSpbZQZa2P87AUzWPpJAMPj1ssnVE/limit/500`)
     return data
   }
+
+  public sendPasswordRecover = async (email: string) => {
+    const { data } = await this._unauthorizedClient.post('/user/password/restore', { email })
+    return data
+  }
 }

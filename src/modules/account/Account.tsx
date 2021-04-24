@@ -7,6 +7,7 @@ import { AccountMenu, MenuOption } from './Menu'
 import EastLogo from '../../resources/images/east-logo.svg'
 import { FAQ } from './modals/FAQ'
 import { Settings } from './modals/Settings'
+import { Batches } from './modals/Batches'
 
 const Container = styled.div`
 
@@ -33,7 +34,7 @@ const EastLogoWrapper = styled.div`
   width: 174px;
   height: 55px;
   background-image: url(${EastLogo});
-  opacity: 0.6;
+  //opacity: 0.6;
 `
 
 const ChartContainer = styled.div`
@@ -57,7 +58,7 @@ const Account = observer( () => {
     setPrimaryModal(null)
   }
 
-  const [primaryModal, setPrimaryModal] = useState<React.ReactChild | null>(<Settings onClose={onCloseModal} />)
+  const [primaryModal, setPrimaryModal] = useState<React.ReactChild | null>(<Batches onClose={onCloseModal} />)
 
   const cardProps = {
     eastAmount: '132,24',
@@ -68,6 +69,7 @@ const Account = observer( () => {
 
   const onMenuClick = (menuOption: MenuOption) => {
     switch(menuOption) {
+    case MenuOption.batches: setPrimaryModal(<Batches onClose={onCloseModal} />); break
     case MenuOption.settings: setPrimaryModal(<Settings onClose={onCloseModal} />); break
     case MenuOption.faq: setPrimaryModal(<FAQ onClose={onCloseModal} />); break
     }

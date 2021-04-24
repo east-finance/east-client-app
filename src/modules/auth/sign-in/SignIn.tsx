@@ -8,6 +8,7 @@ import { Button } from '../../../components/Button'
 import WELogo from '../../../resources/images/we-logo-small.svg'
 import { RouteName } from '../../../router/segments'
 import { FormErrors } from '../constants'
+import { validateEmail } from '../utils'
 
 const Container = styled.div`
   width: 376px;
@@ -34,7 +35,7 @@ const LoginInfoText = styled.div`
 `
 
 const AdditionalText = styled.span`
-  font-weight: 300;
+  font-weight: 600;
   font-size: 15px;
   color: white;
   cursor: pointer;
@@ -44,8 +45,8 @@ const SignIn = () => {
   const { api, authStore } = useStores()
   const { router } = useRoute()
 
-  const [username, setUsername] = useState(localStorage.getItem('test_login'))
-  const [password, setPassword] = useState(localStorage.getItem('test_pass'))
+  const [username, setUsername] = useState(localStorage.getItem('test_login') || '')
+  const [password, setPassword] = useState(localStorage.getItem('test_pass') || '')
   const [usernameError, setUsernameError] = useState('')
   const [passwordError, setPasswordError] = useState('')
 
@@ -63,6 +64,9 @@ const SignIn = () => {
     if (!username) {
       usernameErrors.push(FormErrors.EnterAnEmail)
     }
+    if(!validateEmail(username)) {
+      usernameErrors.push(FormErrors.EmailIsIncorrect)
+    }
     if (!password) {
       passwordErrors.push(FormErrors.EnterAPassword)
     }
@@ -76,8 +80,7 @@ const SignIn = () => {
     // validateForm()
     try {
       const tokenPair = await api.signIn(username, password)
-      authStore.writeTokenPair(tokenPair)
-      authStore.setLoggedIn(true)
+      authStore.loginWithTokenPair(tokenPair)
       router.navigate(RouteName.Account)
     } catch (e) {
       console.log('Login error:', e)
@@ -85,7 +88,7 @@ const SignIn = () => {
   }
 
   return <Container>
-    <Input placeholder={'Email'} onChange={onChangeLogin} />
+    <Input autoFocus={true} placeholder={'Email'} onChange={onChangeLogin} />
     {usernameError &&
       <InputExplain text={usernameError} />
     }
@@ -104,7 +107,7 @@ const SignIn = () => {
       <InputExplain text={passwordError} />
     }
     <Block16 style={{ 'textAlign': 'right' }}>
-      <AdditionalText>Forgot password</AdditionalText>
+      <AdditionalText onClick={() => router.navigate(RouteName.PasswordRecovery)}>Forgot password</AdditionalText>
     </Block16>
     <Block marginTop={65} />
     <Button type={'primary'} onClick={onLoginClick}>Login</Button>

@@ -10,10 +10,10 @@ const InputContainer = styled.input`
   font-weight: 500;
   font-size: 13px;
   outline: none;
-  //font-family: Montserrat,Helvetica,Arial,sans-serif;
   background: rgba(255, 255, 255, 0.5);
   border: 1px solid rgba(255, 255, 255, 0.5);
   border-radius: 17px;
+  font-family: Cairo, Helvetica,Arial,sans-serif;
 `
 
 type InputProps = InputHTMLAttributes<HTMLInputElement>
@@ -37,15 +37,6 @@ export const InputExplain = (props: InputExplainProps) => {
 }
 
 /* ===== SIMPLE INPUT ====== */
-
-interface ISimpleInputProps {
-  disabled?: boolean;
-  value?: string;
-  defaultValue?: string;
-  title?: string;
-  placeholder?: string;
-  onChange?: (e: any) => void;
-}
 
 const SimpleInputContainer = styled.div`
   font-family: Cairo,sans-serif;
@@ -81,7 +72,7 @@ const SimpleInputLine = styled.div`
   background: #C4C4C4;
 `
 
-export const SimpleInput = (props: ISimpleInputProps) => {
+export const SimpleInput = (props: InputProps) => {
   const { title } = props
   return <SimpleInputContainer>
     {title &&

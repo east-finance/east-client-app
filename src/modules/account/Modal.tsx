@@ -1,10 +1,10 @@
 import React, { useRef } from 'react'
 import styled from 'styled-components'
-import crossImg from '../../resources/images/cross.svg'
 import useOutsideAlerter from '../../hooks/useOutsideHandler'
+import { CrossIcon } from '../../components/Icons'
 
 interface ModalProps {
-  children: React.ReactChild[] | React.ReactChild;
+  children: JSX.Element | JSX.Element[];
   onClose: () => void;
 }
 
@@ -22,16 +22,10 @@ const Container = styled.div`
   transform: translate(-50%, -50%);
 `
 
-const CrossIcon = styled.div`
+const IconContainer = styled.div`
   position: absolute;
   top: 16px;
-  right:16px;
-  width: 48px;
-  height: 48px;
-  background-image: url(${crossImg});
-  background-repeat: no-repeat;
-  background-size: 100% 100%;
-  cursor: pointer;
+  right: 16px;
 `
 
 export const PrimaryModal = (props: ModalProps) => {
@@ -41,7 +35,9 @@ export const PrimaryModal = (props: ModalProps) => {
   }
   useOutsideAlerter(wrapperRef, onClickOutside)
   return <Container ref={wrapperRef}>
-    <CrossIcon onClick={props.onClose} />
+    <IconContainer>
+      <CrossIcon color={'#D1D1D1'} onClick={props.onClose} />
+    </IconContainer>
     {props.children}
   </Container>
 }

@@ -7,12 +7,22 @@ import { RouteName, RouteSegment } from '../router/segments'
 
 const tokensLocalStorageKey = 'tokenPair'
 
+interface WEJWTPayload extends JwtPayload {
+  id: string;
+  name: string;
+}
+
 export default class AuthStore {
+  router: Router
   isLoggedIn = false
+
   id = ''
   email = ''
+  password = ''
+  address = 'test'
 
   constructor(router: Router, api: Api) {
+    this.router = router
     makeAutoObservable(this)
     this.initStore(router, api)
   }
@@ -26,7 +36,7 @@ export default class AuthStore {
           const { exp }: JwtPayload = decodeJWT(tokenPair.access_token)
           if (exp && (exp * 1000 - Date.now() > 0)) {
             await api.setupApi(tokenPair)
-            this.setLoggedIn(true)
+            this.loginWithTokenPair(tokenPair)
           } else {
             console.log('JWT tokens expired')
             this.deleteTokenPair()
@@ -45,15 +55,19 @@ export default class AuthStore {
   logout (): void {
     this.deleteTokenPair()
     this.setLoggedIn(false)
+    this.router.navigate(RouteName.SignIn)
+  }
+
+  loginWithTokenPair (tokenPair: ITokenPair) {
+    const { id, name }: WEJWTPayload = decodeJWT(tokenPair.access_token)
+    this.id = id
+    this.email = name
+    this.writeTokenPair(tokenPair)
+    this.setLoggedIn(true)
   }
 
   setLoggedIn (isLoggedIn: boolean): void {
     this.isLoggedIn = isLoggedIn
-  }
-
-  setUserData (id: string, email: string): void {
-    this.id = id
-    this.email = email
   }
 
   writeTokenPair (tokenPair: ITokenPair): void {

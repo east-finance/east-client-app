@@ -12,5 +12,8 @@ export default {
   }, {
     name: RouteSegment.signInWallet,
     path: '/sign-in-wallet'
+  }, {
+    name: RouteSegment.passwordRecovery,
+    path: '/recover'
   }]
 }

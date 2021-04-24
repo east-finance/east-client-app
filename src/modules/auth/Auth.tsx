@@ -10,16 +10,18 @@ import gradientBackground from '../../resources/images/gradient-bg1.png'
 import EastLogo from '../../resources/images/east-logo.svg'
 import SignInWallet from './sign-in/SignInWallet'
 import { NavigationLeft } from '../../components/Button'
+import PasswordRecovery from './password-recovery/PasswordRecovery'
 
 const Container = styled.div`
   position: relative;
   min-width: 400px;
   // margin-top: ${props => props.theme.defaultMarginTop};
   padding-top: ${props => props.theme.defaultMarginTop};
+  box-sizing: border-box;
   background-image: url(${gradientBackground});
   background-repeat: no-repeat;
   background-size: 100% 100%;
-  height: 100%;
+  min-height: 100vh;
   width: 100%;
   color: white;
 `
@@ -87,6 +89,9 @@ const Auth: React.FunctionComponent = () =>  {
       <SignInWallet />
     </div>
     title = 'Login with WE Wallet'
+  } else if(routeName === RouteName.PasswordRecovery) {
+    title = 'Password recovery'
+    content = <PasswordRecovery />
   } else {
     content = <div>Another auth content</div>
   }
