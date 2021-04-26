@@ -1,6 +1,7 @@
 import React, { FunctionComponent, HTMLAttributes } from 'react'
 import styled from 'styled-components'
 import ArrowLeft from '../resources/images/arrow-left.svg'
+import ArrowLeftButton from '../resources/images/arrow-left-button.png'
 
 
 interface ButtonProps extends HTMLAttributes<HTMLDivElement> {
@@ -72,6 +73,22 @@ const NaviLeftContainer = styled(NaviContainer)`
   background-image: url(${ArrowLeft});
 `
 
+const NaviLeftContainerGrad = styled.div`
+  width: 64px;
+  height: 55px;
+  background-image: url(${ArrowLeftButton});
+  background-size: 100% 100%;
+  cursor: pointer;
+`
+
 export const NavigationLeft = (props: ButtonProps) => {
   return <NaviLeftContainer {...props} />
+}
+
+export const NavigationLeftGradient = (props: ButtonProps) => {
+  return <NaviLeftContainerGrad {...props} />
+}
+
+export const NavigationLeftGradientButton = (props: ButtonProps) => {
+  return <NaviLeftContainerGrad {...props} />
 }

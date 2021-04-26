@@ -83,9 +83,9 @@ export const AccountMenu = (props: IProps) => {
     <MenuItem onClick={() => props.onClick(MenuOption.batches)}>
       <IconHelm />
     </MenuItem>
-    <MenuItem onClick={() => props.onClick(MenuOption.exchange)}>
-      <IconExchange />
-    </MenuItem>
+    {/*<MenuItem onClick={() => props.onClick(MenuOption.exchange)}>*/}
+    {/*  <IconExchange />*/}
+    {/*</MenuItem>*/}
     <MenuItem onClick={() => props.onClick(MenuOption.transfer)}>
       <IconExport />
     </MenuItem>

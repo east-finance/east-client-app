@@ -8,6 +8,8 @@ import EastLogo from '../../resources/images/east-logo.svg'
 import { FAQ } from './modals/FAQ'
 import { Settings } from './modals/Settings'
 import { Batches } from './modals/batches/Batches'
+import { TransferEast } from './modals/TransferEast'
+import { BuyEast } from './modals/buy-east/BuyEast'
 
 const Container = styled.div`
 
@@ -58,7 +60,7 @@ const Account = observer( () => {
     setPrimaryModal(null)
   }
 
-  const [primaryModal, setPrimaryModal] = useState<React.ReactChild | null>(<Batches onClose={onCloseModal} />)
+  const [primaryModal, setPrimaryModal] = useState<React.ReactChild | null>(<BuyEast onClose={onCloseModal} />)
 
   const cardProps = {
     eastAmount: '132,24',
@@ -69,7 +71,9 @@ const Account = observer( () => {
 
   const onMenuClick = (menuOption: MenuOption) => {
     switch(menuOption) {
+    case MenuOption.buy: setPrimaryModal(<BuyEast onClose={onCloseModal} />); break
     case MenuOption.batches: setPrimaryModal(<Batches onClose={onCloseModal} />); break
+    case MenuOption.transfer: setPrimaryModal(<TransferEast onClose={onCloseModal} />); break
     case MenuOption.settings: setPrimaryModal(<Settings onClose={onCloseModal} />); break
     case MenuOption.faq: setPrimaryModal(<FAQ onClose={onCloseModal} />); break
     }

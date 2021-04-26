@@ -7,6 +7,9 @@ import { Block, Block16 } from '../../../../components/Block'
 import { IBatch } from '../../../../interfaces'
 import { Pagination } from './Pagination'
 import useScrollHandler from '../../../../hooks/useScrollHandler'
+import gradientBackground from '../../../../resources/images/gradient-bg2.png'
+import { CrossIcon } from '../../../../components/Icons'
+import { BatchDetails } from '../BatchDetails'
 
 interface IProps {
   onClose: () => void
@@ -50,8 +53,7 @@ const BatchItem = styled.div<{ background: string, batchWidth: number }>`
 `
 
 const BatchTitle = styled.div`
-  font-family: Cairo;
-  font-style: normal;
+  font-family: Cairo,sans-serif;
   font-weight: bold;
   font-size: 20px;
   line-height: 16px;
@@ -59,8 +61,7 @@ const BatchTitle = styled.div`
 `
 
 const BatchSubTitle = styled.div`
-  font-family: Cairo;
-  font-style: normal;
+  font-family: Cairo,sans-serif;
   font-weight: bold;
   font-size: 16px;
   line-height: 16px;
@@ -68,8 +69,7 @@ const BatchSubTitle = styled.div`
 `
 
 const BatchText = styled.div`
-  font-family: Cairo;
-  font-style: normal;
+  font-family: Cairo,sans-serif;
   font-weight: normal;
   font-size: 15px;
   line-height: 16px;
@@ -151,6 +151,7 @@ export const Batches = (props: IProps) => {
     createdAt: Date.now()
   }]
 
+  const [openedBatch, setOpenedBatch] = useState<IBatch | null>(null)
   const [batchesPage, setBatchesPage] = useState(0)
 
   const containerRef = useRef(null)
@@ -172,6 +173,7 @@ export const Batches = (props: IProps) => {
   }
 
   return <PrimaryModal {...props}>
+    <BatchDetails batch={openedBatch} onClose={() => setOpenedBatch(null)} />
     <PrimaryTitle>Batches</PrimaryTitle>
     <Block marginTop={40} />
     <Description>
@@ -181,7 +183,7 @@ export const Batches = (props: IProps) => {
     <BatchesItemsContainer ref={containerRef}>
       {batches.map((batch, index) => {
         const grad = gradients[index % gradients.length]
-        return <BatchItem key={index} background={grad.background} batchWidth={BatchWidth} >
+        return <BatchItem key={index} background={grad.background} batchWidth={BatchWidth} onClick={() => setOpenedBatch(batch)}>
           <BatchTitle>Index {index}</BatchTitle>
           <BatchTitle>{batch.eastAmount} East</BatchTitle>
           <Block16 />
@@ -199,11 +201,14 @@ export const Batches = (props: IProps) => {
         </BatchItem>
       })}
     </BatchesItemsContainer>
-    <Block marginTop={72} />
-    <Pagination
-      currentPage={batchesPage}
-      totalPages={Math.ceil(batches.length / BatchesOnPage)}
-      onPageSelected={onPageSelected}
-    />
+    <Block marginTop={72}>
+      {batches.length > BatchesOnPage &&
+      <Pagination
+        currentPage={batchesPage}
+        totalPages={Math.ceil(batches.length / BatchesOnPage)}
+        onPageSelected={onPageSelected}
+      />
+      }
+    </Block>
   </PrimaryModal>
 }
