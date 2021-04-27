@@ -3,11 +3,13 @@ import styled from 'styled-components'
 import CardBackground from '../../resources/images/card_bg.png'
 import { Block } from '../../components/Block'
 import iconPlus from '../../resources/images/icon-plus.png'
-import iconHelm from '../../resources/images/icon-helm.png'
+import iconSafe from '../../resources/images/icon-safe.png'
 import iconExchange from '../../resources/images/icon-exchange.png'
 import iconExport from '../../resources/images/icon-export.png'
 import iconSettings from '../../resources/images/icon-settings.png'
 import iconQuestion from '../../resources/images/icon-question.png'
+import { RouteName } from '../../router/segments'
+import { useRoute } from 'react-router5'
 
 interface CardProps {
   eastAmount: string;
@@ -56,7 +58,7 @@ const IconCommon = styled.div`
 `
 
 const IconPlus = styled(IconCommon)`background-image: url(${iconPlus});`
-const IconHelm = styled(IconCommon)`background-image: url(${iconHelm});`
+const IconSafe = styled(IconCommon)`background-image: url(${iconSafe});`
 const IconExchange = styled(IconCommon)`background-image: url(${iconExchange});`
 const IconExport = styled(IconCommon)`background-image: url(${iconExport});`
 const IconSettings = styled(IconCommon)`background-image: url(${iconSettings});`
@@ -71,28 +73,22 @@ export enum MenuOption {
   faq = 'faq',
 }
 
-interface IProps {
-  onClick: (menuOption: MenuOption) => void
-}
-
-export const AccountMenu = (props: IProps) => {
+export const AccountMenu = () => {
+  const { router } = useRoute()
   return <Container>
-    <MenuItem onClick={() => props.onClick(MenuOption.buy)}>
+    <MenuItem onClick={() => router.navigate(RouteName.BuyEast)}>
       <IconPlus />
     </MenuItem>
-    <MenuItem onClick={() => props.onClick(MenuOption.batches)}>
-      <IconHelm />
+    <MenuItem onClick={() => router.navigate(RouteName.Batches)}>
+      <IconSafe />
     </MenuItem>
-    {/*<MenuItem onClick={() => props.onClick(MenuOption.exchange)}>*/}
-    {/*  <IconExchange />*/}
-    {/*</MenuItem>*/}
-    <MenuItem onClick={() => props.onClick(MenuOption.transfer)}>
+    <MenuItem onClick={() => router.navigate(RouteName.TransferEast)}>
       <IconExport />
     </MenuItem>
-    <MenuItem onClick={() => props.onClick(MenuOption.settings)}>
+    <MenuItem onClick={() => router.navigate(RouteName.AccountSettings)}>
       <IconSettings />
     </MenuItem>
-    <MenuItem onClick={() => props.onClick(MenuOption.faq)}>
+    <MenuItem onClick={() => router.navigate(RouteName.Faq)}>
       <IconQuestion />
     </MenuItem>
   </Container>

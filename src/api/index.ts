@@ -63,4 +63,9 @@ export class Api {
     const { data } = await this._unauthorizedClient.post('/user/password/restore', { email })
     return data
   }
+
+  public getAddressBalance = async (address: string) => {
+    const { data } = await this._apiClient.get(`${NODE_ADDRESS}/addresses/balance/${address}`)
+    return data
+  }
 }

@@ -81,7 +81,7 @@ const SignIn = () => {
     try {
       const tokenPair = await api.signIn(username, password)
       authStore.loginWithTokenPair(tokenPair)
-      router.navigate(RouteName.Account)
+      router.navigate(RouteName.SignInWallet)
     } catch (e) {
       console.log('Login error:', e)
     }

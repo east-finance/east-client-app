@@ -1,12 +1,13 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import CardBackground from '../../resources/images/card_bg.png'
 import { Block } from '../../components/Block'
+import { observer } from 'mobx-react'
+import useStores from '../../hooks/useStores'
 
 interface CardProps {
   eastAmount: string;
   westAmount: string;
-  address: string;
   onClick: () => void;
 }
 
@@ -49,7 +50,7 @@ const Value = styled.div`
 const BottomItem = styled.div`
   color: #FFFFFF;
   font-weight: 300;
-  font-size: 16px;
+  font-size: 18px;
   letter-spacing: 2px;
 `
 
@@ -57,11 +58,26 @@ const BottomContainer = styled.div`
 
 `
 
-export const AccountCard = (props: CardProps) => {
-  const { eastAmount, westAmount, address, onClick } = props
-  return <Container onClick={onClick}>
+export const AccountCard = observer(() => {
+  const { authStore, dataStore } = useStores()
+  const { address } = authStore
+
+  const [westBalance, setWestBalance] = useState('')
+  const [eastBalance, setEastBalance] = useState('100')
+
+  useEffect(() => {
+    const getBalances = async () => {
+      const west = await dataStore.getWestBalance(address)
+      setWestBalance(west)
+    }
+    if (address) {
+      getBalances()
+    }
+  }, [address])
+
+  return <Container>
     <TopContainer>
-      <Value>{eastAmount}</Value>
+      <Value>{eastBalance}</Value>
       <Block marginTop={4}>
         <TokenName>EAST</TokenName>
       </Block>
@@ -70,8 +86,8 @@ export const AccountCard = (props: CardProps) => {
       <BottomContainer>
         <BottomItem>{address}</BottomItem>
         <Block marginTop={8} />
-        <BottomItem>{westAmount + ' WEST'}</BottomItem>
+        <BottomItem>{westBalance + ' WEST'}</BottomItem>
       </BottomContainer>
     }
   </Container>
-}
+})

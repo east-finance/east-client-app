@@ -1,6 +1,8 @@
 import { makeAutoObservable, runInAction } from 'mobx'
 import axios from 'axios'
 import { Api } from '../api'
+import { BigNumber } from 'bignumber.js'
+import { WestDecimals } from '../constants'
 
 enum StreamId {
   WEST_USD = '000003'
@@ -13,8 +15,8 @@ export interface IDataPoint {
 }
 
 export default class DataStore {
-  westPriceHistory: IDataPoint[] = []
   api
+  westPriceHistory: IDataPoint[] = []
 
   constructor(api: Api) {
     makeAutoObservable(this)
@@ -51,5 +53,14 @@ export default class DataStore {
       }
     }).filter((item: IDataPoint | undefined) => item)
     this.westPriceHistory = filteredTxs
+  }
+
+  async getWestBalance(address: string) {
+    try {
+      const { balance } = await this.api.getAddressBalance(address)
+      return new BigNumber(balance).dividedBy(Math.pow(10, WestDecimals)).toString()
+    } catch (e) {
+      return ''
+    }
   }
 }

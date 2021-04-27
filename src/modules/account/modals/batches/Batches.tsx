@@ -31,6 +31,9 @@ const BatchesItemsContainer = styled.div`
   display: flex;
   overflow: auto;
   width: calc(100% + 60px); // 60px = parent padding
+  height: calc(194px + 32px);
+  padding-top: 32px; // For batch item animation to top
+  align-items: flex-end;
   
   //::after {
   //  content: "";
@@ -41,15 +44,27 @@ const BatchesItemsContainer = styled.div`
   //}
 `
 
-const BatchItem = styled.div<{ background: string, batchWidth: number }>`
+const BatchItem = styled.div<{ background: string; batchWidth: number; isActive?: boolean }>`
   width: ${props => props.batchWidth}px;
   min-width: ${props => props.batchWidth}px;
   height: 194px;
   background: ${props => props.background};
-  border-radius: 4px;
   padding: 16px;
   cursor: pointer;
   margin-right: 16px;
+  border: 2px solid white;
+  border-radius: 4px;
+  transition: margin-bottom 250ms ease-in-out;
+  
+  &:hover {
+    margin-bottom: ${props => props.isActive ? '28' : '8'}px;
+  }
+
+  ${({ isActive }) => isActive && `
+    margin-bottom: 28px;
+    border-image-slice: 1;
+    border-image-source: linear-gradient(to left, #743ad5, #d53a9d);
+  `}
 `
 
 const BatchTitle = styled.div`
@@ -151,7 +166,7 @@ export const Batches = (props: IProps) => {
     createdAt: Date.now()
   }]
 
-  const [openedBatch, setOpenedBatch] = useState<IBatch | null>(null)
+  const [openedBatchIndex, setOpenedBatchIndex] = useState<number | null>(null)
   const [batchesPage, setBatchesPage] = useState(0)
 
   const containerRef = useRef(null)
@@ -172,8 +187,10 @@ export const Batches = (props: IProps) => {
     setBatchesPage(page)
   }
 
+  const openedBatchItem = batches.find((_, index) => index === openedBatchIndex)
+
   return <PrimaryModal {...props}>
-    <BatchDetails batch={openedBatch} onClose={() => setOpenedBatch(null)} />
+    <BatchDetails batch={openedBatchItem} onClose={() => setOpenedBatchIndex(null)} />
     <PrimaryTitle>Batches</PrimaryTitle>
     <Block marginTop={40} />
     <Description>
@@ -183,7 +200,14 @@ export const Batches = (props: IProps) => {
     <BatchesItemsContainer ref={containerRef}>
       {batches.map((batch, index) => {
         const grad = gradients[index % gradients.length]
-        return <BatchItem key={index} background={grad.background} batchWidth={BatchWidth} onClick={() => setOpenedBatch(batch)}>
+        const isActive = openedBatchIndex === index
+        return <BatchItem
+          key={index}
+          isActive={isActive}
+          background={grad.background}
+          batchWidth={BatchWidth}
+          onClick={() => setOpenedBatchIndex(index)}
+        >
           <BatchTitle>Index {index}</BatchTitle>
           <BatchTitle>{batch.eastAmount} East</BatchTitle>
           <Block16 />

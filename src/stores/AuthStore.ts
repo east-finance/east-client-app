@@ -15,16 +15,32 @@ interface WEJWTPayload extends JwtPayload {
 export default class AuthStore {
   router: Router
   isLoggedIn = false
+  isWalletAvailable = false
+  walletState = {}
 
   id = ''
   email = ''
   password = ''
-  address = 'test'
+  address = ''
+  westBalance = ''
 
   constructor(router: Router, api: Api) {
     this.router = router
     makeAutoObservable(this)
     this.initStore(router, api)
+    this.startWalletObserver()
+  }
+
+  authInWallet = () => {
+    return window.WEWallet.auth({ data: 'EAST Client auth' })
+  }
+
+  getWalletPublicState = () => {
+    return window.WEWallet.publicState()
+  }
+
+  setSelectedAddress (address: string) {
+    this.address = address
   }
 
   async initStore (router: Router, api: Api): Promise<void> {
@@ -35,19 +51,53 @@ export default class AuthStore {
         try {
           const { exp }: JwtPayload = decodeJWT(tokenPair.access_token)
           if (exp && (exp * 1000 - Date.now() > 0)) {
-            await api.setupApi(tokenPair)
-            this.loginWithTokenPair(tokenPair)
+            // const state = await window.WEWallet.publicState()
+            // console.log('Wallet state', state)
+            // const { address } = state.account
+            const address = '3NzwcJUgnbazFmkXL2xWoijriqtRJCka9Sa'
+            if (address) {
+              await api.setupApi(tokenPair)
+              this.setSelectedAddress(address)
+              this.loginWithTokenPair(tokenPair)
+              this.setLoggedIn(true)
+              router.navigate(RouteName.Account)
+            } else {
+              throw new Error('no address')
+            }
           } else {
-            console.log('JWT tokens expired')
             this.deleteTokenPair()
-            router.navigate(RouteName.SignIn)
+            throw new Error('JWT expired')
           }
         } catch (e) {
-          console.log('Login with tokens error:', e.message)
+          console.error('Login with tokens error:', e.message)
           router.navigate(RouteName.SignIn)
         }
       } else {
         router.navigate(RouteName.SignIn)
+      }
+    }
+  }
+
+  startWalletObserver () {
+    setInterval(() => this.pollWalletState(), 60 * 1000)
+  }
+
+  async pollWalletState () {
+    this.isWalletAvailable = !!window.WEWallet
+    if (this.isWalletAvailable && this.isLoggedIn) {
+      try {
+        const state = await window.WEWallet.publicState()
+        this.walletState = state
+        if (state && state.initialized) {
+          if (state.account) {
+            this.address = state.account.address
+          }
+        }
+      } catch (e) {
+        this.isWalletAvailable = false
+        this.walletState = {}
+        this.address = ''
+        console.log('Cannot get WEWallet state:', e)
       }
     }
   }
@@ -63,7 +113,6 @@ export default class AuthStore {
     this.id = id
     this.email = name
     this.writeTokenPair(tokenPair)
-    this.setLoggedIn(true)
   }
 
   setLoggedIn (isLoggedIn: boolean): void {

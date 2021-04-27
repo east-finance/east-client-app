@@ -7,6 +7,11 @@ export const RouteSegment = {
   signInWallet: 'sign-in-wallet',
   passwordRecovery: 'password-recovery',
   account: 'account',
+  buyEast: 'buyEast',
+  batches: 'batches',
+  transfer: 'transfer',
+  settings: 'settings',
+  faq: 'faq',
 }
 
 export const RouteName = {
@@ -15,6 +20,11 @@ export const RouteName = {
   SignUp: buildRouteName(RouteSegment.auth, RouteSegment.signUp),
   PasswordRecovery: buildRouteName(RouteSegment.auth, RouteSegment.passwordRecovery),
   Account: buildRouteName(RouteSegment.account),
+  Batches: buildRouteName(RouteSegment.account, RouteSegment.batches),
+  BuyEast: buildRouteName(RouteSegment.account, RouteSegment.buyEast),
+  TransferEast: buildRouteName(RouteSegment.account, RouteSegment.transfer),
+  AccountSettings: buildRouteName(RouteSegment.account, RouteSegment.settings),
+  Faq: buildRouteName(RouteSegment.account, RouteSegment.faq),
 }
 
 export const DefaultRouteName = RouteName.SignIn

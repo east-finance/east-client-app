@@ -6,7 +6,7 @@ import gradientBackground from '../../../resources/images/gradient-bg2.png'
 import { Block, Block16, Block24 } from '../../../components/Block'
 
 export interface IBatchDetailsProps {
-  batch: IBatch | null;
+  batch: IBatch | null | undefined;
   onClose: () => void;
 }
 

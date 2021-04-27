@@ -10,6 +10,8 @@ import { Settings } from './modals/Settings'
 import { Batches } from './modals/batches/Batches'
 import { TransferEast } from './modals/TransferEast'
 import { BuyEast } from './modals/buy-east/BuyEast'
+import { Route, useRoute } from 'react-router5'
+import { RouteName } from '../../router/segments'
 
 const Container = styled.div`
 
@@ -23,10 +25,22 @@ const CardContainer = styled.div`
 `
 
 const MenuContainer = styled.div`
+  @keyframes fadeInControls {
+    from {
+      transform: translateY(150%);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1
+    }
+  }
+
   position: absolute;
   bottom: 20px;
   width: 100%;
   text-align: center;
+  animation: fadeInControls 1000ms ease forwards;
 `
 
 const EastLogoWrapper = styled.div`
@@ -53,31 +67,32 @@ const PrimaryModalContainer = styled.div`
 
 `
 
+const getPrimaryModalByRoute = () => {
+  const { route: { name }, router } = useRoute()
+
+  const onCloseModal = () => {
+    router.navigate(RouteName.Account)
+  }
+
+  if (name.startsWith(RouteName.BuyEast)) {
+    return <BuyEast onClose={onCloseModal} />
+  } else if (name.startsWith(RouteName.Batches)) {
+    return <Batches onClose={onCloseModal} />
+  } else if (name.startsWith(RouteName.TransferEast)) {
+    return <TransferEast onClose={onCloseModal} />
+  } else if (name.startsWith(RouteName.AccountSettings)) {
+    return <Settings onClose={onCloseModal} />
+  } else if (name.startsWith(RouteName.Faq)) {
+    return <FAQ onClose={onCloseModal} />
+  }
+
+  return null
+}
+
 const Account = observer( () => {
   const { authStore, configStore: { configLoaded } } = useStores()
 
-  const onCloseModal = () => {
-    setPrimaryModal(null)
-  }
-
-  const [primaryModal, setPrimaryModal] = useState<React.ReactChild | null>(<BuyEast onClose={onCloseModal} />)
-
-  const cardProps = {
-    eastAmount: '132,24',
-    westAmount: '320',
-    address: '3Nmca7xgmoGbW2GPzbSzKDxmchrLFbvKByg',
-    onClick: () => { console.log('clicked') }
-  }
-
-  const onMenuClick = (menuOption: MenuOption) => {
-    switch(menuOption) {
-    case MenuOption.buy: setPrimaryModal(<BuyEast onClose={onCloseModal} />); break
-    case MenuOption.batches: setPrimaryModal(<Batches onClose={onCloseModal} />); break
-    case MenuOption.transfer: setPrimaryModal(<TransferEast onClose={onCloseModal} />); break
-    case MenuOption.settings: setPrimaryModal(<Settings onClose={onCloseModal} />); break
-    case MenuOption.faq: setPrimaryModal(<FAQ onClose={onCloseModal} />); break
-    }
-  }
+  const primaryModal = getPrimaryModalByRoute()
 
   return <Container>
     {primaryModal &&
@@ -90,10 +105,10 @@ const Account = observer( () => {
         {/*<WestChart />*/}
       </ChartContainer>
       <CardContainer>
-        <AccountCard {...cardProps} />
+        <AccountCard />
       </CardContainer>
       <MenuContainer>
-        <AccountMenu onClick={onMenuClick} />
+        <AccountMenu />
       </MenuContainer>
       <EastLogoWrapper />
     </AccountContent>
