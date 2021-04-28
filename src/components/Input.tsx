@@ -2,21 +2,33 @@ import React, { InputHTMLAttributes, useState } from 'react'
 import styled from 'styled-components'
 import { Block, Block16 } from './Block'
 
-const InputContainer = styled.input`
+export enum InputStatus {
+  default = 'default',
+  error = 'error'
+}
+
+const InputContainer = styled.input<{ status?: InputStatus }>`
   height: 55px;
   width: 100%;
   box-sizing: border-box;
   padding: 0 20px;
   font-weight: 500;
-  font-size: 13px;
+  font-size: 15px;
   outline: none;
   background: rgba(255, 255, 255, 0.5);
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  border: 1px solid;
+  border-color: ${props => props.status === InputStatus.error ? props.theme.red : 'rgba(255, 255, 255, 0.5)'};
   border-radius: 17px;
   font-family: Cairo, Helvetica,Arial,sans-serif;
+
+  ::placeholder {
+    color: rgba(224, 224, 224, 0.75);
+  }
 `
 
-type InputProps = InputHTMLAttributes<HTMLInputElement>
+interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
+  status?: InputStatus
+}
 
 export const Input = (props: InputProps) => {
   return <InputContainer {...props} />

@@ -3,6 +3,11 @@
 declare module '*.ttf';
 declare module '*.eot';
 
+declare module '*.mp4' {
+  const src: string
+  export default src
+}
+
 declare namespace WEWallet {
   type TWalletApi = {
     auth(data: IAuthData): Promise<IAuthResponse>;

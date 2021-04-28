@@ -4,5 +4,5 @@ export default {
   gray: '#8d8d8d',
   yellow: '#F8B700',
   defaultMarginTop: '100px',
-  red: '#CC1B1B'
+  red: '#F0212B'
 }

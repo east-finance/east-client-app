@@ -5,6 +5,8 @@ import { RouteSegment } from './router/segments'
 import useStores from './hooks/useStores'
 import Auth from './modules/auth/Auth'
 import Account from './modules/account/Account'
+import styled from 'styled-components'
+import BgWater from './resources/images/bg-water.mp4'
 
 const Content: FunctionComponent = observer( () => {
   const { route: { name } } = useRoute()
@@ -69,6 +71,9 @@ const Content: FunctionComponent = observer( () => {
   }
 
   return <Provider>
+    <video id="videoBG" poster="poster.JPG" autoPlay muted loop>
+      <source src={BgWater} type="video/mp4" />
+    </video>
     {content}
   </Provider>
 })

@@ -1,4 +1,4 @@
-import { makeAutoObservable, runInAction } from 'mobx'
+import { makeAutoObservable } from 'mobx'
 import axios from 'axios'
 import { Api } from '../api'
 import { BigNumber } from 'bignumber.js'
@@ -55,7 +55,7 @@ export default class DataStore {
     this.westPriceHistory = filteredTxs
   }
 
-  async getWestBalance(address: string) {
+  async getWestBalance(address: string): Promise<string> {
     try {
       const { balance } = await this.api.getAddressBalance(address)
       return new BigNumber(balance).dividedBy(Math.pow(10, WestDecimals)).toString()

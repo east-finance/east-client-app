@@ -26,7 +26,7 @@ const TabsTitle = styled.div`
   justify-content: center;
 `
 const TabsTitleItem = styled.div<{isActiveTab: boolean}>`
-  font-size: 13px;
+  font-size: 16px;
   color: white;
   font-weight: bold;
   cursor: ${props => props.isActiveTab ? 'default' : 'pointer'};

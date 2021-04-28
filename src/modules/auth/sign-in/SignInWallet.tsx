@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react'
-import { Link, useRoute } from 'react-router5'
-import { Block, Block16, Block24, Block32 } from '../../../components/Block'
+import { useRoute } from 'react-router5'
+import { Block, Block16, Block24 } from '../../../components/Block'
 import styled from 'styled-components'
 import useStores from '../../../hooks/useStores'
-import { Button, NavigationLeft } from '../../../components/Button'
+import { Button } from '../../../components/Button'
 import { observer } from 'mobx-react'
 import { RouteName } from '../../../router/segments'
 import { BigNumber } from 'bignumber.js'
@@ -65,9 +65,6 @@ const SignInWallet = observer(() => {
   const { api, authStore } = useStores()
   const { router } = useRoute()
 
-  const { isWalletAvailable } = authStore
-
-  const [isAuthorized, setAuthorized] = useState(false)
   const [noAccounts, setNoAccounts] = useState(false)
   const [selectedAddress, setSelectedAddress] = useState('')
   const [addressBalance, setAddressBalance] = useState('0')

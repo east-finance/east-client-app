@@ -17,17 +17,14 @@ export class Api {
   private _nodeClient!: AxiosInstance
 
   public signIn  = async (username: string, password: string): Promise<ITokenPair> => {
-    const { data: tokenPair } = await this._unauthorizedClient.post(
-      '/auth/login',
-      {
-        username,
-        password
-      }
-    )
-
+    const { data: tokenPair } = await this._unauthorizedClient.post('/auth/login', { username, password })
     await this.setupApi(tokenPair)
-
     return tokenPair
+  }
+
+  public signUp  = async (username: string, password: string): Promise<ITokenPair> => {
+    const { data } = await this._unauthorizedClient.post('/user', { username, password, source: 'east_client' })
+    return data
   }
 
   public setupApi = async (tokenPair: ITokenPair) => {

@@ -56,9 +56,9 @@ const BatchItem = styled.div<{ background: string; batchWidth: number; isActive?
   border-radius: 4px;
   transition: margin-bottom 250ms ease-in-out;
   
-  &:hover {
-    margin-bottom: ${props => props.isActive ? '28' : '8'}px;
-  }
+  // &:hover {
+  //   margin-bottom: ${props => props.isActive ? '28' : '8'}px;
+  // }
 
   ${({ isActive }) => isActive && `
     margin-bottom: 28px;

@@ -1,48 +1,91 @@
 import React, { useState } from 'react'
-import { withTranslation, WithTranslation } from 'react-i18next'
-import { Link, useRoute } from 'react-router5'
-import { Block, Block24, Block32 } from '../../../components/Block'
+import { useRoute } from 'react-router5'
+import { Block, Block24 } from '../../../components/Block'
 import styled from 'styled-components'
 import useStores from '../../../hooks/useStores'
-import { Input } from '../../../components/Input'
+import { Input, InputStatus } from '../../../components/Input'
 import { Button } from '../../../components/Button'
-
-type IProps = WithTranslation
+import { validateEmail } from '../utils'
+import { FormErrors } from '../constants'
+import { toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 const Container = styled.div`
   width: 376px;
 `
 
-const SignUp = (props: IProps) => {
-  const { t } = props
-  const { api, authStore } = useStores()
+const SignUp = () => {
+  const { api } = useStores()
   const { router } = useRoute()
 
   const [username, setUsername] = useState('')
+  const [usernameStatus, setUsernameStatus] = useState(InputStatus.default)
   const [password, setPassword] = useState('')
   const [confirm, setConfirm] = useState('')
+  const [passwordStatus, setPasswordStatus] = useState(InputStatus.default)
+
+  const validateForm = () => {
+    let usernameStatus = InputStatus.default
+    let passwordStatus = InputStatus.default
+    let msg = ''
+    if(!username) {
+      msg = FormErrors.EnterAnEmail
+    } else if(!validateEmail(username)) {
+      msg = FormErrors.EmailIsIncorrect
+    }
+    if (msg) {
+      usernameStatus = InputStatus.error
+    } else {
+      if (!password || !confirm) {
+        msg = FormErrors.EnterAPassword
+      }
+      if(msg) {
+        passwordStatus = InputStatus.error
+      }
+    }
+    setUsernameStatus(usernameStatus)
+    setPasswordStatus(passwordStatus)
+    console.log('msgmsgmsg', msg)
+    if (msg) {
+      toast(msg)
+    }
+    return msg
+  }
 
   const onChangeLogin = (e: any) => {
-    console.log('onChangeLogin', e.target.value)
+    setUsername(e.target.value)
   }
 
   const onChangePassword = (e: any) => {
-    console.log('onChangePassword', e.target.value)
+    setPassword(e.target.value)
   }
 
   const onChangeConfirm = (e: any) => {
-    console.log('onChangeConfirm', e.target.value)
+    setConfirm(e.target.value)
+  }
+
+  const onSignUpClicked = async () => {
+    try {
+      toast('123')
+      const formError = validateForm()
+      if(!formError) {
+        const result = await api.signUp(username, password)
+        console.log('result', result)
+      }
+    } catch (e) {
+      console.log(e)
+    }
   }
 
   return <Container>
-    <Input placeholder={'Email'} onChange={onChangeLogin} />
+    <Input placeholder={'Email'} status={usernameStatus} onChange={onChangeLogin} />
     <Block24 />
-    <Input placeholder={'Password'} type={'password'} onChange={onChangePassword} />
+    <Input placeholder={'Password'} type={'password'} status={passwordStatus} onChange={onChangePassword} />
     <Block24 />
-    <Input placeholder={'Confirm password'} type={'password'} onChange={onChangeConfirm} />
+    <Input placeholder={'Confirm password'} type={'password'} status={passwordStatus} onChange={onChangeConfirm} />
     <Block marginTop={54} />
-    <Button type={'primary'}>Sign Up</Button>
+    <Button type={'primary'} onClick={onSignUpClicked}>Sign Up</Button>
   </Container>
 }
 
-export default withTranslation()(SignUp)
+export default SignUp

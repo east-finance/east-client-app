@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import useStores from '../../hooks/useStores'
 import { observer } from 'mobx-react'
@@ -63,9 +63,7 @@ const AccountContent = styled.div<{visible: boolean}>`
   transition: opacity 250ms;
 `
 
-const PrimaryModalContainer = styled.div`
-
-`
+const PrimaryModalContainer = styled.div``
 
 const getPrimaryModalByRoute = () => {
   const { route: { name }, router } = useRoute()
