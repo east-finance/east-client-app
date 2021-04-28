@@ -4,6 +4,7 @@ import { Block, Block16, Block24 } from '../../../../components/Block'
 import { Steps } from './constants'
 import { SimpleInput } from '../../../../components/Input'
 import { Button, NavigationLeftGradientButton } from '../../../../components/Button'
+import { TextTable, TextTableKey, TextTablePrimaryValue, TextTableRow, TextTableSecondaryValue } from '../../../../components/TextTable'
 
 interface IProps {
   eastToWest: number;
@@ -16,38 +17,6 @@ interface IProps {
 const Container = styled.div`
   width: 376px;
   margin: 0 auto;
-`
-
-const Table = styled.div`
-  width: 250px;
-  margin: 0 auto;
-`
-
-const TableRow = styled.div`
-  margin-top: 32px;
-  display: flex;
-  justify-content: end;
-`
-
-const Text = styled.div`
-  width: 60%;
-  color: #000000;
-  opacity: 0.6;
-  font-size: 15px;
-`
-
-const PrimaryValue = styled.div`
-  font-weight: bold;
-  font-size: 24px;
-  line-height: 24px;
-  color: #000000;
-`
-
-const SecondaryValue = styled.div`
-  font-weight: 600;
-  font-size: 18px;
-  line-height: 22px;
-  color: #525252;
 `
 
 const Description = styled.div`
@@ -65,23 +34,23 @@ const SendButtonsContainer = styled.div`
 export const CheckForm = (props: IProps) => {
   return <Container>
     <Block marginTop={58}>
-      <Table>
-        <TableRow>
-          <Text>You will get</Text>
-          <PrimaryValue>{props.eastAmount} EAST</PrimaryValue>
-        </TableRow>
-        <TableRow>
-          <Text>You will pay</Text>
-          <SecondaryValue>{props.westAmount} WEST</SecondaryValue>
-        </TableRow>
-        <TableRow>
-          <Text>Will be in vault</Text>
-          <SecondaryValue>
+      <TextTable>
+        <TextTableRow>
+          <TextTableKey>You will get</TextTableKey>
+          <TextTablePrimaryValue>{props.eastAmount} EAST</TextTablePrimaryValue>
+        </TextTableRow>
+        <TextTableRow>
+          <TextTableKey>You will pay</TextTableKey>
+          <TextTableSecondaryValue>{props.westAmount} WEST</TextTableSecondaryValue>
+        </TextTableRow>
+        <TextTableRow>
+          <TextTableKey>Will be in vault</TextTableKey>
+          <TextTableSecondaryValue>
             <div>300 WEST</div>
             <div>50 USDp</div>
-          </SecondaryValue>
-        </TableRow>
-      </Table>
+          </TextTableSecondaryValue>
+        </TextTableRow>
+      </TextTable>
     </Block>
     <Block marginTop={42}>
       <Description>We convert  some of your WEST into USDp to maintain EAST stability. Learn more</Description>

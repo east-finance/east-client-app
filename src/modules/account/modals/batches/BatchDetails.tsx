@@ -1,12 +1,14 @@
-import { IBatch } from '../../../interfaces'
-import { CrossIcon } from '../../../components/Icons'
+import { IBatch } from '../../../../interfaces'
+import { CrossIcon } from '../../../../components/Icons'
 import React from 'react'
 import styled from 'styled-components'
-import gradientBackground from '../../../resources/images/gradient-bg2.png'
-import { Block, Block16, Block24 } from '../../../components/Block'
+import gradientBackground from '../../../../resources/images/gradient-bg2.png'
+import { Block, Block16, Block24 } from '../../../../components/Block'
+import { BatchOperation } from '../../../../constants'
 
 export interface IBatchDetailsProps {
   batch: IBatch | null | undefined;
+  onOperationClicked: (op: BatchOperation) => void;
   onClose: () => void;
 }
 
@@ -48,11 +50,35 @@ const SubTitle = styled.div`
   color: #FFFFFF;
 `
 
+const FlexWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  height: inherit;
+`
+
+const BlueButton = styled.div`
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(224, 224, 224, 0.25);
+  border-radius: 8px;
+  text-align: center;
+  color: #FFFFFF;
+  font-family: Cairo;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 16px;
+  cursor: pointer;
+`
+
 export const BatchDetails = (props: IBatchDetailsProps) => {
   const { batch, onClose } = props
   return <SecondaryModal style={{ visibility: batch ? 'visible' : 'hidden' }}>
     {batch &&
-      <div>
+      <FlexWrapper>
         <IconContainer onClick={onClose}>
           <CrossIcon color={'white'} />
         </IconContainer>
@@ -68,7 +94,10 @@ export const BatchDetails = (props: IBatchDetailsProps) => {
             <SubTitle>Changed</SubTitle>
           </Block16>
         </Block>
-      </div>
+        <div style={{ marginTop: 'auto' }}>
+          <BlueButton onClick={() => props.onOperationClicked(BatchOperation.liquidate)}>Liquidate</BlueButton>
+        </div>
+      </FlexWrapper>
     }
   </SecondaryModal>
 }

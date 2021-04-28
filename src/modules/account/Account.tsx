@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
 import useStores from '../../hooks/useStores'
 import { observer } from 'mobx-react'
@@ -12,6 +12,7 @@ import { TransferEast } from './modals/TransferEast'
 import { BuyEast } from './modals/buy-east/BuyEast'
 import { Route, useRoute } from 'react-router5'
 import { RouteName } from '../../router/segments'
+import useOutsideAlerter from '../../hooks/useOutsideHandler'
 
 const Container = styled.div`
 
@@ -63,7 +64,15 @@ const AccountContent = styled.div<{visible: boolean}>`
   transition: opacity 250ms;
 `
 
-const PrimaryModalContainer = styled.div``
+const PrimaryModalContainer = styled.div`
+  display: block;
+  position: fixed;
+  z-index: 9999;
+  width: 625px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+`
 
 const getPrimaryModalByRoute = () => {
   const { route: { name }, router } = useRoute()
@@ -88,13 +97,20 @@ const getPrimaryModalByRoute = () => {
 }
 
 const Account = observer( () => {
+  const { router } = useRoute()
   const { authStore, configStore: { configLoaded } } = useStores()
 
   const primaryModal = getPrimaryModalByRoute()
 
+  const modalRef = useRef(null)
+  const onClickOutside = () => {
+    router.navigate(RouteName.Account)
+  }
+  useOutsideAlerter(modalRef, onClickOutside)
+
   return <Container>
     {primaryModal &&
-      <PrimaryModalContainer>
+      <PrimaryModalContainer ref={modalRef}>
         {primaryModal}
       </PrimaryModalContainer>
     }

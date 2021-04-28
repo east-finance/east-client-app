@@ -1,19 +1,22 @@
 import React, { useRef, useState } from 'react'
 import styled from 'styled-components'
 import { PrimaryTitle } from '../../../../components/PrimaryTitle'
-import CardBackground from '../../resources/images/card_bg.png'
 import { PrimaryModal } from '../../Modal'
 import { Block, Block16 } from '../../../../components/Block'
 import { IBatch } from '../../../../interfaces'
 import { Pagination } from './Pagination'
 import useScrollHandler from '../../../../hooks/useScrollHandler'
-import gradientBackground from '../../../../resources/images/gradient-bg2.png'
-import { CrossIcon } from '../../../../components/Icons'
-import { BatchDetails } from '../BatchDetails'
+import { BatchDetails } from './BatchDetails'
+import { BatchOperation } from '../../../../constants'
+import { BatchLiquidation } from './BatchLiquidation'
 
 interface IProps {
   onClose: () => void
 }
+
+const Container = styled.div`
+  
+`
 
 const Description = styled.div`
   margin: 0 auto;
@@ -45,6 +48,7 @@ const BatchesItemsContainer = styled.div`
 `
 
 const BatchItem = styled.div<{ background: string; batchWidth: number; isActive?: boolean }>`
+  box-sizing: border-box;
   width: ${props => props.batchWidth}px;
   min-width: ${props => props.batchWidth}px;
   height: 194px;
@@ -90,6 +94,15 @@ const BatchText = styled.div`
   line-height: 16px;
   color: #000000;
   max-width: 70px;
+`
+
+const PrimaryWrapper = styled.div<{ isHidden: boolean }>`
+  transition: transform 500ms cubic-bezier(.7,0,.6,1), opacity 500ms;
+  ${({ isHidden }) => isHidden && `
+    opacity: .3;
+    transform: translate(150px, -650px);
+    user-select: none;
+  `}
 `
 
 const gradients = [{
@@ -168,6 +181,7 @@ export const Batches = (props: IProps) => {
 
   const [openedBatchIndex, setOpenedBatchIndex] = useState<number | null>(null)
   const [batchesPage, setBatchesPage] = useState(0)
+  const [batchOperation, setBatchOperation] = useState<BatchOperation | null>(null)
 
   const containerRef = useRef(null)
   useScrollHandler(containerRef, (scrollLeft: number) => {
@@ -188,51 +202,70 @@ export const Batches = (props: IProps) => {
   }
 
   const openedBatchItem = batches.find((_, index) => index === openedBatchIndex)
+  const onOperationClicked = (operation: BatchOperation) => {
+    setBatchOperation(operation)
+  }
 
-  return <PrimaryModal {...props}>
-    <BatchDetails batch={openedBatchItem} onClose={() => setOpenedBatchIndex(null)} />
-    <PrimaryTitle>Batches</PrimaryTitle>
-    <Block marginTop={40} />
-    <Description>
-      Batches are roughly like transaction history. Each batch has a vault with blocked WEST and USDp. Read more
-    </Description>
-    <Block marginTop={72} />
-    <BatchesItemsContainer ref={containerRef}>
-      {batches.map((batch, index) => {
-        const grad = gradients[index % gradients.length]
-        const isActive = openedBatchIndex === index
-        return <BatchItem
-          key={index}
-          isActive={isActive}
-          background={grad.background}
-          batchWidth={BatchWidth}
-          onClick={() => setOpenedBatchIndex(index)}
-        >
-          <BatchTitle>Index {index}</BatchTitle>
-          <BatchTitle>{batch.eastAmount} East</BatchTitle>
-          <Block16 />
-          <BatchText>
-            112 West
-            at 0.2253$
-          </BatchText>
-          <Block16 />
-          <BatchSubTitle>In vault</BatchSubTitle>
-          <Block marginTop={8} />
-          <BatchText>
-            112 West
-            at 0.2253$
-          </BatchText>
-        </BatchItem>
-      })}
-    </BatchesItemsContainer>
-    <Block marginTop={72}>
-      {batches.length > BatchesOnPage &&
-      <Pagination
-        currentPage={batchesPage}
-        totalPages={Math.ceil(batches.length / BatchesOnPage)}
-        onPageSelected={onPageSelected}
-      />
-      }
-    </Block>
-  </PrimaryModal>
+  return <Container>
+    <BatchDetails
+      batch={openedBatchItem}
+      onOperationClicked={onOperationClicked}
+      onClose={() => {
+        setOpenedBatchIndex(null)
+        setBatchOperation(null)
+      }}
+    />
+    <PrimaryWrapper isHidden={!!batchOperation}>
+      <PrimaryModal {...props}>
+        <PrimaryTitle>Batches</PrimaryTitle>
+        <Block marginTop={40} />
+        <Description>
+          Batches are roughly like transaction history. Each batch has a vault with blocked WEST and USDp. Read more
+        </Description>
+        <Block marginTop={72} />
+        <BatchesItemsContainer ref={containerRef}>
+          {batches.map((batch, index) => {
+            const grad = gradients[index % gradients.length]
+            const isActive = openedBatchIndex === index
+            return <BatchItem
+              key={index}
+              isActive={isActive}
+              background={grad.background}
+              batchWidth={BatchWidth}
+              onClick={() => setOpenedBatchIndex(index)}
+            >
+              <BatchTitle>Index {index}</BatchTitle>
+              <BatchTitle>{batch.eastAmount} East</BatchTitle>
+              <Block16 />
+              <BatchText>
+                112 West
+                at 0.2253$
+              </BatchText>
+              <Block16 />
+              <BatchSubTitle>In vault</BatchSubTitle>
+              <Block marginTop={8} />
+              <BatchText>
+                112 West
+                at 0.2253$
+              </BatchText>
+            </BatchItem>
+          })}
+        </BatchesItemsContainer>
+        <Block marginTop={72}>
+          {batches.length > BatchesOnPage &&
+          <Pagination
+            currentPage={batchesPage}
+            totalPages={Math.ceil(batches.length / BatchesOnPage)}
+            onPageSelected={onPageSelected}
+          />
+          }
+        </Block>
+      </PrimaryModal>
+    </PrimaryWrapper>
+    <BatchLiquidation
+      batch={openedBatchItem}
+      isVisible={!!batchOperation}
+      onClose={() => setBatchOperation(null)}
+    />
+  </Container>
 }
