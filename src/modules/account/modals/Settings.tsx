@@ -1,17 +1,22 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
 import { PrimaryTitle } from '../../../components/PrimaryTitle'
-import { PrimaryModal } from '../Modal'
+import { PrimaryModal, SecondaryModal, SecondaryModalButton } from '../Modal'
 import { Block, Block16, Block32 } from '../../../components/Block'
 import { SimpleInput } from '../../../components/Input'
-import gradientBackground from '../../../resources/images/gradient-bg2.png'
 import { CrossIcon } from '../../../components/Icons'
 import useStores from '../../../hooks/useStores'
-import { Button } from '../../../components/Button'
 
 interface IProps {
   onClose: () => void
 }
+
+const FlexWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  height: inherit;
+`
 
 const Container = styled.div`
   width: 376px;
@@ -22,20 +27,6 @@ const IconContainer = styled.div`
   position: absolute;
   top: 0;
   right: 0;
-`
-
-const SecondaryModal = styled.div`
-  position: absolute;
-  width: 208px;
-  padding: 16px;
-  box-sizing: border-box;
-  left: calc(-208px - 16px);
-  height: 100%;
-  border-radius: 22px;
-  background-image: url(${gradientBackground});
-  background-repeat: no-repeat;
-  background-size: 120% 100%;
-  top: 0;
 `
 
 const PasswordChangeForm = styled.div`
@@ -83,23 +74,25 @@ interface IPassChangeProps {
 
 const PasswordChange = (props: IPassChangeProps) => {
   return <SecondaryModal style={{ visibility: props.visible ? 'visible' : 'hidden' }}>
-    <IconContainer onClick={props.onClose}>
-      <CrossIcon color={'white'} />
-    </IconContainer>
-    <Block marginTop={100}>
-      <PasswordChangeForm>
-        <H3>Password change</H3>
-        <Block marginTop={40} />
-        <SimpleInput type={'password'} autoComplete='new-password' placeholder={'Old password'} />
-        <Block marginTop={32} />
-        <SimpleInput type={'password'} autoComplete='new-password' placeholder={'New password'} />
-        <Block marginTop={32} />
-        <SimpleInput type={'password'} autoComplete='new-password' placeholder={'Confirm new password'} />
-      </PasswordChangeForm>
-      <Block marginTop={48}>
-        <Button>Change</Button>
+    <FlexWrapper>
+      <IconContainer onClick={props.onClose}>
+        <CrossIcon color={'white'} />
+      </IconContainer>
+      <Block marginTop={100}>
+        <PasswordChangeForm>
+          <H3>Password change</H3>
+          <Block marginTop={40} />
+          <SimpleInput type={'password'} autoComplete='new-password' placeholder={'Old password'} />
+          <Block marginTop={32} />
+          <SimpleInput type={'password'} autoComplete='new-password' placeholder={'New password'} />
+          <Block marginTop={32} />
+          <SimpleInput type={'password'} autoComplete='new-password' placeholder={'Confirm new password'} />
+        </PasswordChangeForm>
       </Block>
-    </Block>
+      <div style={{ marginTop: 'auto' }}>
+        <SecondaryModalButton>Change</SecondaryModalButton>
+      </div>
+    </FlexWrapper>
   </SecondaryModal>
 }
 
@@ -111,10 +104,10 @@ export const Settings = (props: IProps) => {
   const onPassChangeClicked = () => setPassChangeVisible(!passChangeVisible)
 
   return <PrimaryModal {...props}>
+    <PrimaryTitle>Settings</PrimaryTitle>
     <div>
       <PasswordChange visible={passChangeVisible} onClose={() => setPassChangeVisible(false)} />
       <Container>
-        <PrimaryTitle>Settings</PrimaryTitle>
         <Block marginTop={36} />
         <SimpleInput disabled title={'Email'} defaultValue={authStore.email} />
         <Block16 />

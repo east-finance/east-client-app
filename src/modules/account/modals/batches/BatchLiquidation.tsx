@@ -1,8 +1,7 @@
 import { IBatch } from '../../../../interfaces'
 import React from 'react'
 import styled from 'styled-components'
-import { Block, Block16, Block24 } from '../../../../components/Block'
-import { BatchOperation } from '../../../../constants'
+import { Block, Block16 } from '../../../../components/Block'
 import { PrimaryTitle } from '../../../../components/PrimaryTitle'
 import { PrimaryModal } from '../../Modal'
 import {
@@ -33,7 +32,7 @@ const Container = styled.div<{ isVisible: boolean }>`
   `}
 `
 
-const ReturnToPrimary = styled.div`
+const BackToPrimary = styled.div`
   background: #FFFFFF;
   border-radius: 16px;
   display: inline-flex;
@@ -58,9 +57,9 @@ export const BatchLiquidation = (props: IBatchDetailsProps) => {
   return <Container isVisible={isVisible}>
     {batch &&
     <div style={{ textAlign: 'center' }}>
-      <ReturnToPrimary onClick={onClose}>
+      <BackToPrimary onClick={onClose}>
         Close and return to batches overview
-      </ReturnToPrimary>
+      </BackToPrimary>
       <Block16 />
       <PrimaryModal>
         <PrimaryTitle>batch liquidation</PrimaryTitle>

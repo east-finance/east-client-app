@@ -14,6 +14,7 @@ interface CardProps {
 const Container = styled.div`
   width: 444px;
   height: 260px;
+  box-sizing: border-box;
   padding: 52px 72px 24px 32px;
   //background: radial-gradient(97.31% 97.31% at 50% 2.69%, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0) 79%), #000000;
   background-image: url(${CardBackground});

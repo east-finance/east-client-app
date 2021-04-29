@@ -51,7 +51,7 @@ const EastLogoWrapper = styled.div`
   width: 174px;
   height: 55px;
   background-image: url(${EastLogo});
-  //opacity: 0.6;
+  opacity: 0.6;
 `
 
 const ChartContainer = styled.div`

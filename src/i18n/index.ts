@@ -1,7 +1,7 @@
 import i18n from 'i18next'
 import LanguageDetector from 'i18next-browser-languagedetector'
 import moment from 'moment'
-import 'moment/locale/ru'
+// import 'moment/locale/ru'
 
 import ruLocales from './locales/ru.json'
 import enLocales from './locales/en.json'

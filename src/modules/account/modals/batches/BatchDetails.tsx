@@ -5,6 +5,8 @@ import styled from 'styled-components'
 import gradientBackground from '../../../../resources/images/gradient-bg2.png'
 import { Block, Block16, Block24 } from '../../../../components/Block'
 import { BatchOperation } from '../../../../constants'
+import { SecondaryModal, SecondaryModalButton } from '../../Modal'
+import moment from 'moment'
 
 export interface IBatchDetailsProps {
   batch: IBatch | null | undefined;
@@ -18,27 +20,12 @@ const IconContainer = styled.div`
   right: 0;
 `
 
-const SecondaryModal = styled.div`
-  position: absolute;
-  width: 208px;
-  padding: 16px;
-  box-sizing: border-box;
-  left: calc(-208px - 16px);
-  height: 100%;
-  border-radius: 22px;
-  background-image: url(${gradientBackground});
-  background-repeat: no-repeat;
-  background-size: 120% 100%;
-  top: 0;
-`
-
 const Title = styled.div`
-  font-family: Cairo,sans-serif;
-  font-style: normal;
-  font-weight: bold;
-  font-size: 20px;
-  line-height: 16px;
-  color: #FFFFFF;
+  font-family: BrutalType,sans-serif;
+  font-size: 32px;
+  line-height: 48px;
+  letter-spacing: -1px;
+  text-transform: uppercase;
 `
 
 const SubTitle = styled.div`
@@ -50,28 +37,18 @@ const SubTitle = styled.div`
   color: #FFFFFF;
 `
 
+const Text = styled.div`
+  font-family: Cairo,sans-serif;
+  font-size: 15px;
+  line-height: 18px;
+`
+
 const FlexWrapper = styled.div`
   display: flex;
   flex-direction: column;
   flex: 1;
   height: inherit;
-`
-
-const BlueButton = styled.div`
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(224, 224, 224, 0.25);
-  border-radius: 8px;
-  text-align: center;
   color: #FFFFFF;
-  font-family: Cairo;
-  font-style: normal;
-  font-weight: 600;
-  font-size: 16px;
-  line-height: 16px;
-  cursor: pointer;
 `
 
 export const BatchDetails = (props: IBatchDetailsProps) => {
@@ -84,18 +61,33 @@ export const BatchDetails = (props: IBatchDetailsProps) => {
         </IconContainer>
         <Block marginTop={139}>
           <Title>{batch.eastAmount} East</Title>
-          <Block24>
-            <SubTitle>In vault</SubTitle>
-          </Block24>
+          <div  style={{ maxWidth: '70px' }}>
+            <Block24>
+              <Text>West was at {batch.westRate}$</Text>
+            </Block24>
+            <Block16>
+              <SubTitle>Contains</SubTitle>
+              <Block marginTop={8}>
+                <Text>{batch.westAmount} West</Text>
+                <Text>{batch.usdpAmount} USDp</Text>
+              </Block>
+            </Block16>
+          </div>
           <Block16>
             <SubTitle>Created</SubTitle>
-          </Block16>
-          <Block16>
-            <SubTitle>Changed</SubTitle>
+            <Block marginTop={8}>
+              <Text>{moment(batch.createdAt).format('LLL')}</Text>
+            </Block>
           </Block16>
         </Block>
         <div style={{ marginTop: 'auto' }}>
-          <BlueButton onClick={() => props.onOperationClicked(BatchOperation.liquidate)}>Liquidate</BlueButton>
+          <SecondaryModalButton style={{ color: '#62FD84' }} onClick={() => props.onOperationClicked(BatchOperation.overpay)}>
+            Claim overpay
+          </SecondaryModalButton>
+          <Block marginTop={8} />
+          <SecondaryModalButton onClick={() => props.onOperationClicked(BatchOperation.liquidate)}>
+            Liquidate
+          </SecondaryModalButton>
         </div>
       </FlexWrapper>
     }

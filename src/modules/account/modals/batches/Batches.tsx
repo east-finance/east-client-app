@@ -9,6 +9,7 @@ import useScrollHandler from '../../../../hooks/useScrollHandler'
 import { BatchDetails } from './BatchDetails'
 import { BatchOperation } from '../../../../constants'
 import { BatchLiquidation } from './BatchLiquidation'
+import { BatchItem, BatchWidth } from './BatchItem'
 
 interface IProps {
   onClose: () => void
@@ -21,11 +22,11 @@ const Container = styled.div`
 const Description = styled.div`
   margin: 0 auto;
   max-width: 500px;
-  font-family: Montserrat,sans-serif;
+  font-family: Cairo,sans-serif;
   font-style: normal;
   font-weight: 500;
-  font-size: 13px;
-  line-height: 22px;
+  font-size: 15px;
+  line-height: 18px;
   text-align: center;
 `
 
@@ -33,10 +34,20 @@ const BatchesItemsContainer = styled.div`
   position: relative;
   display: flex;
   overflow: auto;
-  width: calc(100% + 60px); // 60px = parent padding
+  width: calc(100% + 120px); // 60px = parent padding
   height: calc(194px + 32px);
   padding-top: 32px; // For batch item animation to top
+  padding-bottom: 72px; // For batch item animation to top
+  margin-left: -60px;
   align-items: flex-end;
+  scrollbar-width: none; // Disable scrollbar
+  ::-webkit-scrollbar {
+    display: none;
+  }
+  
+  > div:first-child {
+    margin-left: 60px;
+  }
   
   //::after {
   //  content: "";
@@ -45,55 +56,6 @@ const BatchesItemsContainer = styled.div`
   //  height: 100%;
   //  box-shadow: inset -24px 0 16px -8px white;
   //}
-`
-
-const BatchItem = styled.div<{ background: string; batchWidth: number; isActive?: boolean }>`
-  box-sizing: border-box;
-  width: ${props => props.batchWidth}px;
-  min-width: ${props => props.batchWidth}px;
-  height: 194px;
-  background: ${props => props.background};
-  padding: 16px;
-  cursor: pointer;
-  margin-right: 16px;
-  border: 2px solid white;
-  border-radius: 4px;
-  transition: margin-bottom 250ms ease-in-out;
-  
-  // &:hover {
-  //   margin-bottom: ${props => props.isActive ? '28' : '8'}px;
-  // }
-
-  ${({ isActive }) => isActive && `
-    margin-bottom: 28px;
-    border-image-slice: 1;
-    border-image-source: linear-gradient(to left, #743ad5, #d53a9d);
-  `}
-`
-
-const BatchTitle = styled.div`
-  font-family: Cairo,sans-serif;
-  font-weight: bold;
-  font-size: 20px;
-  line-height: 16px;
-  color: #000000;
-`
-
-const BatchSubTitle = styled.div`
-  font-family: Cairo,sans-serif;
-  font-weight: bold;
-  font-size: 16px;
-  line-height: 16px;
-  color: #000000;
-`
-
-const BatchText = styled.div`
-  font-family: Cairo,sans-serif;
-  font-weight: normal;
-  font-size: 15px;
-  line-height: 16px;
-  color: #000000;
-  max-width: 70px;
 `
 
 const PrimaryWrapper = styled.div<{ isHidden: boolean }>`
@@ -113,69 +75,92 @@ const gradients = [{
   background: 'radial-gradient(114.95% 114.95% at 5.23% -14.95%, #FF842C 0%, rgba(255, 255, 255, 0) 100%), linear-gradient(180deg, #F2F2F2 0%, #EDEDED 100%);'
 }]
 
-export const BatchWidth = 153
 const BatchesOnPage = 3
 
 export const Batches = (props: IProps) => {
   const batches: IBatch[] = [{
-    eastAmount: 100,
-    westAmount: 219,
-    usdpAmount: 22,
+    id: '1',
+    eastAmount: 80,
+    westAmount: 50,
+    usdpAmount: 14,
+    westRate: 0.52,
     createdAt: Date.now()
   }, {
-    eastAmount: 100,
-    westAmount: 219,
-    usdpAmount: 22,
+    id: '2',
+    eastAmount: 120,
+    westAmount: 76,
+    usdpAmount: 123,
+    westRate: 0.31,
     createdAt: Date.now()
   }, {
+    id: '3',
     eastAmount: 100,
     westAmount: 219,
     usdpAmount: 22,
+    westRate: 0.52,
     createdAt: Date.now()
   }, {
+    id: '4',
     eastAmount: 100,
     westAmount: 219,
     usdpAmount: 22,
+    westRate: 0.52,
     createdAt: Date.now()
   }, {
+    id: '5',
     eastAmount: 100,
     westAmount: 219,
     usdpAmount: 22,
+    westRate: 0.52,
     createdAt: Date.now()
   }, {
+    id: '6',
     eastAmount: 100,
     westAmount: 219,
     usdpAmount: 22,
+    westRate: 0.52,
     createdAt: Date.now()
   }, {
+    id: '7',
     eastAmount: 100,
     westAmount: 219,
     usdpAmount: 22,
+    westRate: 0.52,
     createdAt: Date.now()
   }, {
+    id: '8',
     eastAmount: 100,
     westAmount: 219,
     usdpAmount: 22,
+    westRate: 0.52,
     createdAt: Date.now()
   }, {
+    id: '9',
     eastAmount: 100,
     westAmount: 219,
     usdpAmount: 22,
+    westRate: 0.52,
     createdAt: Date.now()
   }, {
+    id: '10',
     eastAmount: 100,
     westAmount: 219,
     usdpAmount: 22,
+    westRate: 0.52,
     createdAt: Date.now()
   }, {
+    id: '11',
     eastAmount: 100,
     westAmount: 219,
     usdpAmount: 22,
+    westRate: 0.52,
     createdAt: Date.now()
   }, {
+    id: '12',
     eastAmount: 100,
     westAmount: 219,
     usdpAmount: 22,
+    westRate: 0.52,
     createdAt: Date.now()
   }]
 
@@ -220,38 +205,22 @@ export const Batches = (props: IProps) => {
         <PrimaryTitle>Batches</PrimaryTitle>
         <Block marginTop={40} />
         <Description>
-          Batches are roughly like transaction history. Each batch has a vault with blocked WEST and USDp. Read more
+          Batch is like a container with your WEST and USDp. A new batch is created every time you buy EAST. Learn more
         </Description>
-        <Block marginTop={72} />
+        <Block marginTop={16} />
         <BatchesItemsContainer ref={containerRef}>
           {batches.map((batch, index) => {
             const grad = gradients[index % gradients.length]
-            const isActive = openedBatchIndex === index
-            return <BatchItem
-              key={index}
-              isActive={isActive}
-              background={grad.background}
-              batchWidth={BatchWidth}
-              onClick={() => setOpenedBatchIndex(index)}
-            >
-              <BatchTitle>Index {index}</BatchTitle>
-              <BatchTitle>{batch.eastAmount} East</BatchTitle>
-              <Block16 />
-              <BatchText>
-                112 West
-                at 0.2253$
-              </BatchText>
-              <Block16 />
-              <BatchSubTitle>In vault</BatchSubTitle>
-              <Block marginTop={8} />
-              <BatchText>
-                112 West
-                at 0.2253$
-              </BatchText>
-            </BatchItem>
+            const batchItemProps = {
+              batch,
+              background: grad.background,
+              isActive: openedBatchIndex === index,
+              onClick: () => setOpenedBatchIndex(index)
+            }
+            return <BatchItem key={index} {...batchItemProps} />
           })}
         </BatchesItemsContainer>
-        <Block marginTop={72}>
+        <div>
           {batches.length > BatchesOnPage &&
           <Pagination
             currentPage={batchesPage}
@@ -259,7 +228,7 @@ export const Batches = (props: IProps) => {
             onPageSelected={onPageSelected}
           />
           }
-        </Block>
+        </div>
       </PrimaryModal>
     </PrimaryWrapper>
     <BatchLiquidation

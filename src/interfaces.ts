@@ -5,8 +5,10 @@ export interface ITokenPair {
 }
 
 export interface IBatch {
-  eastAmount: number,
-  westAmount: number,
-  usdpAmount: number,
+  id: string;
+  eastAmount: number;
+  westAmount: number;
+  usdpAmount: number;
+  westRate: number;
   createdAt: number
 }
