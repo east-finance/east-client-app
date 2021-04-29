@@ -38,7 +38,7 @@ const BatchesItemsContainer = styled.div`
   overflow: auto;
   width: calc(100% + 120px); // 60px = parent padding
   height: calc(194px + 32px);
-  padding-top: 32px; // For batch item animation to top
+  padding-top: 48px; // For batch item animation to top
   padding-bottom: 72px; // For batch item animation to top
   margin-left: -60px;
   align-items: flex-end;
@@ -60,9 +60,9 @@ const BatchesItemsContainer = styled.div`
   //}
 `
 
-const PrimaryWrapper = styled.div<{ isHidden: boolean }>`
+const PrimaryWrapper = styled.div<{ isVisible: boolean }>`
   transition: transform 500ms cubic-bezier(.7,0,.6,1), opacity 500ms;
-  ${({ isHidden }) => isHidden && `
+  ${({ isVisible }) => !isVisible && `
     opacity: .3;
     transform: translate(150px, -650px);
     user-select: none;
@@ -96,14 +96,14 @@ export const Batches = (props: IProps) => {
     createdAt: Date.now()
   }, {
     id: '3',
-    eastAmount: 100,
-    westAmount: 219,
-    usdpAmount: 22,
-    westRate: 0.52,
+    eastAmount: 32,
+    westAmount: 12,
+    usdpAmount: 2,
+    westRate: 0.12,
     createdAt: Date.now()
   }, {
     id: '4',
-    eastAmount: 100,
+    eastAmount: 504,
     westAmount: 219,
     usdpAmount: 22,
     westRate: 0.52,
@@ -202,7 +202,7 @@ export const Batches = (props: IProps) => {
         setBatchOperation(null)
       }}
     />
-    <PrimaryWrapper isHidden={!!batchOperation}>
+    <PrimaryWrapper isVisible={!batchOperation}>
       <PrimaryModal {...props}>
         <PrimaryTitle>Batches</PrimaryTitle>
         <Block marginTop={40} />
@@ -217,9 +217,9 @@ export const Batches = (props: IProps) => {
               batch,
               background: grad.background,
               isActive: openedBatchIndex === index,
-              onClick: () => setOpenedBatchIndex(index)
+              onClick: () => openedBatchIndex === index ? setOpenedBatchIndex(null) : setOpenedBatchIndex(index)
             }
-            return <BatchItem key={index} {...batchItemProps} />
+            return <BatchItem key={index} batchIndex={batches.length - index} {...batchItemProps} />
           })}
         </BatchesItemsContainer>
         <div>

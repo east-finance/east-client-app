@@ -1,22 +1,22 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useRef } from 'react'
 import styled from 'styled-components'
 import useStores from '../../hooks/useStores'
 import { observer } from 'mobx-react'
 import { AccountCard } from './Card'
-import { AccountMenu, MenuOption } from './Menu'
+import { AccountMenu } from './Menu'
 import EastLogo from '../../resources/images/east-logo.svg'
 import { FAQ } from './modals/FAQ'
 import { Settings } from './modals/Settings'
 import { Batches } from './modals/batches/Batches'
 import { TransferEast } from './modals/TransferEast'
 import { BuyEast } from './modals/buy-east/BuyEast'
-import { Route, useRoute } from 'react-router5'
+import { useRoute } from 'react-router5'
 import { RouteName } from '../../router/segments'
 import useOutsideAlerter from '../../hooks/useOutsideHandler'
+import { fadeIn, fadeInControls, fadeOut } from '../../components/Animations'
+import { BackgroundVideo } from '../../components/BackgroundVideo'
 
-const Container = styled.div`
-
-`
+const Container = styled.div``
 
 const CardContainer = styled.div`
   display: flex;
@@ -26,22 +26,11 @@ const CardContainer = styled.div`
 `
 
 const MenuContainer = styled.div`
-  @keyframes fadeInControls {
-    from {
-      transform: translateY(150%);
-      opacity: 0;
-    }
-    to {
-      transform: translateY(0);
-      opacity: 1
-    }
-  }
-
   position: absolute;
   bottom: 20px;
   width: 100%;
   text-align: center;
-  animation: fadeInControls 1000ms ease forwards;
+  // animation: ${fadeInControls} 1000ms ease forwards;
 `
 
 const EastLogoWrapper = styled.div`
@@ -59,9 +48,10 @@ const ChartContainer = styled.div`
   top: 0;
 `
 
-const AccountContent = styled.div<{visible: boolean}>`
-  opacity: ${props => props.visible ? 1 : 0};
-  transition: opacity 250ms;
+const AccountContent = styled.div<{isVisible: boolean}>`
+  > div {
+    animation: ${props => props.isVisible ? fadeIn : fadeOut} 250ms ease forwards;
+  }
 `
 
 const PrimaryModalContainer = styled.div`
@@ -109,12 +99,13 @@ const Account = observer( () => {
   useOutsideAlerter(modalRef, onClickOutside)
 
   return <Container>
+    <BackgroundVideo isBlurred={!!primaryModal} />
     {primaryModal &&
       <PrimaryModalContainer ref={modalRef}>
         {primaryModal}
       </PrimaryModalContainer>
     }
-    <AccountContent visible={!primaryModal}>
+    <AccountContent isVisible={!primaryModal}>
       <ChartContainer>
         {/*<WestChart />*/}
       </ChartContainer>

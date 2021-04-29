@@ -2,7 +2,6 @@ import { Block, Block16 } from '../../../../components/Block'
 import React from 'react'
 import styled from 'styled-components'
 import { IBatch } from '../../../../interfaces'
-import gradientBackground from '../../resources/images/gradient-bg2.png'
 
 export const BatchWidth = 153
 
@@ -10,14 +9,14 @@ const Container = styled.div<{ background: string; batchWidth: number; isActive?
   box-sizing: border-box;
   width: ${props => props.batchWidth}px;
   min-width: ${props => props.batchWidth}px;
-  height: 194px;
+  height: 210px;
   background: ${props => props.background};
   padding: 16px;
   cursor: pointer;
   margin-right: 16px;
   border: 1px solid white;
   border-radius: 4px;
-  transition: margin-bottom 250ms ease-in-out;
+  transition: margin-bottom 250ms ease, filter 500ms ease;
   
   // &:hover {
   //   margin-bottom: ${props => props.isActive ? '28' : '8'}px;
@@ -58,6 +57,7 @@ const BatchText = styled.div`
 
 interface IProps {
   batch: IBatch;
+  batchIndex: number;
   background: string;
   isActive: boolean;
   onClick: () => void;
@@ -71,17 +71,23 @@ export const BatchItem = (props: IProps) => {
     batchWidth={BatchWidth}
     onClick={props.onClick}
   >
-    <BatchTitle>{batch.eastAmount} East</BatchTitle>
-    <Block16 />
-    <BatchText>
-      West was at {batch.westRate}
-    </BatchText>
-    <Block16 />
-    <BatchSubTitle>Contains</BatchSubTitle>
-    <Block marginTop={8} />
-    <BatchText>
-      <div>{batch.westAmount} West</div>
-      <div>{batch.usdpAmount} USDp</div>
-    </BatchText>
+    <BatchTitle>Batch #{props.batchIndex}</BatchTitle>
+    <Block16>
+      <BatchSubTitle>{batch.eastAmount} East</BatchSubTitle>
+    </Block16>
+    <Block marginTop={8}>
+      <BatchText>
+        West was at {batch.westRate}
+      </BatchText>
+    </Block>
+    <Block16>
+      <BatchSubTitle>Contains</BatchSubTitle>
+      <Block marginTop={8}>
+        <BatchText>
+          <div>{batch.westAmount} West</div>
+          <div>{batch.usdpAmount} USDp</div>
+        </BatchText>
+      </Block>
+    </Block16>
   </Container>
 }

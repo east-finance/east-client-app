@@ -21,26 +21,7 @@ const StyleGlobal = createGlobalStyle`
   //  height: 100vh;
   //  margin: 0;
   //}
-  
-  // https://redstapler.co/responsive-css-video-background/
 
-  #videoBG {
-    position:fixed;
-    top: 0;
-    z-index: -1;
-  }
-  @media (min-aspect-ratio: 16/9) {
-    #videoBG {
-      width:100%;
-      height: auto;
-    }
-  }
-  @media (max-aspect-ratio: 16/9) {
-    #videoBG {
-      width:auto;
-      height: 100%;
-    }
-  }
   @media (max-width: 767px) {
     #videoBG {
       display: none;

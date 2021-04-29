@@ -32,7 +32,7 @@ const BackToPrimary = styled.div`
   border-radius: 16px;
   display: inline-flex;
   padding: 8px 12px;
-  margin: 16px auto 0;
+  margin: 32px auto 0;
   font-weight: 700;
   font-size: 16px;
   line-height: 16px;

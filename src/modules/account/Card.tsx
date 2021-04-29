@@ -14,7 +14,7 @@ const Container = styled.div`
   background-image: url(${CardBackground});
   background-repeat: no-repeat;
   background-size: cover;
-  box-shadow: 0px 32px 32px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 32px 32px rgba(0, 0, 0, 0.15);
   border-radius: 6px;
   filter: drop-shadow(0px 24px 40px rgba(0, 0, 0, 0.4));
   font-family: 'Staatliches',serif;

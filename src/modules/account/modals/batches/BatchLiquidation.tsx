@@ -11,6 +11,7 @@ import {
   TextTableRow,
   TextTableSecondaryValue
 } from '../../../../components/TextTable'
+import { Button } from '../../../../components/Button'
 
 export interface IBatchDetailsProps {
   batch: IBatch | null | undefined;
@@ -37,7 +38,7 @@ const BackToPrimary = styled.div`
   border-radius: 16px;
   display: inline-flex;
   padding: 8px 12px;
-  margin: 16px auto 0;
+  margin: 32px auto 0;
   font-weight: 700;
   font-size: 16px;
   line-height: 16px;
@@ -52,6 +53,19 @@ const Description = styled.div`
   color: #0A0606;
 `
 
+const ButtonsContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  
+  > div {
+    width: 376px;
+    &:not(:first-child) {
+      margin-top: 8px;
+    }
+  }
+`
+
 export const BatchLiquidation = (props: IBatchDetailsProps) => {
   const { batch, isVisible, onClose } = props
   return <Container isVisible={isVisible}>
@@ -63,10 +77,10 @@ export const BatchLiquidation = (props: IBatchDetailsProps) => {
       <Block16 />
       <PrimaryModal>
         <PrimaryTitle>batch liquidation</PrimaryTitle>
-        <Block marginTop={40}>
+        <Block marginTop={32}>
           <Description>Give back your EAST to unlock WEST and USDp from your batch</Description>
         </Block>
-        <Block marginTop={50}>
+        <Block marginTop={40}>
           <TextTable>
             <TextTableRow>
               <TextTableKey>Current balance</TextTableKey>
@@ -84,6 +98,11 @@ export const BatchLiquidation = (props: IBatchDetailsProps) => {
               </TextTableSecondaryValue>
             </TextTableRow>
           </TextTable>
+        </Block>
+        <Block marginTop={45}>
+          <ButtonsContainer>
+            <Button type={'primary'}>Confirm and liquidate</Button>
+          </ButtonsContainer>
         </Block>
       </PrimaryModal>
     </div>

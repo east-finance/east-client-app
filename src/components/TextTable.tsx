@@ -10,10 +10,11 @@ export const TextTableRow = styled.div`
   margin-top: 32px;
   display: flex;
   justify-content: end;
+  align-items: baseline;
 `
 
 export const TextTableKey = styled.div`
-  width: 60%;
+  width: 50%;
   color: #000000;
   opacity: 0.6;
   font-size: 15px;
