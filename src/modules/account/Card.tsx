@@ -5,12 +5,6 @@ import { Block } from '../../components/Block'
 import { observer } from 'mobx-react'
 import useStores from '../../hooks/useStores'
 
-interface CardProps {
-  eastAmount: string;
-  westAmount: string;
-  onClick: () => void;
-}
-
 const Container = styled.div`
   width: 444px;
   height: 260px;

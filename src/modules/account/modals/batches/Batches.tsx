@@ -2,7 +2,7 @@ import React, { useRef, useState } from 'react'
 import styled from 'styled-components'
 import { PrimaryTitle } from '../../../../components/PrimaryTitle'
 import { PrimaryModal } from '../../Modal'
-import { Block, Block16 } from '../../../../components/Block'
+import { Block } from '../../../../components/Block'
 import { IBatch } from '../../../../interfaces'
 import { Pagination } from './Pagination'
 import useScrollHandler from '../../../../hooks/useScrollHandler'
@@ -10,6 +10,8 @@ import { BatchDetails } from './BatchDetails'
 import { BatchOperation } from '../../../../constants'
 import { BatchLiquidation } from './BatchLiquidation'
 import { BatchItem, BatchWidth } from './BatchItem'
+import { ClaimOverpay } from './ClaimOverpay'
+import { PostponeLiquidation } from './PostponeLiquidation'
 
 interface IProps {
   onClose: () => void
@@ -233,7 +235,17 @@ export const Batches = (props: IProps) => {
     </PrimaryWrapper>
     <BatchLiquidation
       batch={openedBatchItem}
-      isVisible={!!batchOperation}
+      isVisible={batchOperation === BatchOperation.liquidate}
+      onClose={() => setBatchOperation(null)}
+    />
+    <ClaimOverpay
+      batch={openedBatchItem}
+      isVisible={batchOperation === BatchOperation.overpay}
+      onClose={() => setBatchOperation(null)}
+    />
+    <PostponeLiquidation
+      batch={openedBatchItem}
+      isVisible={batchOperation === BatchOperation.postponeLiquidation}
       onClose={() => setBatchOperation(null)}
     />
   </Container>

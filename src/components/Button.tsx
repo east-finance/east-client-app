@@ -18,7 +18,7 @@ const ButtonContainer = styled.div<ButtonProps>`
   justify-content: center;
   background: #C4C4C4;
   border-radius: 4px;
-  font-weight: 600;
+  font-weight: 500;
   font-size: 16px;
   cursor: pointer;
   user-select: none;

@@ -1,7 +1,5 @@
 import React from 'react'
 import styled from 'styled-components'
-import CardBackground from '../../resources/images/card_bg.png'
-import { Block } from '../../components/Block'
 import iconPlus from '../../resources/images/icon-plus.png'
 import iconSafe from '../../resources/images/icon-safe.png'
 import iconExchange from '../../resources/images/icon-exchange.png'
@@ -10,13 +8,6 @@ import iconSettings from '../../resources/images/icon-settings.png'
 import iconQuestion from '../../resources/images/icon-question.png'
 import { RouteName } from '../../router/segments'
 import { useRoute } from 'react-router5'
-
-interface CardProps {
-  eastAmount: string;
-  westAmount: string;
-  address: string;
-  onClick: () => void;
-}
 
 const Container = styled.div`
   display: inline-flex;
@@ -76,19 +67,19 @@ export enum MenuOption {
 export const AccountMenu = () => {
   const { router } = useRoute()
   return <Container>
-    <MenuItem onClick={() => router.navigate(RouteName.BuyEast)}>
+    <MenuItem title={'Buy East'} onClick={() => router.navigate(RouteName.BuyEast)}>
       <IconPlus />
     </MenuItem>
-    <MenuItem onClick={() => router.navigate(RouteName.Batches)}>
+    <MenuItem title={'Batches'} onClick={() => router.navigate(RouteName.Batches)}>
       <IconSafe />
     </MenuItem>
-    <MenuItem onClick={() => router.navigate(RouteName.TransferEast)}>
+    <MenuItem title={'Transfer East'} onClick={() => router.navigate(RouteName.TransferEast)}>
       <IconExport />
     </MenuItem>
-    <MenuItem onClick={() => router.navigate(RouteName.AccountSettings)}>
+    <MenuItem title={'Settings'} onClick={() => router.navigate(RouteName.AccountSettings)}>
       <IconSettings />
     </MenuItem>
-    <MenuItem onClick={() => router.navigate(RouteName.Faq)}>
+    <MenuItem title={'FAQ'} onClick={() => router.navigate(RouteName.Faq)}>
       <IconQuestion />
     </MenuItem>
   </Container>

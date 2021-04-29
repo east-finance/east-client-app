@@ -81,6 +81,10 @@ export const BatchDetails = (props: IBatchDetailsProps) => {
           </Block16>
         </Block>
         <div style={{ marginTop: 'auto' }}>
+          <SecondaryModalButton style={{ color: '#FDA362' }} onClick={() => props.onOperationClicked(BatchOperation.postponeLiquidation)}>
+            Postpone liquidation
+          </SecondaryModalButton>
+          <Block marginTop={8} />
           <SecondaryModalButton style={{ color: '#62FD84' }} onClick={() => props.onOperationClicked(BatchOperation.overpay)}>
             Claim overpay
           </SecondaryModalButton>
