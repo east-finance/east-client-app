@@ -82,11 +82,9 @@ const PasswordChange = (props: IPassChangeProps) => {
         <PasswordChangeForm>
           <H3>Password change</H3>
           <Block marginTop={40} />
-          <SimpleInput type={'password'} autoComplete='new-password' placeholder={'Old password'} />
-          <Block marginTop={32} />
-          <SimpleInput type={'password'} autoComplete='new-password' placeholder={'New password'} />
-          <Block marginTop={32} />
-          <SimpleInput type={'password'} autoComplete='new-password' placeholder={'Confirm new password'} />
+          <SimpleInput type={'password'} label={'Old password'} autoComplete='new-password' />
+          <SimpleInput type={'password'} label={'New password'} autoComplete='new-password' />
+          <SimpleInput type={'password'} label={'Confirm new password'} autoComplete='new-password' />
         </PasswordChangeForm>
       </Block>
       <div style={{ marginTop: 'auto' }}>

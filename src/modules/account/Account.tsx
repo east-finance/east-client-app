@@ -1,4 +1,4 @@
-import React, { useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
 import useStores from '../../hooks/useStores'
 import { observer } from 'mobx-react'
@@ -15,6 +15,7 @@ import { RouteName } from '../../router/segments'
 import useOutsideAlerter from '../../hooks/useOutsideHandler'
 import { fadeIn, fadeInControls, fadeOut } from '../../components/Animations'
 import { BackgroundVideo } from '../../components/BackgroundVideo'
+import data from '@wavesenterprise/js-sdk/raw/src/grpc/transactions/Data'
 
 const Container = styled.div``
 
@@ -88,7 +89,24 @@ const getPrimaryModalByRoute = () => {
 
 const Account = observer( () => {
   const { router } = useRoute()
-  const { authStore, configStore: { configLoaded } } = useStores()
+  const { api, authStore, dataStore, configStore: { configLoaded } } = useStores()
+
+  const [eastBalance, setEastBalance] = useState('0.0')
+
+  useEffect(() => {
+    const getUserVaults = async () => {
+      if (authStore.address) {
+        try {
+          const balance = await dataStore.getEastBalance(authStore.address)
+          setEastBalance(balance)
+        } catch (e) {
+          console.error('Cannot get user vaults data', e.message)
+        }
+      }
+    }
+    getUserVaults()
+    setInterval(getUserVaults, 10000)
+  }, [authStore.address])
 
   const primaryModal = getPrimaryModalByRoute()
 
@@ -110,7 +128,7 @@ const Account = observer( () => {
         {/*<WestChart />*/}
       </ChartContainer>
       <CardContainer>
-        <AccountCard />
+        <AccountCard eastBalance={eastBalance} />
       </CardContainer>
       <MenuContainer>
         <AccountMenu />

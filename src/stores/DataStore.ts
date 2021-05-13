@@ -3,6 +3,7 @@ import axios from 'axios'
 import { Api } from '../api'
 import { BigNumber } from 'bignumber.js'
 import { WestDecimals } from '../constants'
+import { IBatch } from '../interfaces'
 
 enum StreamId {
   WEST_USD = '000003'
@@ -53,6 +54,15 @@ export default class DataStore {
       }
     }).filter((item: IDataPoint | undefined) => item)
     this.westPriceHistory = filteredTxs
+  }
+
+  async getEastBalance(address: string): Promise<string> {
+    try {
+      const batches = await this.api.getBatches(address)
+      return batches.reduce((amount: number, batch: IBatch) => amount + +batch.eastAmount, 0).toString()
+    } catch (e) {
+      return ''
+    }
   }
 
   async getWestBalance(address: string): Promise<string> {

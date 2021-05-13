@@ -1,17 +1,17 @@
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
 import { PrimaryTitle } from '../../../../components/PrimaryTitle'
 import { PrimaryModal } from '../../Modal'
 import { Block } from '../../../../components/Block'
-import { IBatch } from '../../../../interfaces'
 import { Pagination } from './Pagination'
 import useScrollHandler from '../../../../hooks/useScrollHandler'
 import { BatchDetails } from './BatchDetails'
 import { BatchOperation } from '../../../../constants'
 import { BatchLiquidation } from './BatchLiquidation'
-import { BatchItem, BatchWidth } from './BatchItem'
+import { BatchItem, BatchSkeleton, BatchWidth } from './BatchItem'
 import { ClaimOverpay } from './ClaimOverpay'
 import { PostponeLiquidation } from './PostponeLiquidation'
+import useStores from '../../../../hooks/useStores'
 
 interface IProps {
   onClose: () => void
@@ -80,95 +80,116 @@ const gradients = [{
 const BatchesOnPage = 3
 
 export const Batches = (props: IProps) => {
-  const batches: IBatch[] = [{
-    id: '1',
-    eastAmount: 80,
-    westAmount: 50,
-    usdpAmount: 14,
-    westRate: 0.52,
-    createdAt: Date.now()
-  }, {
-    id: '2',
-    eastAmount: 120,
-    westAmount: 76,
-    usdpAmount: 123,
-    westRate: 0.31,
-    createdAt: Date.now()
-  }, {
-    id: '3',
-    eastAmount: 32,
-    westAmount: 12,
-    usdpAmount: 2,
-    westRate: 0.12,
-    createdAt: Date.now()
-  }, {
-    id: '4',
-    eastAmount: 504,
-    westAmount: 219,
-    usdpAmount: 22,
-    westRate: 0.52,
-    createdAt: Date.now()
-  }, {
-    id: '5',
-    eastAmount: 100,
-    westAmount: 219,
-    usdpAmount: 22,
-    westRate: 0.52,
-    createdAt: Date.now()
-  }, {
-    id: '6',
-    eastAmount: 100,
-    westAmount: 219,
-    usdpAmount: 22,
-    westRate: 0.52,
-    createdAt: Date.now()
-  }, {
-    id: '7',
-    eastAmount: 100,
-    westAmount: 219,
-    usdpAmount: 22,
-    westRate: 0.52,
-    createdAt: Date.now()
-  }, {
-    id: '8',
-    eastAmount: 100,
-    westAmount: 219,
-    usdpAmount: 22,
-    westRate: 0.52,
-    createdAt: Date.now()
-  }, {
-    id: '9',
-    eastAmount: 100,
-    westAmount: 219,
-    usdpAmount: 22,
-    westRate: 0.52,
-    createdAt: Date.now()
-  }, {
-    id: '10',
-    eastAmount: 100,
-    westAmount: 219,
-    usdpAmount: 22,
-    westRate: 0.52,
-    createdAt: Date.now()
-  }, {
-    id: '11',
-    eastAmount: 100,
-    westAmount: 219,
-    usdpAmount: 22,
-    westRate: 0.52,
-    createdAt: Date.now()
-  }, {
-    id: '12',
-    eastAmount: 100,
-    westAmount: 219,
-    usdpAmount: 22,
-    westRate: 0.52,
-    createdAt: Date.now()
-  }]
+  // const batches: IBatch[] = [{
+  //   id: '1',
+  //   eastAmount: 80,
+  //   westAmount: 50,
+  //   usdpAmount: 14,
+  //   westRate: 0.52,
+  //   createdAt: Date.now()
+  // }, {
+  //   id: '2',
+  //   eastAmount: 120,
+  //   westAmount: 76,
+  //   usdpAmount: 123,
+  //   westRate: 0.31,
+  //   createdAt: Date.now()
+  // }, {
+  //   id: '3',
+  //   eastAmount: 32,
+  //   westAmount: 12,
+  //   usdpAmount: 2,
+  //   westRate: 0.12,
+  //   createdAt: Date.now()
+  // }, {
+  //   id: '4',
+  //   eastAmount: 504,
+  //   westAmount: 219,
+  //   usdpAmount: 22,
+  //   westRate: 0.52,
+  //   createdAt: Date.now()
+  // }, {
+  //   id: '5',
+  //   eastAmount: 100,
+  //   westAmount: 219,
+  //   usdpAmount: 22,
+  //   westRate: 0.52,
+  //   createdAt: Date.now()
+  // }, {
+  //   id: '6',
+  //   eastAmount: 100,
+  //   westAmount: 219,
+  //   usdpAmount: 22,
+  //   westRate: 0.52,
+  //   createdAt: Date.now()
+  // }, {
+  //   id: '7',
+  //   eastAmount: 100,
+  //   westAmount: 219,
+  //   usdpAmount: 22,
+  //   westRate: 0.52,
+  //   createdAt: Date.now()
+  // }, {
+  //   id: '8',
+  //   eastAmount: 100,
+  //   westAmount: 219,
+  //   usdpAmount: 22,
+  //   westRate: 0.52,
+  //   createdAt: Date.now()
+  // }, {
+  //   id: '9',
+  //   eastAmount: 100,
+  //   westAmount: 219,
+  //   usdpAmount: 22,
+  //   westRate: 0.52,
+  //   createdAt: Date.now()
+  // }, {
+  //   id: '10',
+  //   eastAmount: 100,
+  //   westAmount: 219,
+  //   usdpAmount: 22,
+  //   westRate: 0.52,
+  //   createdAt: Date.now()
+  // }, {
+  //   id: '11',
+  //   eastAmount: 100,
+  //   westAmount: 219,
+  //   usdpAmount: 22,
+  //   westRate: 0.52,
+  //   createdAt: Date.now()
+  // }, {
+  //   id: '12',
+  //   eastAmount: 100,
+  //   westAmount: 219,
+  //   usdpAmount: 22,
+  //   westRate: 0.52,
+  //   createdAt: Date.now()
+  // }]
 
+  const { api, authStore } = useStores()
+
+  const [batches, setBatches] = useState([])
+  const [isLoading, setLoading] = useState(false)
   const [openedBatchIndex, setOpenedBatchIndex] = useState<number | null>(null)
   const [batchesPage, setBatchesPage] = useState(0)
   const [batchOperation, setBatchOperation] = useState<BatchOperation | null>(null)
+
+  useEffect(() => {
+    const loadBatches = async () => {
+      try {
+        setLoading(true)
+        const data = await api.getBatches(authStore.address)
+        setBatches(data)
+      } catch (e) {
+        console.error('Cannot load batches list', e)
+      } finally {
+        setLoading(false)
+      }
+    }
+    if (authStore.address) {
+      loadBatches()
+    }
+  }, [authStore.address])
 
   const containerRef = useRef(null)
   useScrollHandler(containerRef, (scrollLeft: number) => {
@@ -181,7 +202,7 @@ export const Batches = (props: IProps) => {
     // containerRef.current.scrollLeft = page * (BatchWidth * BatchesOnPage + (16 * (BatchesOnPage - 1)))
     containerRef.current.scrollTo({
       top: 0,
-      left: Math.floor(page * ((BatchWidth + 16) * BatchesOnPage + 92)),
+      left: Math.floor(page * ((BatchWidth + 16) * BatchesOnPage)),
       behavior: 'smooth'
     })
 
@@ -211,7 +232,8 @@ export const Batches = (props: IProps) => {
         </Description>
         <Block marginTop={16} />
         <BatchesItemsContainer ref={containerRef}>
-          {batches.map((batch, index) => {
+          {isLoading && [0,1,2,3,4].map((_, index) => <BatchSkeleton key={index} />) }
+          {!isLoading && batches.map((batch, index) => {
             const grad = gradients[index % gradients.length]
             const batchItemProps = {
               batch,

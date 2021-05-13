@@ -91,3 +91,12 @@ export const circInX = keyframes`
     transform: translateX(0);
   }
 `
+
+export const shineBatch = keyframes`
+  0% {
+    background-position: -32px;
+  }
+  40%, 100% {
+    background-position: 208px;
+  }
+`

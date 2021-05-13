@@ -1,13 +1,26 @@
 import axios, { AxiosInstance } from 'axios'
 import { ApiTokenRefresher } from '@wavesenterprise/api-token-refresher'
 import {
+  IBatch,
   ITokenPair,
 } from '../interfaces'
 
 const AUTH_SERVICE_ADDRESS = '/authServiceAddress'
 const NODE_ADDRESS = '/nodeAddress'
-const API_ADDRESS = '/backendAddress'
+const API_ADDRESS = '/apiAddress'
 const API_VERSION_PREFIX = '/v1'
+
+/*
+* address: "3Nr3w79QHmBQkFJ4cBmvaD7L1bErUMtLuSL"
+createdAt: "2021-05-13T13:37:57.102Z"
+eastAmount: "3.497142857142857"
+id: 3
+usdpAmount: "1.7485714285714284"
+usdpRateTimestamp: "2021-05-13T13:37:57.095Z"
+vaultId: "43VNkCqW1h8VMfvoDQ7hmiBiAcdPNkFtKPwYxXuvjSLR"
+westAmount: "12.857142857142858"
+westRateTimestamp: "2021-05-13T13:37:57.095Z"
+* */
 
 export class Api {
   private _unauthorizedClient: AxiosInstance = axios.create({
@@ -63,6 +76,11 @@ export class Api {
 
   public getAddressBalance = async (address: string) => {
     const { data } = await this._apiClient.get(`${NODE_ADDRESS}/addresses/balance/${address}`)
+    return data
+  }
+
+  public getBatches = async (address: string): Promise<IBatch[]> => {
+    const { data } = await this._apiClient.get(`${API_ADDRESS}/v1/user/vaults?address=${address}`)
     return data
   }
 }

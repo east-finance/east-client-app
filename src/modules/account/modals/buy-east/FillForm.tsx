@@ -53,9 +53,9 @@ export const FillForm = (props: IProps) => {
   }
   return <Container>
     <Block marginTop={48}>
-      <SimpleInput type={'number'} placeholder={'Amount of EAST'} value={eastAmount} onChange={onChangeEast} />
+      <SimpleInput isFocused={true} label={'Amount of EAST'} value={eastAmount} onChange={onChangeEast} />
       <Block24 />
-      <SimpleInput type={'number'} placeholder={'Amount of WEST'} value={westAmount} onChange={onChangeWest} />
+      <SimpleInput isFocused={true} label={'Amount of WEST'} value={westAmount} onChange={onChangeWest} />
     </Block>
     <Block16>
       <Description>You can type in one currency, the other one will be calculated automatically</Description>

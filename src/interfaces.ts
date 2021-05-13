@@ -5,10 +5,13 @@ export interface ITokenPair {
 }
 
 export interface IBatch {
-  id: string;
-  eastAmount: number;
-  westAmount: number;
-  usdpAmount: number;
-  westRate: number;
-  createdAt: number
+  id: number;
+  vaultId: string;
+  address: string;
+  createdAt: string;
+  eastAmount: string;
+  usdpAmount: string;
+  usdpRateTimestamp: string;
+  westAmount: string;
+  westRateTimestamp: string;
 }

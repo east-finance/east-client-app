@@ -4,12 +4,13 @@ import CardBackground from '../../resources/images/card_bg.png'
 import { Block } from '../../components/Block'
 import { observer } from 'mobx-react'
 import useStores from '../../hooks/useStores'
+import { formatNumber } from '../../utils'
 
 const Container = styled.div`
   width: 444px;
   height: 260px;
   box-sizing: border-box;
-  padding: 52px 72px 24px 32px;
+  padding: 52px 72px 16px 32px;
   //background: radial-gradient(97.31% 97.31% at 50% 2.69%, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0) 79%), #000000;
   background-image: url(${CardBackground});
   background-repeat: no-repeat;
@@ -25,6 +26,11 @@ const Container = styled.div`
 
 const TopContainer = styled.div`
 
+`
+
+const TextShadow = styled.div`
+  color: rgba(10,60,150, 0.8);
+  text-shadow: 1px 4px 6px #def, 0 0 0 #000, 1px 4px 6px #def;
 `
 
 const TokenName = styled.div`
@@ -46,6 +52,7 @@ const BottomItem = styled.div`
   color: #FFFFFF;
   font-weight: 300;
   font-size: 18px;
+  line-height: 16px;
   letter-spacing: 2px;
 `
 
@@ -53,12 +60,16 @@ const BottomContainer = styled.div`
 
 `
 
-export const AccountCard = observer(() => {
+export interface IProps {
+  eastBalance: string;
+}
+
+export const AccountCard = observer((props: IProps) => {
+  const { eastBalance } = props
   const { authStore, dataStore } = useStores()
   const { address } = authStore
 
   const [westBalance, setWestBalance] = useState('')
-  const [eastBalance, setEastBalance] = useState('100')
 
   useEffect(() => {
     const getBalances = async () => {
@@ -72,7 +83,7 @@ export const AccountCard = observer(() => {
 
   return <Container>
     <TopContainer>
-      <Value>{eastBalance}</Value>
+      <Value>{formatNumber(eastBalance)}</Value>
       <Block marginTop={4}>
         <TokenName>EAST</TokenName>
       </Block>
@@ -81,7 +92,7 @@ export const AccountCard = observer(() => {
       <BottomContainer>
         <BottomItem>{address}</BottomItem>
         <Block marginTop={8} />
-        <BottomItem>{westBalance + ' WEST'}</BottomItem>
+        <BottomItem>{formatNumber(westBalance) + ' WEST'}</BottomItem>
       </BottomContainer>
     }
   </Container>

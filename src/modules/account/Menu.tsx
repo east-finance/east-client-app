@@ -20,6 +20,41 @@ const Container = styled.div`
   padding: 0 24px;
 `
 
+const Tooltip = styled.div`
+  display: none;
+  position: absolute;
+  padding: 2px 0;
+  background: white;
+  border-radius: 4px;
+  margin: auto;
+  top: -70px;
+  left: 0;
+  right: 0;
+  
+  &:after {
+    content: "";
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-width: 8px;
+    border-style: solid;
+    border-color: #FFFFFF transparent transparent transparent;
+    bottom: -16px;
+    left: calc(50% - 8px);
+  }
+`
+
+const MenuItemContainer = styled.div`
+  position: relative;
+  &:not(:first-child) {
+    margin-left: 45px;
+  }
+
+  &:hover ${Tooltip} {
+    display: block;
+  }
+`
+
 const MenuItem = styled.div`
   background: #FFFFFF;
   opacity: 0.9;
@@ -31,10 +66,6 @@ const MenuItem = styled.div`
   align-items: center;
   cursor: pointer;
   transition: transform 0.25s;
-  
-  &:not(:first-child) {
-    margin-left: 45px;
-  }
   
   &:hover {
     transform: scale(1.1);
@@ -67,20 +98,35 @@ export enum MenuOption {
 export const AccountMenu = () => {
   const { router } = useRoute()
   return <Container>
-    <MenuItem title={'Buy East'} onClick={() => router.navigate(RouteName.BuyEast)}>
-      <IconPlus />
-    </MenuItem>
-    <MenuItem title={'Batches'} onClick={() => router.navigate(RouteName.Batches)}>
-      <IconSafe />
-    </MenuItem>
-    <MenuItem title={'Transfer East'} onClick={() => router.navigate(RouteName.TransferEast)}>
-      <IconExport />
-    </MenuItem>
-    <MenuItem title={'Settings'} onClick={() => router.navigate(RouteName.AccountSettings)}>
-      <IconSettings />
-    </MenuItem>
-    <MenuItem title={'FAQ'} onClick={() => router.navigate(RouteName.Faq)}>
-      <IconQuestion />
-    </MenuItem>
+    <MenuItemContainer>
+      <Tooltip>Buy EAST</Tooltip>
+      <MenuItem onClick={() => router.navigate(RouteName.BuyEast)}>
+        <IconPlus />
+      </MenuItem>
+    </MenuItemContainer>
+    <MenuItemContainer>
+      <Tooltip>Batches</Tooltip>
+      <MenuItem onClick={() => router.navigate(RouteName.Batches)}>
+        <IconSafe />
+      </MenuItem>
+    </MenuItemContainer>
+    <MenuItemContainer>
+      <Tooltip>Transfer</Tooltip>
+      <MenuItem onClick={() => router.navigate(RouteName.TransferEast)}>
+        <IconExport />
+      </MenuItem>
+    </MenuItemContainer>
+    <MenuItemContainer>
+      <Tooltip>Settings</Tooltip>
+      <MenuItem onClick={() => router.navigate(RouteName.AccountSettings)}>
+        <IconSettings />
+      </MenuItem>
+    </MenuItemContainer>
+    <MenuItemContainer>
+      <Tooltip>FAQ</Tooltip>
+      <MenuItem onClick={() => router.navigate(RouteName.Faq)}>
+        <IconQuestion />
+      </MenuItem>
+    </MenuItemContainer>
   </Container>
 }

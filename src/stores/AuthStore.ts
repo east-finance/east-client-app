@@ -54,7 +54,7 @@ export default class AuthStore {
             // const state = await window.WEWallet.publicState()
             // console.log('Wallet state', state)
             // const { address } = state.account
-            const address = '3NzwcJUgnbazFmkXL2xWoijriqtRJCka9Sa'
+            const address = '3Nr3w79QHmBQkFJ4cBmvaD7L1bErUMtLuSL'
             if (address) {
               await api.setupApi(tokenPair)
               this.setSelectedAddress(address)

@@ -4,7 +4,6 @@ import { observer, Provider } from 'mobx-react'
 import useStores from './hooks/useStores'
 import Auth from './modules/auth/Auth'
 import Account from './modules/account/Account'
-import { BackgroundVideo } from './components/BackgroundVideo'
 
 const Content: FunctionComponent = observer( () => {
   const { route: { name } } = useRoute()

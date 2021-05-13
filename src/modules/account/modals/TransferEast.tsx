@@ -69,7 +69,7 @@ export const TransferEast = (props: IProps) => {
     title = 'transfer east'
     content = <Container>
       <Block marginTop={109}>
-        <SimpleInput type={'number'} placeholder={'Amount of EAST'} onChange={(e:  any) => setEastAmount(e.target.value)} />
+        <SimpleInput type={'number'} label={'Amount of EAST'} onChange={(e:  any) => setEastAmount(e.target.value)} />
       </Block>
       <Block24 />
       <SimpleInput placeholder={'Address'} onChange={(e:  any) => setAddress(e.target.value)} />

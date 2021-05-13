@@ -2,13 +2,15 @@ import { Block, Block16 } from '../../../../components/Block'
 import React from 'react'
 import styled from 'styled-components'
 import { IBatch } from '../../../../interfaces'
+import { shineBatch } from '../../../../components/Animations'
+import { formatNumber } from '../../../../utils'
 
 export const BatchWidth = 153
 
-const Container = styled.div<{ background: string; batchWidth: number; isActive?: boolean }>`
+const Container = styled.div<{ background: string; isActive?: boolean }>`
   box-sizing: border-box;
-  width: ${props => props.batchWidth}px;
-  min-width: ${props => props.batchWidth}px;
+  width: ${BatchWidth}px;
+  min-width: ${BatchWidth}px;
   height: 210px;
   background: ${props => props.background};
   padding: 16px;
@@ -28,6 +30,14 @@ const Container = styled.div<{ background: string; batchWidth: number; isActive?
     border-image-source: linear-gradient(to right, #3f3e7e, #d96855);
     filter: drop-shadow(-6px 10px 21px rgba(89, 104, 198, 0.4));
   `}
+`
+
+// https://codepen.io/viktorstrate/pen/yoBRLy
+const SkeletonContainer = styled(Container)`
+  background-image: linear-gradient(90deg, #ddd 0px,  #e8e8e8 40px, #ddd 80px);
+  background-size: 600px;
+  animation: ${shineBatch} 1.6s infinite linear;
+  cursor: default;
 `
 
 const BatchTitle = styled.div`
@@ -63,29 +73,32 @@ interface IProps {
   onClick: () => void;
 }
 
+export const BatchSkeleton = () => {
+  return <SkeletonContainer background={'gray'} />
+}
+
 export const BatchItem = (props: IProps) => {
   const { batch } = props
   return <Container
     isActive={props.isActive}
     background={props.background}
-    batchWidth={BatchWidth}
     onClick={props.onClick}
   >
     <BatchTitle>Batch #{props.batchIndex}</BatchTitle>
     <Block16>
-      <BatchSubTitle>{batch.eastAmount} East</BatchSubTitle>
+      <BatchSubTitle>{formatNumber(batch.eastAmount)} East</BatchSubTitle>
     </Block16>
     <Block marginTop={8}>
       <BatchText>
-        West was at {batch.westRate}
+        West was at 0.21$
       </BatchText>
     </Block>
     <Block16>
       <BatchSubTitle>Contains</BatchSubTitle>
       <Block marginTop={8}>
         <BatchText>
-          <div>{batch.westAmount} West</div>
-          <div>{batch.usdpAmount} USDp</div>
+          <div>{formatNumber(batch.westAmount)} West</div>
+          <div>{formatNumber(batch.usdpAmount)} USDp</div>
         </BatchText>
       </Block>
     </Block16>
