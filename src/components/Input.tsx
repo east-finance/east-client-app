@@ -97,7 +97,7 @@ export interface SimpleInputProps extends InputProps {
 }
 
 export const SimpleInput = (props: SimpleInputProps) => {
-  const { label} = props
+  const { label } = props
   const [value, setValue] = useState(props.value || '')
   const [isFocused, setFocused] = useState(props.isFocused || false)
   const onFocus = (e: any) => {

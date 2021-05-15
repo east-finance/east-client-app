@@ -20,7 +20,7 @@ const FlexWrapper = styled.div`
 
 const Container = styled.div`
   width: 376px;
-  padding-left: 96px;
+  margin: 0 auto;
 `
 
 const IconContainer = styled.div`
@@ -106,11 +106,11 @@ export const Settings = (props: IProps) => {
     <div>
       <PasswordChange visible={passChangeVisible} onClose={() => setPassChangeVisible(false)} />
       <Container>
-        <Block marginTop={36} />
-        <SimpleInput disabled title={'Email'} defaultValue={authStore.email} />
+        <Block marginTop={55} />
+        <SimpleInput disabled label={'Email'} value={authStore.email} />
         <Block16 />
-        <SimpleInput disabled title={'Blockchain address'} defaultValue={authStore.address} />
-        <Block32 />
+        <SimpleInput disabled label={'Blockchain address'} value={authStore.address} />
+        <Block16 />
         <OptionsContainer>
           <Option onClick={onPassChangeClicked}>Change password</Option>
           <Option>View SEED phrase</Option>

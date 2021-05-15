@@ -62,7 +62,7 @@ const AddressBalance = styled(SelectedAddress)`
 `
 
 const SignInWallet = observer(() => {
-  const { api, authStore } = useStores()
+  const { api, authStore, dataStore } = useStores()
   const { router } = useRoute()
 
   const [noAccounts, setNoAccounts] = useState(false)
@@ -71,12 +71,13 @@ const SignInWallet = observer(() => {
 
   const onUseAddressClicked = () => {
     authStore.setSelectedAddress(selectedAddress)
+    dataStore.startPolling(selectedAddress)
     router.navigate(RouteName.Account)
     authStore.setLoggedIn(true)
   }
 
   useEffect(() => {
-    const authInWallet = async () => {
+    const checkWallet = async () => {
       try {
         const state = await window.WEWallet.publicState()
         console.log('Wallet state:', state)
@@ -94,7 +95,8 @@ const SignInWallet = observer(() => {
       }
     }
     if (window.WEWallet) {
-      authInWallet()
+      checkWallet()
+      setInterval(checkWallet, 5000)
     }
   }, [])
 

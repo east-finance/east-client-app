@@ -18,6 +18,8 @@ export interface IDataPoint {
 export default class DataStore {
   api
   westPriceHistory: IDataPoint[] = []
+  pollingId: any = null
+  eastBalance = '0.0'
 
   constructor(api: Api) {
     makeAutoObservable(this)
@@ -56,21 +58,31 @@ export default class DataStore {
     this.westPriceHistory = filteredTxs
   }
 
-  async getEastBalance(address: string): Promise<string> {
-    try {
-      const batches = await this.api.getBatches(address)
-      return batches.reduce((amount: number, batch: IBatch) => amount + +batch.eastAmount, 0).toString()
-    } catch (e) {
-      return ''
+  async startPolling (address: string) {
+    const updateEastBalance = async () => {
+      try {
+        this.eastBalance = await this.getEastBalance(address)
+      } catch (e) {
+        console.log(`Polling error: cannot get address ${address} vaults`, e.message)
+      }
     }
+
+    const updateData = async () => {
+      await updateEastBalance()
+    }
+
+    clearInterval(this.pollingId)
+    await updateData()
+    this.pollingId = setInterval(updateData, 5000)
+  }
+
+  async getEastBalance(address: string): Promise<string> {
+    const batches = await this.api.getBatches(address)
+    return batches.reduce((amount: number, batch: IBatch) => amount + +batch.eastAmount, 0).toString()
   }
 
   async getWestBalance(address: string): Promise<string> {
-    try {
-      const { balance } = await this.api.getAddressBalance(address)
-      return new BigNumber(balance).dividedBy(Math.pow(10, WestDecimals)).toString()
-    } catch (e) {
-      return ''
-    }
+    const { balance } = await this.api.getAddressBalance(address)
+    return new BigNumber(balance).dividedBy(Math.pow(10, WestDecimals)).toString()
   }
 }

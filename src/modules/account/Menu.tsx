@@ -2,12 +2,13 @@ import React from 'react'
 import styled from 'styled-components'
 import iconPlus from '../../resources/images/icon-plus.png'
 import iconSafe from '../../resources/images/icon-safe.png'
-import iconExchange from '../../resources/images/icon-exchange.png'
-import iconExport from '../../resources/images/icon-export.png'
+import iconTransfer from '../../resources/images/icon-transfer.png'
 import iconSettings from '../../resources/images/icon-settings.png'
 import iconQuestion from '../../resources/images/icon-question.png'
 import { RouteName } from '../../router/segments'
 import { useRoute } from 'react-router5'
+import useStores from '../../hooks/useStores'
+import { observer } from 'mobx-react'
 
 const Container = styled.div`
   display: inline-flex;
@@ -55,7 +56,7 @@ const MenuItemContainer = styled.div`
   }
 `
 
-const MenuItem = styled.div`
+const MenuItem = styled.div<{ disabled?: boolean; }>`
   background: #FFFFFF;
   opacity: 0.9;
   border-radius: 112px;
@@ -64,12 +65,18 @@ const MenuItem = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  cursor: pointer;
   transition: transform 0.25s;
-  
-  &:hover {
-    transform: scale(1.1);
-  }
+
+  ${({ disabled }) => disabled && `
+    opacity: 0.2;
+  `}
+
+  ${({ disabled }) => !disabled && `
+    cursor: pointer;
+    &:hover {
+      transform: scale(1.1);
+    }
+  `}
 `
 
 const IconCommon = styled.div`
@@ -81,22 +88,16 @@ const IconCommon = styled.div`
 
 const IconPlus = styled(IconCommon)`background-image: url(${iconPlus});`
 const IconSafe = styled(IconCommon)`background-image: url(${iconSafe});`
-const IconExchange = styled(IconCommon)`background-image: url(${iconExchange});`
-const IconExport = styled(IconCommon)`background-image: url(${iconExport});`
+const IconTransfer = styled(IconCommon)`background-image: url(${iconTransfer});padding-bottom: 4px;`
 const IconSettings = styled(IconCommon)`background-image: url(${iconSettings});`
 const IconQuestion = styled(IconCommon)`background-image: url(${iconQuestion});`
 
-export enum MenuOption {
-  buy = 'buy',
-  batches = 'batches',
-  exchange = 'exchange',
-  transfer = 'transfer',
-  settings = 'settings',
-  faq = 'faq',
-}
-
-export const AccountMenu = () => {
+export const AccountMenu = observer(() => {
+  const { authStore, dataStore } = useStores()
+  const isUserHaveEast = parseInt(dataStore.eastBalance) > 0
   const { router } = useRoute()
+  const batchesAvailable = isUserHaveEast
+  const transferAvailable = isUserHaveEast
   return <Container>
     <MenuItemContainer>
       <Tooltip>Buy EAST</Tooltip>
@@ -105,15 +106,19 @@ export const AccountMenu = () => {
       </MenuItem>
     </MenuItemContainer>
     <MenuItemContainer>
-      <Tooltip>Batches</Tooltip>
-      <MenuItem onClick={() => router.navigate(RouteName.Batches)}>
+      {batchesAvailable &&
+        <Tooltip>Batches</Tooltip>
+      }
+      <MenuItem disabled={!batchesAvailable} onClick={() => batchesAvailable && router.navigate(RouteName.Batches)}>
         <IconSafe />
       </MenuItem>
     </MenuItemContainer>
     <MenuItemContainer>
-      <Tooltip>Transfer</Tooltip>
-      <MenuItem onClick={() => router.navigate(RouteName.TransferEast)}>
-        <IconExport />
+      {transferAvailable &&
+        <Tooltip>Transfer</Tooltip>
+      }
+      <MenuItem disabled={!transferAvailable} onClick={() => transferAvailable && router.navigate(RouteName.TransferEast)}>
+        <IconTransfer />
       </MenuItem>
     </MenuItemContainer>
     <MenuItemContainer>
@@ -129,4 +134,4 @@ export const AccountMenu = () => {
       </MenuItem>
     </MenuItemContainer>
   </Container>
-}
+})
