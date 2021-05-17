@@ -83,4 +83,9 @@ export class Api {
     const { data } = await this._apiClient.get(`${API_ADDRESS}/v1/user/vaults?address=${address}`)
     return data
   }
+
+  public getContractStateValue = async (contractId: string, key: string): Promise<{ key: string; type: string; value: string }> => {
+    const { data } = await this._apiClient.get(`${NODE_ADDRESS}/contracts/${contractId}/${key}`)
+    return data
+  }
 }

@@ -17,7 +17,7 @@ import { Api } from './api'
 const configStore = new ConfigStore()
 const api = new Api()
 const authStore = new AuthStore(router, api)
-const dataStore = new DataStore(api)
+const dataStore = new DataStore(api, configStore)
 
 const stores = {
   api,

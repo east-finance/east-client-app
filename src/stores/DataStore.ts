@@ -4,6 +4,7 @@ import { Api } from '../api'
 import { BigNumber } from 'bignumber.js'
 import { WestDecimals } from '../constants'
 import { IBatch } from '../interfaces'
+import ConfigStore from './ConfigStore'
 
 enum StreamId {
   WEST_USD = '000003'
@@ -17,13 +18,15 @@ export interface IDataPoint {
 
 export default class DataStore {
   api
+  configStore
   westPriceHistory: IDataPoint[] = []
   pollingId: any = null
   eastBalance = '0.0'
 
-  constructor(api: Api) {
+  constructor(api: Api, configStore: ConfigStore) {
     makeAutoObservable(this)
     this.api = api
+    this.configStore = configStore
   }
 
   sleep(timeout: number) {
@@ -71,8 +74,12 @@ export default class DataStore {
   }
 
   async getEastBalance(address: string): Promise<string> {
-    const batches = await this.api.getBatches(address)
-    return batches.reduce((amount: number, batch: IBatch) => amount + +batch.eastAmount, 0).toString()
+    const contractId =  this.configStore.getEastContractId()
+    if (contractId) {
+      const { value } = await this.api.getContractStateValue(contractId, `balance_${address}`)
+      return value
+    }
+    return ''
   }
 
   async getWestBalance(address: string): Promise<string> {
