@@ -24,7 +24,6 @@ export default class DataStore {
   constructor(api: Api) {
     makeAutoObservable(this)
     this.api = api
-    this.start()
   }
 
   sleep(timeout: number) {
@@ -33,17 +32,10 @@ export default class DataStore {
     })
   }
 
-  async start () {
-    try {
-      // await this.pollOracleTxs()
-    } finally {
-      await this.sleep(300 * 1000)
-      this.start()
-    }
-  }
-
   async pollOracleTxs () {
-    const [data] = await this.api.getAddressesTransactions()
+    // TODO remove hardcode
+    const [data] = await this.api.getAddressesTransactions('3NfpckQUCNA3Bi2t92BWvcszna4NJ7inA7f')
+    console.log('data', data)
     const filteredTxs = data.reverse().map((tx: any) => {
       const { type, params = [], timestamp, height } = tx
       if (type === 104 && params.find((param: any) => param.value.includes(`${StreamId.WEST_USD}_regular_data_request_`))) {
@@ -55,6 +47,7 @@ export default class DataStore {
         }
       }
     }).filter((item: IDataPoint | undefined) => item)
+    console.log('filteredTxs', filteredTxs)
     this.westPriceHistory = filteredTxs
   }
 
@@ -69,11 +62,12 @@ export default class DataStore {
 
     const updateData = async () => {
       await updateEastBalance()
+      // await this.pollOracleTxs()
     }
 
     clearInterval(this.pollingId)
     await updateData()
-    this.pollingId = setInterval(updateData, 5000)
+    this.pollingId = setInterval(updateData, 10000)
   }
 
   async getEastBalance(address: string): Promise<string> {

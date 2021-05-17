@@ -15,6 +15,7 @@ import { RouteName } from '../../router/segments'
 import useOutsideAlerter from '../../hooks/useOutsideHandler'
 import { fadeIn, fadeInControls, fadeOut } from '../../components/Animations'
 import { BackgroundVideo } from '../../components/BackgroundVideo'
+import { WestChart } from './WestChart'
 
 const Container = styled.div``
 
@@ -111,7 +112,7 @@ const Account = observer( () => {
     }
     <AccountContent isVisible={!primaryModal}>
       <ChartContainer>
-        {/*<WestChart />*/}
+        <WestChart />
       </ChartContainer>
       <CardContainer>
         <AccountCard />

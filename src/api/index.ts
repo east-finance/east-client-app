@@ -64,8 +64,8 @@ export class Api {
     return tokenPair
   }
 
-  public getAddressesTransactions = async () => {
-    const { data } = await this._apiClient.get(`${NODE_ADDRESS}/transactions/address/3Ng3g5ZSpbZQZa2P87AUzWPpJAMPj1ssnVE/limit/500`)
+  public getAddressesTransactions = async (address: string) => {
+    const { data } = await this._apiClient.get(`${NODE_ADDRESS}/transactions/address/${address}/limit/500`)
     return data
   }
 

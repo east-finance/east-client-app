@@ -11,7 +11,7 @@ export interface FillFormData {
 }
 
 interface IProps {
-  eastToWest: number;
+  westPrice: number;
   eastAmount: string;
   westAmount: string;
   onNextClicked: (formData: FillFormData) => void
@@ -20,31 +20,48 @@ interface IProps {
 const Container = styled.div`
   width: 376px;
   margin: 0 auto;
+  font-family: Cairo,sans-serif;
 `
 
-const Description = styled.div`
-  font-family: Montserrat;
-  font-weight: 500;
-  font-size: 14px;
+const Centered = styled.div`text-align: center;`
+
+const Description = styled(Centered)`
+  font-weight: 600;
+  font-size: 15px;
+  line-height: 22px;
+  color: #525252;
+`
+
+const RateTitle = styled(Centered)`
+  font-size: 15px;
   line-height: 18px;
-  max-width: 314px;
+  color: #0A0606;
   opacity: 0.6;
 `
 
+const Link = styled.div`
+  
+`
+
 export const FillForm = (props: IProps) => {
-  const { eastToWest } = props
+  const { westPrice } = props
   const [eastAmount, setEastAmount] = useState(props.eastAmount)
   const [westAmount, setWestAmount] = useState(props.westAmount)
+
   const onChangeEast = (e: any) => {
     const { value } = e.target
     setEastAmount(value)
-    setWestAmount((+value * eastToWest).toString())
+    const westValue = (+value * (1 / westPrice)).toString().slice(0, 8)
+    setWestAmount(westValue)
   }
+
   const onChangeWest = (e: any) => {
     const { value } = e.target
-    setWestAmount(e.target.value)
-    setEastAmount((+value / eastToWest).toString())
+    setWestAmount(value)
+    const eastValue = (+value / (1 / westPrice)).toString().slice(0, 8)
+    setEastAmount(eastValue)
   }
+
   const onNextClicked = () => {
     props.onNextClicked({
       eastAmount,
@@ -52,14 +69,22 @@ export const FillForm = (props: IProps) => {
     })
   }
   return <Container>
-    <Block marginTop={48}>
-      <SimpleInput isFocused={true} label={'Amount of EAST'} value={eastAmount} onChange={onChangeEast} />
-      <Block24 />
-      <SimpleInput isFocused={true} label={'Amount of WEST'} value={westAmount} onChange={onChangeWest} />
+    <Block marginTop={40}>
+      <RateTitle>Current WEST price is {props.westPrice}</RateTitle>
     </Block>
-    <Block16>
-      <Description>You can type in one currency, the other one will be calculated automatically</Description>
-    </Block16>
+    <Block marginTop={16}>
+      <SimpleInput type={'number'} label={'Amount of EAST'} value={eastAmount} onChange={onChangeEast} />
+      <Block marginTop={4} />
+      <SimpleInput type={'number'} label={'Amount of WEST'} value={westAmount} onChange={onChangeWest} />
+    </Block>
+    <div>
+      <Description>EAST is collateralized by 50% USDP and 250% WEST.</Description>
+    </div>
+    <Block24>
+      <Description>
+        Keep in mind – we create a &apos;Batch&apos; every time you buy EAST. It contains locked WEST and USDp.
+      </Description>
+    </Block24>
     <Block24>
       <Button type={'primary'} onClick={onNextClicked}>Continue</Button>
     </Block24>

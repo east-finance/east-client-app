@@ -1,17 +1,18 @@
 import React, { useState } from 'react'
-import styled from 'styled-components'
 import { PrimaryTitle } from '../../../../components/PrimaryTitle'
 import { PrimaryModal } from '../../Modal'
 import { CheckForm } from './CheckForm'
 import { Steps } from './constants'
 import { FillForm, FillFormData } from './FillForm'
+import useStores from '../../../../hooks/useStores'
 
 interface IProps {
   onClose: () => void
 }
 
 export const BuyEast = (props: IProps) => {
-  const eastToWest = 2
+  const westPrice = 0.3638
+  const { configStore } = useStores()
   const [currentStep, setCurrentStep] = useState(Steps.fill)
   const [eastAmount, setEastAmount] = useState('')
   const [westAmount, setWestAmount] = useState('')
@@ -20,8 +21,8 @@ export const BuyEast = (props: IProps) => {
     const state = await window.WEWallet.publicState()
     console.log('WALLET state', state)
     const { account: { address, publicKey } } = state
-    const ownerAddress = '3Ny3vjNsoNyX6afHdv7byVNHoMV7CYSHkUz'
-    const eastContractId = '6GKhbCbJpZfN8ywCRNrm4jwyAnaJGDLR42HJ1U8R3us8'
+    const ownerAddress = configStore.getEastOwnerAddress()
+    const eastContractId = configStore.getEastContractId()
     const transfer = {
       type: 'transferV3',
       tx: {
@@ -70,7 +71,7 @@ export const BuyEast = (props: IProps) => {
   const formProps = {
     eastAmount,
     westAmount,
-    eastToWest,
+    westPrice,
   }
   if (currentStep === Steps.fill) {
     const onNextClicked = (data: FillFormData) => {

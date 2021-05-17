@@ -120,7 +120,7 @@ export const SimpleInput = (props: SimpleInputProps) => {
   }
   return <SimpleInputContainer>
     {label &&
-      <SimpleInputLabel isOpened={isFocused || props.isFocused || !!value}>
+      <SimpleInputLabel isOpened={isFocused || props.isFocused || !!value || !!props.value}>
         {label}
       </SimpleInputLabel>
     }

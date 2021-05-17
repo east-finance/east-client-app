@@ -3,8 +3,10 @@ import styled from 'styled-components'
 import { PrimaryTitle } from '../../../components/PrimaryTitle'
 import { PrimaryModal } from '../Modal'
 import { Block, Block16, Block24 } from '../../../components/Block'
-import { SimpleInput } from '../../../components/Input'
+import { InputStatus, SimpleInput } from '../../../components/Input'
 import { Button, NavigationLeftGradientButton } from '../../../components/Button'
+import { dockerCallTransfer } from '../../../utils/txFactory'
+import useStores from '../../../hooks/useStores'
 
 interface IProps {
   onClose: () => void
@@ -53,6 +55,7 @@ enum Steps {
 }
 
 export const TransferEast = (props: IProps) => {
+  const { configStore } = useStores()
 
   const [eastAmount, setEastAmount] = useState('')
   const [address, setAddress] = useState('')
@@ -62,17 +65,32 @@ export const TransferEast = (props: IProps) => {
   let title = ''
 
   const onClickContinue = () => {
-    setCurrentStep(Steps.confirm)
+    if (eastAmount && address) {
+      setCurrentStep(Steps.confirm)
+    }
+  }
+
+  const onConfirmTransfer = async () => {
+    const state = await window.WEWallet.publicState()
+    console.log('WALLET state', state)
+    const { account: { publicKey } } = state
+    const tx = dockerCallTransfer({
+      publicKey,
+      contractId: configStore.getEastContractId(),
+      recipient: address,
+      eastAmount: +eastAmount
+    })
+    const result = await window.WEWallet.broadcast('dockerCallV3', tx)
+    console.log('result', result)
   }
 
   if (currentStep === Steps.fill) {
     title = 'transfer east'
     content = <Container>
       <Block marginTop={109}>
-        <SimpleInput type={'number'} label={'Amount of EAST'} onChange={(e:  any) => setEastAmount(e.target.value)} />
+        <SimpleInput type={'number'} label={'Amount of EAST'} value={eastAmount} onChange={(e:  any) => setEastAmount(e.target.value)} />
       </Block>
-      <Block24 />
-      <SimpleInput placeholder={'Address'} onChange={(e:  any) => setAddress(e.target.value)} />
+      <SimpleInput label={'Address'} value={address} onChange={(e:  any) => setAddress(e.target.value)} />
       <Block marginTop={86}>
         <Button type={'primary'} onClick={onClickContinue}>Continue</Button>
       </Block>
@@ -97,7 +115,7 @@ export const TransferEast = (props: IProps) => {
       <Block marginTop={64}>
         <SendButtonsContainer>
           <NavigationLeftGradientButton onClick={() => setCurrentStep(Steps.fill)} />
-          <Button type={'primary'} style={{ width: '300px' }}>Confirm and continue</Button>
+          <Button type={'primary'} style={{ width: '300px' }} onClick={onConfirmTransfer}>Confirm and continue</Button>
         </SendButtonsContainer>
       </Block>
     </Container>

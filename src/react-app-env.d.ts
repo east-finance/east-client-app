@@ -16,6 +16,7 @@ declare namespace WEWallet {
     getTxId(data: any) : Promise<any>;
     signTransaction(data: any) : Promise<any>;
     signAtomicTransaction(data: any) : Promise<any>;
+    broadcast(type: string, tx: any) : Promise<any>;
     broadcastAtomic(data: any) : Promise<any>;
   }
 

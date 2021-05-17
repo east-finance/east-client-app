@@ -1,13 +1,11 @@
-import React, { useState } from 'react'
+import React from 'react'
 import styled from 'styled-components'
-import { Block, Block16, Block24 } from '../../../../components/Block'
-import { Steps } from './constants'
-import { SimpleInput } from '../../../../components/Input'
+import { Block } from '../../../../components/Block'
 import { Button, NavigationLeftGradientButton } from '../../../../components/Button'
 import { TextTable, TextTableKey, TextTablePrimaryValue, TextTableRow, TextTableSecondaryValue } from '../../../../components/TextTable'
 
 interface IProps {
-  eastToWest: number;
+  westPrice: number;
   eastAmount: string;
   westAmount: string;
   onNextClicked: () => void

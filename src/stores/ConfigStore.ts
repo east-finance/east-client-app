@@ -5,7 +5,8 @@ export default class ConfigStore {
   configLoaded = false
 
   config = {
-    test: 0
+    eastContractId: '',
+    eastOwnerAddress: ''
   }
 
   constructor() {
@@ -17,7 +18,7 @@ export default class ConfigStore {
     try {
       const start = Date.now()
       const { data } = await axios.get('/app.config.json')
-      console.log('app.config.json loaded:', data, ', time:', Date.now() - start, 'ms')
+      console.log('app.config.json loaded:', data, ', time elapsed:', Date.now() - start, 'ms')
       this.setConfig(data)
     } catch (e) {
       console.log('Cannot get app config', e.message)
@@ -28,5 +29,13 @@ export default class ConfigStore {
     this.config = {
       ...config
     }
+  }
+
+  getEastOwnerAddress () {
+    return this.config.eastOwnerAddress || ''
+  }
+
+  getEastContractId () {
+    return this.config.eastContractId || ''
   }
 }

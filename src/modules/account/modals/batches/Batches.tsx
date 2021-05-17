@@ -193,7 +193,7 @@ export const Batches = (props: IProps) => {
 
   const containerRef = useRef(null)
   useScrollHandler(containerRef, (scrollLeft: number) => {
-    setBatchesPage(Math.floor(scrollLeft / (BatchWidth * BatchesOnPage)))
+    setBatchesPage(Math.floor(scrollLeft / ((BatchWidth - 16) * BatchesOnPage)))
   })
 
   const onPageSelected = (page: number) => {
