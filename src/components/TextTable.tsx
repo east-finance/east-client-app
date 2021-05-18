@@ -1,7 +1,6 @@
 import styled from 'styled-components'
 
 export const TextTable = styled.div`
-  width: 250px;
   margin: 0 auto;
   text-align: left;
 `
@@ -14,7 +13,8 @@ export const TextTableRow = styled.div`
 `
 
 export const TextTableKey = styled.div`
-  width: 50%;
+  width: 40%;
+  margin-left: 10%;
   color: #000000;
   opacity: 0.6;
   font-size: 15px;

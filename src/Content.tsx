@@ -7,7 +7,7 @@ import Account from './modules/account/Account'
 
 const Content: FunctionComponent = observer( () => {
   const { route: { name } } = useRoute()
-  const { authStore, configStore: { configLoaded } } = useStores()
+  const { authStore } = useStores()
 
   useEffect(() => {
     // // eslint-disable-next-line no-unexpected-multiline

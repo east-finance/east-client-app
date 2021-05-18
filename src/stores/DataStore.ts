@@ -86,4 +86,42 @@ export default class DataStore {
     const { balance } = await this.api.getAddressBalance(address)
     return new BigNumber(balance).dividedBy(Math.pow(10, WestDecimals)).toString()
   }
+
+  async getOracleTokenPrices (contractId: string) {
+    const data = await this.api.getContractState(contractId, '(000003|000010)_latest') //(000003|000010)_regular_data_request_.*
+    let westRate = '0'
+    let usdpRate = '0'
+    data.forEach((item: any) => {
+      const { value, timestamp } = JSON.parse(item.value)
+      if (item.key === '000010_latest') {
+        usdpRate = value
+      } else if(item.key === '000003_latest') {
+        westRate = value
+      }
+    })
+    return {
+      westRate,
+      usdpRate
+    }
+  }
+
+  calculateWestAmount (data: any) {
+    const { usdpPart, westCollateral, westRate, inputEastAmount } = data
+    return {
+      westAmount: inputEastAmount * ((usdpPart / westRate) + ((1 - usdpPart) / westRate * westCollateral))
+    }
+  }
+
+  calculateEastAmount (data: any) {
+    const { usdpPart, westCollateral, westRate, usdpRate, inputWestAmount} = data
+    const usdpPartInPosition = usdpPart / ((1 - usdpPart) * westCollateral + usdpPart)
+    const transferAmount = parseFloat(inputWestAmount + '')
+    const westToUsdpAmount = usdpPartInPosition * transferAmount
+    const eastAmount = (westToUsdpAmount * westRate) / usdpPart
+    const usdpAmount = westToUsdpAmount * westRate / usdpRate
+    return {
+      eastAmount,
+      usdpAmount
+    }
+  }
 }

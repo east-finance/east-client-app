@@ -1,21 +1,39 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { PrimaryTitle } from '../../../../components/PrimaryTitle'
 import { PrimaryModal } from '../../Modal'
 import { CheckForm } from './CheckForm'
 import { Steps } from './constants'
 import { FillForm, FillFormData } from './FillForm'
 import useStores from '../../../../hooks/useStores'
+import { RechargeWest } from './RechargeWest'
 
 interface IProps {
   onClose: () => void
 }
 
 export const BuyEast = (props: IProps) => {
-  const westPrice = 0.3638
-  const { configStore } = useStores()
+  const { configStore, dataStore, authStore } = useStores()
   const [currentStep, setCurrentStep] = useState(Steps.fill)
   const [eastAmount, setEastAmount] = useState('')
   const [westAmount, setWestAmount] = useState('')
+  const [westBalance, setWestBalance] = useState('0')
+
+  const [westRate, setWestRate] = useState('')
+  const [usdpRate, setUsdpRate] = useState('')
+
+  useEffect(() => {
+    const getData = async () => {
+      try {
+        const { westRate, usdpRate } = await dataStore.getOracleTokenPrices(configStore.getOracleContractId())
+        setWestRate(westRate)
+        setUsdpRate(usdpRate)
+        console.log('oracle data', westRate, usdpRate)
+      } catch (e) {
+        console.error('Cannot get oracle data', e.message)
+      }
+    }
+    getData()
+  }, [])
 
   const sendAtomic = async () => {
     const state = await window.WEWallet.publicState()
@@ -23,13 +41,15 @@ export const BuyEast = (props: IProps) => {
     const { account: { address, publicKey } } = state
     const ownerAddress = configStore.getEastOwnerAddress()
     const eastContractId = configStore.getEastContractId()
+    console.log('ownerAddress', ownerAddress)
+    console.log('eastContractId', eastContractId)
     const transfer = {
       type: 'transferV3',
       tx: {
         recipient: ownerAddress,
         assetId: 'WAVES',
         amount: +westAmount * Math.pow(10, 8),
-        fee: '1000000',
+        fee: configStore.getTransferFee(),
         attachment: '',
         timestamp: Date.now(),
         atomicBadge: {
@@ -38,7 +58,6 @@ export const BuyEast = (props: IProps) => {
       }
     }
     const transferId = await window.WEWallet.getTxId({ type: 'transferV3', tx: transfer.tx })
-    console.log('transferId:', transferId)
     const dockerCall = {
       type: 'dockerCallV4',
       tx: {
@@ -54,7 +73,7 @@ export const BuyEast = (props: IProps) => {
             transferId: transferId
           })
         }],
-        fee: '1000000',
+        fee: configStore.getDockerCallFee(),
         atomicBadge: {
           trustedSender: address
         }
@@ -64,14 +83,15 @@ export const BuyEast = (props: IProps) => {
     // const signedTx = await window.WEWallet.signAtomicTransaction({ transactions, fee: '0' })
     // console.log('signedTx', signedTx)
     const result = await window.WEWallet.broadcastAtomic(transactions)
-    console.log('broadcast result', result)
+    console.log('Broadcast atomic result', result)
   }
 
   let content = null
   const formProps = {
     eastAmount,
     westAmount,
-    westPrice,
+    westRate,
+    usdpRate
   }
   if (currentStep === Steps.fill) {
     const onNextClicked = (data: FillFormData) => {
@@ -84,13 +104,23 @@ export const BuyEast = (props: IProps) => {
     // const onNextClicked = () => setCurrentStep(Steps.selectExchange)
     const onNextClicked = async () => {
       try {
-        await sendAtomic()
+        const westBalance = await dataStore.getWestBalance(authStore.address)
+        setWestBalance(westBalance)
+        if (+westAmount > +westBalance) {
+          setCurrentStep(Steps.rechargeWest)
+        } else {
+          await sendAtomic()
+        }
       } catch (e) {
         console.error('sendAtomic Error:', e)
       }
     }
     const onPrevClicked = () => setCurrentStep(Steps.fill)
     content = <CheckForm {...formProps} onNextClicked={onNextClicked} onPrevClicked={onPrevClicked} />
+  } else if (currentStep === Steps.rechargeWest) {
+    const onPrevClicked = () => setCurrentStep(Steps.check)
+    const rechargeWestAmount = (+westAmount - +westBalance).toString()
+    content = <RechargeWest rechargeWestAmount={rechargeWestAmount} eastAmount={eastAmount} westAmount={westAmount} onPrevClicked={onPrevClicked} />
   }
 
   return <PrimaryModal {...props}>

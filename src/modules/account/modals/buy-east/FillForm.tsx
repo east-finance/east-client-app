@@ -4,6 +4,7 @@ import { Block, Block16, Block24 } from '../../../../components/Block'
 import { Steps } from './constants'
 import { SimpleInput } from '../../../../components/Input'
 import { Button } from '../../../../components/Button'
+import useStores from '../../../../hooks/useStores'
 
 export interface FillFormData {
   eastAmount: string;
@@ -11,7 +12,8 @@ export interface FillFormData {
 }
 
 interface IProps {
-  westPrice: number;
+  westRate: string;
+  usdpRate: string;
   eastAmount: string;
   westAmount: string;
   onNextClicked: (formData: FillFormData) => void
@@ -44,22 +46,43 @@ const Link = styled.div`
 `
 
 export const FillForm = (props: IProps) => {
-  const { westPrice } = props
+  const { westRate, usdpRate } = props
+  const { dataStore, configStore } = useStores()
   const [eastAmount, setEastAmount] = useState(props.eastAmount)
   const [westAmount, setWestAmount] = useState(props.westAmount)
 
   const onChangeEast = (e: any) => {
     const { value } = e.target
     setEastAmount(value)
-    const westValue = (+value * (1 / westPrice)).toString().slice(0, 8)
-    setWestAmount(westValue)
+    const { westAmount } = dataStore.calculateWestAmount({
+      usdpPart: configStore.getUsdpPart(),
+      westCollateral: configStore.getWestCollateral(),
+      westRate: +westRate,
+      usdpRate: +usdpRate,
+      inputEastAmount: +value
+    })
+    if (westAmount > 0) {
+      setWestAmount(westAmount)
+    } else {
+      setWestAmount('')
+    }
   }
 
   const onChangeWest = (e: any) => {
     const { value } = e.target
     setWestAmount(value)
-    const eastValue = (+value / (1 / westPrice)).toString().slice(0, 8)
-    setEastAmount(eastValue)
+    const { eastAmount } = dataStore.calculateEastAmount({
+      usdpPart: configStore.getUsdpPart(),
+      westCollateral: configStore.getWestCollateral(),
+      westRate: +westRate,
+      usdpRate: +usdpRate,
+      inputWestAmount: +value
+    })
+    if (eastAmount > 0) {
+      setEastAmount(eastAmount)
+    } else {
+      setEastAmount('')
+    }
   }
 
   const onNextClicked = () => {
@@ -70,7 +93,7 @@ export const FillForm = (props: IProps) => {
   }
   return <Container>
     <Block marginTop={40}>
-      <RateTitle>Current WEST price is {props.westPrice}</RateTitle>
+      <RateTitle>Current WEST price is {props.westRate}$</RateTitle>
     </Block>
     <Block marginTop={16}>
       <SimpleInput type={'number'} label={'Amount of EAST'} value={eastAmount} onChange={onChangeEast} />

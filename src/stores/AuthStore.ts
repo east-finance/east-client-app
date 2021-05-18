@@ -46,35 +46,33 @@ export default class AuthStore {
   async initStore (router: Router, api: Api): Promise<void> {
     const { name, params } = router.getState()
     if (!name.startsWith(RouteSegment.auth)) {
-      const tokenPair = this.readTokenPair()
-      if (tokenPair) {
-        try {
-          const { exp }: JwtPayload = decodeJWT(tokenPair.access_token)
-          if (exp && (exp * 1000 - Date.now() > 0)) {
-            // const state = await window.WEWallet.publicState()
-            // console.log('Wallet state', state)
-            // const { address } = state.account
-            const address = '3Nr3w79QHmBQkFJ4cBmvaD7L1bErUMtLuSL'
-            if (address) {
-              await api.setupApi(tokenPair)
-              this.setSelectedAddress(address)
-              this.loginWithTokenPair(tokenPair)
-              this.setLoggedIn(true)
-              router.navigate(RouteName.Account)
-            } else {
-              throw new Error('no address')
-            }
-          } else {
-            this.deleteTokenPair()
-            throw new Error('JWT expired')
-          }
-        } catch (e) {
-          console.error('Login with tokens error:', e.message)
-          router.navigate(RouteName.SignIn)
-        }
-      } else {
-        router.navigate(RouteName.SignIn)
-      }
+      router.navigate(RouteName.SignIn)
+      // const tokenPair = this.readTokenPair()
+      // if (tokenPair) {
+      //   try {
+      //     const { exp }: JwtPayload = decodeJWT(tokenPair.access_token)
+      //     if (exp && (exp * 1000 - Date.now() > 0)) {
+      //       const address = '3Nr3w79QHmBQkFJ4cBmvaD7L1bErUMtLuSL'
+      //       if (address) {
+      //         await api.setupApi(tokenPair)
+      //         this.setSelectedAddress(address)
+      //         this.loginWithTokenPair(tokenPair)
+      //         this.setLoggedIn(true)
+      //         router.navigate(RouteName.Account)
+      //       } else {
+      //         throw new Error('no address')
+      //       }
+      //     } else {
+      //       this.deleteTokenPair()
+      //       throw new Error('JWT expired')
+      //     }
+      //   } catch (e) {
+      //     console.error('Login with tokens error:', e.message)
+      //     router.navigate(RouteName.SignIn)
+      //   }
+      // } else {
+      //   router.navigate(RouteName.SignIn)
+      // }
     }
   }
 

@@ -8,6 +8,7 @@ import { observer } from 'mobx-react'
 import { RouteName } from '../../../router/segments'
 import { BigNumber } from 'bignumber.js'
 import { WestDecimals } from '../../../constants'
+import { config } from '@wavesenterprise/js-sdk'
 
 const Container = styled.div`
   width: 640px;
@@ -62,14 +63,20 @@ const AddressBalance = styled(SelectedAddress)`
 `
 
 const SignInWallet = observer(() => {
-  const { api, authStore, dataStore } = useStores()
+  const { api, authStore, dataStore, configStore } = useStores()
   const { router } = useRoute()
 
   const [noAccounts, setNoAccounts] = useState(false)
   const [selectedAddress, setSelectedAddress] = useState('')
   const [addressBalance, setAddressBalance] = useState('0')
 
-  const onUseAddressClicked = () => {
+  const onUseAddressClicked = async () => {
+    try {
+      await configStore.loadEastContractConfig()
+      await configStore.loadNodeConfig()
+    } catch (e) {
+      console.error('Cannot get remote configs', e.message)
+    }
     authStore.setSelectedAddress(selectedAddress)
     dataStore.startPolling(selectedAddress)
     router.navigate(RouteName.Account)
@@ -94,9 +101,14 @@ const SignInWallet = observer(() => {
         }
       }
     }
+    let intervalId: any
     if (window.WEWallet) {
       checkWallet()
-      setInterval(checkWallet, 5000)
+      intervalId = setInterval(checkWallet, 5000)
+    }
+
+    return function cleanup () {
+      clearInterval(intervalId)
     }
   }, [])
 

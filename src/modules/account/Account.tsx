@@ -1,6 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useRef } from 'react'
 import styled from 'styled-components'
-import useStores from '../../hooks/useStores'
 import { observer } from 'mobx-react'
 import { AccountCard } from './Card'
 import { AccountMenu } from './Menu'
@@ -38,6 +37,7 @@ const EastLogoContainer = styled.div`
   position: absolute;
   bottom: 48px;
   left: 37px;
+  z-index: -1;
 `
 
 const EastLogoWrapper = styled.div`
@@ -45,7 +45,6 @@ const EastLogoWrapper = styled.div`
   height: 55px;
   background-image: url(${EastLogo});
   opacity: 0.6;
-  z-index: -1;
 `
 
 const ChartContainer = styled.div`
@@ -93,7 +92,6 @@ const getPrimaryModalByRoute = () => {
 
 const Account = observer( () => {
   const { router } = useRoute()
-  const { api, authStore, dataStore, configStore: { configLoaded } } = useStores()
 
   const primaryModal = getPrimaryModalByRoute()
 

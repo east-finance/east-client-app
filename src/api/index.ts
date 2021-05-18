@@ -10,18 +10,6 @@ const NODE_ADDRESS = '/nodeAddress'
 const API_ADDRESS = '/apiAddress'
 const API_VERSION_PREFIX = '/v1'
 
-/*
-* address: "3Nr3w79QHmBQkFJ4cBmvaD7L1bErUMtLuSL"
-createdAt: "2021-05-13T13:37:57.102Z"
-eastAmount: "3.497142857142857"
-id: 3
-usdpAmount: "1.7485714285714284"
-usdpRateTimestamp: "2021-05-13T13:37:57.095Z"
-vaultId: "43VNkCqW1h8VMfvoDQ7hmiBiAcdPNkFtKPwYxXuvjSLR"
-westAmount: "12.857142857142858"
-westRateTimestamp: "2021-05-13T13:37:57.095Z"
-* */
-
 export class Api {
   private _unauthorizedClient: AxiosInstance = axios.create({
     baseURL: AUTH_SERVICE_ADDRESS + API_VERSION_PREFIX
@@ -64,8 +52,18 @@ export class Api {
     return tokenPair
   }
 
+  public getNodeConfig = async () => {
+    const { data } = await this._apiClient.get(`${NODE_ADDRESS}/node/config`)
+    return data
+  }
+
   public getAddressesTransactions = async (address: string) => {
     const { data } = await this._apiClient.get(`${NODE_ADDRESS}/transactions/address/${address}/limit/500`)
+    return data
+  }
+
+  public getContractState = async (contractId: string, matches = '', limit = 20) => {
+    const { data } = await this._apiClient.get(`${NODE_ADDRESS}/contracts/${contractId}?matches=${matches}&limit=${limit}`)
     return data
   }
 

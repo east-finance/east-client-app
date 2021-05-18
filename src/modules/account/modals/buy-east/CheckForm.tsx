@@ -3,9 +3,10 @@ import styled from 'styled-components'
 import { Block } from '../../../../components/Block'
 import { Button, NavigationLeftGradientButton } from '../../../../components/Button'
 import { TextTable, TextTableKey, TextTablePrimaryValue, TextTableRow, TextTableSecondaryValue } from '../../../../components/TextTable'
+import useStores from '../../../../hooks/useStores'
 
 interface IProps {
-  westPrice: number;
+  westRate: string;
   eastAmount: string;
   westAmount: string;
   onNextClicked: () => void
@@ -30,22 +31,30 @@ const SendButtonsContainer = styled.div`
 `
 
 export const CheckForm = (props: IProps) => {
+  const { dataStore, authStore, configStore } = useStores()
+  const dockerCallFee = configStore.getDockerCallFee()
   return <Container>
     <Block marginTop={58}>
       <TextTable>
         <TextTableRow>
           <TextTableKey>You will get</TextTableKey>
-          <TextTablePrimaryValue>{props.eastAmount} EAST</TextTablePrimaryValue>
+          <TextTablePrimaryValue>~{props.eastAmount} EAST</TextTablePrimaryValue>
         </TextTableRow>
         <TextTableRow>
           <TextTableKey>You will pay</TextTableKey>
           <TextTableSecondaryValue>{props.westAmount} WEST</TextTableSecondaryValue>
         </TextTableRow>
         <TextTableRow>
-          <TextTableKey>Will be in vault</TextTableKey>
+          <TextTableKey>Will be in batch</TextTableKey>
           <TextTableSecondaryValue>
             <div>300 WEST</div>
             <div>50 USDp</div>
+          </TextTableSecondaryValue>
+        </TextTableRow>
+        <TextTableRow>
+          <TextTableKey>Fee</TextTableKey>
+          <TextTableSecondaryValue>
+            <div>{dockerCallFee} WEST</div>
           </TextTableSecondaryValue>
         </TextTableRow>
       </TextTable>
