@@ -3,7 +3,7 @@ import React from 'react'
 import styled from 'styled-components'
 import { IBatch } from '../../../../interfaces'
 import { shineBatch } from '../../../../components/Animations'
-import { formatNumber } from '../../../../utils'
+import { roundNumber } from '../../../../utils'
 
 export const BatchWidth = 153
 
@@ -86,7 +86,7 @@ export const BatchItem = (props: IProps) => {
   >
     <BatchTitle>Batch #{props.batchIndex}</BatchTitle>
     <Block16>
-      <BatchSubTitle>{formatNumber(batch.eastAmount)} East</BatchSubTitle>
+      <BatchSubTitle>{roundNumber(batch.eastAmount)} East</BatchSubTitle>
     </Block16>
     <Block marginTop={8}>
       <BatchText>
@@ -97,8 +97,8 @@ export const BatchItem = (props: IProps) => {
       <BatchSubTitle>Contains</BatchSubTitle>
       <Block marginTop={8}>
         <BatchText>
-          <div>{formatNumber(batch.westAmount)} West</div>
-          <div>{formatNumber(batch.usdpAmount)} USDp</div>
+          <div>{roundNumber(batch.westAmount)} West</div>
+          <div>{roundNumber(batch.usdpAmount)} USDp</div>
         </BatchText>
       </Block>
     </Block16>

@@ -12,6 +12,9 @@ import {
   TextTableSecondaryValue
 } from '../../../../components/TextTable'
 import { Button } from '../../../../components/Button'
+import { liquidateVault } from '../../../../utils/txFactory'
+import useStores from '../../../../hooks/useStores'
+import { roundNumber } from '../../../../utils'
 
 export interface IBatchDetailsProps {
   batch: IBatch | null | undefined;
@@ -68,6 +71,28 @@ const ButtonsContainer = styled.div`
 
 export const BatchLiquidation = (props: IBatchDetailsProps) => {
   const { batch, isVisible, onClose } = props
+
+  const { configStore } = useStores()
+
+  const onLiquidateClick = async () => {
+    if (batch) {
+      const state = await window.WEWallet.publicState()
+      const { account: { publicKey } } = state
+      if (state.locked) {
+        await window.WEWallet.auth({ data: 'EAST Client auth' })
+      }
+      const tx = liquidateVault({
+        publicKey: publicKey,
+        contractId: configStore.getEastContractId(),
+        vaultId: batch.vaultId,
+        fee: configStore.getDockerCallFee()
+      })
+      console.log('Liquidate Docker call tx:', tx)
+      const result = await window.WEWallet.broadcast('dockerCallV3', tx)
+      console.log('Liquidate broadcast result:', result)
+    }
+  }
+
   return <Container isVisible={isVisible}>
     {batch &&
     <div style={{ textAlign: 'center' }}>
@@ -84,24 +109,24 @@ export const BatchLiquidation = (props: IBatchDetailsProps) => {
           <TextTable>
             <TextTableRow>
               <TextTableKey>Current balance</TextTableKey>
-              <TextTablePrimaryValue>120 EAST</TextTablePrimaryValue>
+              <TextTablePrimaryValue>{roundNumber(batch.eastAmount)} EAST</TextTablePrimaryValue>
             </TextTableRow>
-            <TextTableRow>
-              <TextTableKey>You will pay</TextTableKey>
-              <TextTablePrimaryValue>100 WEST</TextTablePrimaryValue>
-            </TextTableRow>
+            {/*<TextTableRow>*/}
+            {/*  <TextTableKey>You will pay</TextTableKey>*/}
+            {/*  <TextTablePrimaryValue>100 WEST</TextTablePrimaryValue>*/}
+            {/*</TextTableRow>*/}
             <TextTableRow>
               <TextTableKey>You will unlock</TextTableKey>
               <TextTableSecondaryValue>
-                <div>300 WEST</div>
-                <div>50 USDp</div>
+                <div>{roundNumber(batch.westAmount)} WEST</div>
+                <div>{roundNumber(batch.usdpAmount)} USDp</div>
               </TextTableSecondaryValue>
             </TextTableRow>
           </TextTable>
         </Block>
         <Block marginTop={45}>
           <ButtonsContainer>
-            <Button type={'primary'}>Confirm and liquidate</Button>
+            <Button type={'primary'} onClick={onLiquidateClick}>Confirm and liquidate</Button>
           </ButtonsContainer>
         </Block>
       </PrimaryModal>

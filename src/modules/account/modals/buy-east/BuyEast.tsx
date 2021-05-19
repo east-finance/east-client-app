@@ -6,6 +6,7 @@ import { Steps } from './constants'
 import { FillForm, FillFormData } from './FillForm'
 import useStores from '../../../../hooks/useStores'
 import { RechargeWest } from './RechargeWest'
+import { BuyWestSuccess } from './Success'
 
 interface IProps {
   onClose: () => void
@@ -18,8 +19,8 @@ export const BuyEast = (props: IProps) => {
   const [westAmount, setWestAmount] = useState('')
   const [westBalance, setWestBalance] = useState('0')
 
-  const [westRate, setWestRate] = useState('')
-  const [usdpRate, setUsdpRate] = useState('')
+  const [westRate, setWestRate] = useState(dataStore.westRate)
+  const [usdpRate, setUsdpRate] = useState(dataStore.usdpRate)
 
   useEffect(() => {
     const getData = async () => {
@@ -82,7 +83,7 @@ export const BuyEast = (props: IProps) => {
     const transactions = [transfer, dockerCall]
     // const signedTx = await window.WEWallet.signAtomicTransaction({ transactions, fee: '0' })
     // console.log('signedTx', signedTx)
-    const result = await window.WEWallet.broadcastAtomic(transactions)
+    const result = await window.WEWallet.broadcastAtomic(transactions, configStore.getAtomicFee())
     console.log('Broadcast atomic result', result)
   }
 
@@ -109,7 +110,12 @@ export const BuyEast = (props: IProps) => {
         if (+westAmount > +westBalance) {
           setCurrentStep(Steps.rechargeWest)
         } else {
+          const state = await window.WEWallet.publicState()
+          if (state.locked) {
+            await window.WEWallet.auth({ data: 'EAST Client auth' })
+          }
           await sendAtomic()
+          setCurrentStep(Steps.success)
         }
       } catch (e) {
         console.error('sendAtomic Error:', e)
@@ -121,6 +127,8 @@ export const BuyEast = (props: IProps) => {
     const onPrevClicked = () => setCurrentStep(Steps.check)
     const rechargeWestAmount = (+westAmount - +westBalance).toString()
     content = <RechargeWest rechargeWestAmount={rechargeWestAmount} eastAmount={eastAmount} westAmount={westAmount} onPrevClicked={onPrevClicked} />
+  } else if (currentStep === Steps.success) {
+    content = <BuyWestSuccess onClose={props.onClose} />
   }
 
   return <PrimaryModal {...props}>

@@ -1,10 +1,10 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
-import { Block, Block16, Block24 } from '../../../../components/Block'
-import { Steps } from './constants'
-import { SimpleInput } from '../../../../components/Input'
+import { Block, Block24 } from '../../../../components/Block'
+import { InputStatus, SimpleInput } from '../../../../components/Input'
 import { Button } from '../../../../components/Button'
 import useStores from '../../../../hooks/useStores'
+import { roundNumber } from '../../../../utils'
 
 export interface FillFormData {
   eastAmount: string;
@@ -50,6 +50,8 @@ export const FillForm = (props: IProps) => {
   const { dataStore, configStore } = useStores()
   const [eastAmount, setEastAmount] = useState(props.eastAmount)
   const [westAmount, setWestAmount] = useState(props.westAmount)
+  const [eastError, setEastError] = useState('')
+  const [westError, setWestError] = useState('')
 
   const onChangeEast = (e: any) => {
     const { value } = e.target
@@ -62,7 +64,7 @@ export const FillForm = (props: IProps) => {
       inputEastAmount: +value
     })
     if (westAmount > 0) {
-      setWestAmount(westAmount)
+      setWestAmount(roundNumber(westAmount).toString())
     } else {
       setWestAmount('')
     }
@@ -79,26 +81,51 @@ export const FillForm = (props: IProps) => {
       inputWestAmount: +value
     })
     if (eastAmount > 0) {
-      setEastAmount(eastAmount)
+      setEastAmount(roundNumber(eastAmount).toString())
     } else {
       setEastAmount('')
     }
   }
 
   const onNextClicked = () => {
-    props.onNextClicked({
-      eastAmount,
-      westAmount
-    })
+    if (eastAmount && westAmount) {
+      props.onNextClicked({
+        eastAmount,
+        westAmount
+      })
+    } else {
+      let eastErrorMsg = ''
+      let westErrorMsg = ''
+      if(!eastAmount) {
+        eastErrorMsg = 'Zero amount'
+      }
+      if (!westAmount) {
+        westErrorMsg = 'Zero amount'
+      }
+      setEastError(eastErrorMsg)
+      setWestError(westErrorMsg)
+    }
   }
   return <Container>
     <Block marginTop={40}>
-      <RateTitle>Current WEST price is {props.westRate}$</RateTitle>
+      <RateTitle>Current WEST price is {roundNumber(props.westRate)}$</RateTitle>
     </Block>
-    <Block marginTop={16}>
-      <SimpleInput type={'number'} label={'Amount of EAST'} value={eastAmount} onChange={onChangeEast} />
+    <Block marginTop={24}>
+      <SimpleInput
+        type={'number'}
+        label={'Amount of EAST'}
+        value={eastAmount}
+        status={eastError ? InputStatus.error : InputStatus.default}
+        onChange={onChangeEast}
+      />
       <Block marginTop={4} />
-      <SimpleInput type={'number'} label={'Amount of WEST'} value={westAmount} onChange={onChangeWest} />
+      <SimpleInput
+        type={'number'}
+        label={'Amount of WEST'}
+        value={westAmount}
+        status={westError ? InputStatus.error : InputStatus.default}
+        onChange={onChangeWest}
+      />
     </Block>
     <div>
       <Description>EAST is collateralized by 50% USDP and 250% WEST.</Description>

@@ -5,6 +5,7 @@ import { Block, Block16, Block24 } from '../../../../components/Block'
 import { Button, NavigationLeftGradientButton } from '../../../../components/Button'
 import useStores from '../../../../hooks/useStores'
 import iconCopy from '../../../../resources/images/icon-copy.png'
+import { roundNumber } from '../../../../utils'
 
 interface IProps {
   rechargeWestAmount: string;
@@ -65,7 +66,7 @@ export const RechargeWest = (props: IProps) => {
   return <Container>
     <Block marginTop={40}>
       <Description>
-        Add {props.rechargeWestAmount} WEST to your address to get {props.eastAmount} EAST.
+        Add {roundNumber(props.rechargeWestAmount, 4)} WEST to your address to get {props.eastAmount} EAST.
       </Description>
       <Block16>
         <Description>

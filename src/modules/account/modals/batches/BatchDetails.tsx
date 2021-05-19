@@ -7,7 +7,7 @@ import { Block, Block16, Block24 } from '../../../../components/Block'
 import { BatchOperation } from '../../../../constants'
 import { SecondaryModal, SecondaryModalButton } from '../../Modal'
 import moment from 'moment'
-import { formatNumber } from '../../../../utils'
+import { roundNumber } from '../../../../utils'
 
 export interface IBatchDetailsProps {
   batch: IBatch | null | undefined;
@@ -61,7 +61,7 @@ export const BatchDetails = (props: IBatchDetailsProps) => {
           <CrossIcon color={'white'} />
         </IconContainer>
         <Block marginTop={139}>
-          <Title>{formatNumber(batch.eastAmount)} East</Title>
+          <Title>{roundNumber(batch.eastAmount)} East</Title>
           <div  style={{ maxWidth: '80px' }}>
             <Block24>
               <Text>West was at 0.21$</Text>
@@ -69,8 +69,8 @@ export const BatchDetails = (props: IBatchDetailsProps) => {
             <Block16>
               <SubTitle>Contains</SubTitle>
               <Block marginTop={8}>
-                <Text>{formatNumber(batch.westAmount)} West</Text>
-                <Text>{formatNumber(batch.usdpAmount)} USDp</Text>
+                <Text>{roundNumber(batch.westAmount)} West</Text>
+                <Text>{roundNumber(batch.usdpAmount)} USDp</Text>
               </Block>
             </Block16>
           </div>

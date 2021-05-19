@@ -77,3 +77,26 @@ export const dockerCallTransfer = (props: IDockerCallTransfer) => {
     fee: '1000000',
   }
 }
+
+export interface ILiquidateVault {
+  publicKey: string;
+  contractId: string;
+  vaultId: string;
+  fee: string;
+}
+
+export const liquidateVault = (props: ILiquidateVault) => {
+  return {
+    senderPublicKey: props.publicKey,
+    authorPublicKey: props.publicKey,
+    contractId: props.contractId,
+    contractVersion: 1,
+    timestamp: Date.now(),
+    params: [{
+      type: 'string',
+      key: 'burn_init',
+      value: JSON.stringify({ vaultId: props.vaultId })
+    }],
+    fee: props.fee,
+  }
+}

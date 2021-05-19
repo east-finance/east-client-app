@@ -60,7 +60,7 @@ const SimpleInputContainer = styled.div`
   padding-top: 16px;
 `
 
-const SimpleInputLabel = styled.div<{ isOpened: boolean }>`
+const SimpleInputLabel = styled.div<{ isOpened: boolean, status?: InputStatus }>`
   position: absolute;
   font-weight: 500;
   line-height: 16px;
@@ -69,6 +69,10 @@ const SimpleInputLabel = styled.div<{ isOpened: boolean }>`
   color: ${props => props.isOpened ? '#8D8D8D' : '#8D8D8D'};
   top: ${props => props.isOpened ? '-8px' : '16px'};
   font-size: ${props => props.isOpened ? '13px' : '15px'};
+
+  ${({ status }) => status === InputStatus.error && `
+    color: #F0222B;
+  `}
 `
 
 const SimpleInputComponent = styled.input`
@@ -86,10 +90,14 @@ const SimpleInputComponent = styled.input`
   background: transparent;
 `
 
-const SimpleInputLine = styled.div`
+const SimpleInputLine = styled.div<{ status?: InputStatus }>`
   height: 1px;
   width: 100%;
   background: #C4C4C4;
+
+  ${({ status }) => status === InputStatus.error && `
+    background: #F0222B;
+  `}
 `
 
 export interface SimpleInputProps extends InputProps {
@@ -120,13 +128,16 @@ export const SimpleInput = (props: SimpleInputProps) => {
   }
   return <SimpleInputContainer>
     {label &&
-      <SimpleInputLabel isOpened={isFocused || props.isFocused || !!value || !!props.value}>
+      <SimpleInputLabel
+        isOpened={isFocused || props.isFocused || !!value || !!props.value}
+        status={props.status}
+      >
         {label}
       </SimpleInputLabel>
     }
     <SimpleInputComponent {...props} onFocus={onFocus} onBlur={onBlur} onChange={onChange} />
     <Block marginTop={8}>
-      <SimpleInputLine />
+      <SimpleInputLine status={props.status} />
     </Block>
   </SimpleInputContainer>
 }

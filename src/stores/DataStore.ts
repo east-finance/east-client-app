@@ -22,6 +22,8 @@ export default class DataStore {
   westPriceHistory: IDataPoint[] = []
   pollingId: any = null
   eastBalance = '0.0'
+  westRate = ''
+  usdpRate = ''
 
   constructor(api: Api, configStore: ConfigStore) {
     makeAutoObservable(this)
@@ -63,8 +65,15 @@ export default class DataStore {
       }
     }
 
+    const updateTokenRates = async () => {
+      const { westRate, usdpRate } = await this.getOracleTokenPrices(this.configStore.getOracleContractId())
+      this.westRate = westRate
+      this.usdpRate = usdpRate
+    }
+
     const updateData = async () => {
       await updateEastBalance()
+      await updateTokenRates()
       // await this.pollOracleTxs()
     }
 

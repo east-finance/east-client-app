@@ -1,5 +1,4 @@
-export const formatNumber = (value: string, visibleDigits = 2) => {
-  const [integerPart, decimalPart = ''] = value.split('.')
-  const decimal = decimalPart ? '.' + decimalPart.slice(0, visibleDigits) : ''
-  return integerPart + decimal
+export const roundNumber = (number: string, n = 2) => {
+  const precision = Math.pow(10, n)
+  return Math.round((+number + Number.EPSILON) * precision ) / precision
 }

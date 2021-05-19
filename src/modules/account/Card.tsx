@@ -5,7 +5,7 @@ import iconPlus from '../../resources/images/plus.png'
 import { Block, Block24 } from '../../components/Block'
 import { observer } from 'mobx-react'
 import useStores from '../../hooks/useStores'
-import { formatNumber } from '../../utils'
+import { roundNumber } from '../../utils'
 import { RouteName } from '../../router/segments'
 import { useRoute } from 'react-router5'
 
@@ -168,7 +168,7 @@ export const AccountCard = observer(() => {
       <BottomContainer>
         <BottomItem>{address}</BottomItem>
         <Block marginTop={8} />
-        <BottomItem>{formatNumber(westBalance) + ' WEST'}</BottomItem>
+        <BottomItem>{roundNumber(westBalance) + ' WEST'}</BottomItem>
       </BottomContainer>
       }
     </ContentWrapper>

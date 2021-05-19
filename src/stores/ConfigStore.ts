@@ -15,7 +15,8 @@ export default class ConfigStore {
     chainId: 'V',
     minimumFee: {
       4: 10000000,
-      104: 10000000
+      104: 10000000,
+      120: 0
     }
   }
 
@@ -98,5 +99,9 @@ export default class ConfigStore {
 
   getTransferFee () {
     return this.nodeConfig.minimumFee['4']
+  }
+
+  getAtomicFee () {
+    return this.nodeConfig.minimumFee['120']
   }
 }
