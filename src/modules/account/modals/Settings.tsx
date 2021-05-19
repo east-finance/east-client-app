@@ -1,9 +1,11 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
+import { ToastContainer, toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 import { PrimaryTitle } from '../../../components/PrimaryTitle'
 import { PrimaryModal, SecondaryModal, SecondaryModalButton } from '../Modal'
-import { Block, Block16, Block32 } from '../../../components/Block'
-import { SimpleInput } from '../../../components/Input'
+import { Block, Block16 } from '../../../components/Block'
+import { InputStatus, SimpleInput } from '../../../components/Input'
 import { CrossIcon } from '../../../components/Icons'
 import useStores from '../../../hooks/useStores'
 
@@ -67,12 +69,72 @@ const Option = styled.div`
   cursor: pointer;
 `
 
+const ValidationErrorWrapper = styled.div`
+  height: 16px;
+  font-family: Cairo;
+  font-weight: 600;
+  font-size: 13px;
+  line-height: 16px;
+  color: ${props => props.theme.red};
+`
+
 interface IPassChangeProps {
   visible: boolean;
   onClose: () => void;
 }
 
 const PasswordChange = (props: IPassChangeProps) => {
+  const { api, authStore } = useStores()
+
+
+  const [oldPassword, setOldPassword] = useState('')
+  const [oldPasswordError, setOldPasswordError] = useState('')
+
+  const [password, setPassword] = useState('')
+  const [passwordError, setPasswordError] = useState('')
+
+  const [confirm, setConfirm] = useState('')
+
+  const onChangeClicked = async () => {
+    let errorOldPass = '', errorPass = ''
+    if (!oldPassword) {
+      errorOldPass = 'Enter old password'
+    } else {
+      if (!password) {
+        errorPass = 'Enter new password'
+      } else {
+        if (password !== confirm) {
+          errorPass = 'Passwords do not match'
+        }
+      }
+    }
+    if (!errorOldPass && !errorPass) {
+      let oldPasswordCorrect = false
+      try {
+        await api.signIn(authStore.email, oldPassword)
+        oldPasswordCorrect = true
+      } catch (e) {
+        if(e.message.includes('401')) {
+          errorOldPass = 'Wrong old password'
+        } else {
+          errorOldPass = 'Unknown error. Try again later'
+        }
+      }
+      if (oldPasswordCorrect) {
+        try {
+          await api.changePassword(password)
+          toast('Password changed!')
+        } catch (e) {
+          errorPass = 'Unknown error. Try again later'
+        }
+      }
+    }
+    setOldPasswordError(errorOldPass)
+    setPasswordError(errorPass)
+  }
+
+  const validationError = oldPasswordError || passwordError
+
   return <SecondaryModal style={{ visibility: props.visible ? 'visible' : 'hidden' }}>
     <FlexWrapper>
       <IconContainer onClick={props.onClose}>
@@ -82,13 +144,36 @@ const PasswordChange = (props: IPassChangeProps) => {
         <PasswordChangeForm>
           <H3>Password change</H3>
           <Block marginTop={40} />
-          <SimpleInput type={'password'} label={'Old password'} autoComplete='new-password' />
-          <SimpleInput type={'password'} label={'New password'} autoComplete='new-password' />
-          <SimpleInput type={'password'} label={'Confirm new password'} autoComplete='new-password' />
+          <SimpleInput
+            type={'password'}
+            label={'Old password'}
+            autoComplete='new-password'
+            status={oldPasswordError ? InputStatus.error : InputStatus.default}
+            onChange={(e: any) => setOldPassword(e.target.value)}
+          />
+          <SimpleInput
+            type={'password'}
+            label={'New password'}
+            autoComplete='new-password'
+            status={passwordError ? InputStatus.error : InputStatus.default}
+            onChange={(e: any) => setPassword(e.target.value)}
+          />
+          <SimpleInput
+            type={'password'}
+            label={'Confirm new password'}
+            autoComplete='new-password'
+            status={passwordError ? InputStatus.error : InputStatus.default}
+            onChange={(e: any) => setConfirm(e.target.value)}
+          />
         </PasswordChangeForm>
       </Block>
+      <ValidationErrorWrapper>
+        {validationError}
+      </ValidationErrorWrapper>
       <div style={{ marginTop: 'auto' }}>
-        <SecondaryModalButton>Change</SecondaryModalButton>
+        <SecondaryModalButton onClick={onChangeClicked}>
+          Change
+        </SecondaryModalButton>
       </div>
     </FlexWrapper>
   </SecondaryModal>

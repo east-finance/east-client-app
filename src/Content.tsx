@@ -4,6 +4,15 @@ import { observer, Provider } from 'mobx-react'
 import useStores from './hooks/useStores'
 import Auth from './modules/auth/Auth'
 import Account from './modules/account/Account'
+import { ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
+import styled from 'styled-components'
+
+const ToastWrapper = styled.div`
+  position: absolute;
+  right: 200px;
+  top: 0;
+`
 
 const Content: FunctionComponent = observer( () => {
   const { route: { name } } = useRoute()
@@ -68,6 +77,9 @@ const Content: FunctionComponent = observer( () => {
   }
 
   return <Provider>
+    <ToastWrapper id={'toast-container'}>
+      <ToastContainer />
+    </ToastWrapper>
     {content}
   </Provider>
 })

@@ -15,7 +15,6 @@ export class Api {
     baseURL: AUTH_SERVICE_ADDRESS + API_VERSION_PREFIX
   })
   private _apiClient!: AxiosInstance
-  private _nodeClient!: AxiosInstance
 
   public signIn  = async (username: string, password: string): Promise<ITokenPair> => {
     const { data: tokenPair } = await this._unauthorizedClient.post('/auth/login', { username, password })
@@ -25,6 +24,13 @@ export class Api {
 
   public signUp  = async (username: string, password: string): Promise<ITokenPair> => {
     const { data } = await this._unauthorizedClient.post('/user', { username, password, source: 'east_client' })
+    return data
+  }
+
+  public changePassword  = async (password: string): Promise<ITokenPair> => {
+    const { data } = await this._apiClient.post(`${AUTH_SERVICE_ADDRESS}/v1/user/password/change`, {
+      password, passwordRepeat: password
+    })
     return data
   }
 
