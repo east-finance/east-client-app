@@ -1,14 +1,16 @@
 import React, { useState } from 'react'
-import { Link, useRoute } from 'react-router5'
-import { Block, Block16, Block24, Block32 } from '../../../components/Block'
+import { useRoute } from 'react-router5'
+import { Block, Block16, Block24 } from '../../../components/Block'
 import styled from 'styled-components'
+import { toast } from 'react-toastify'
 import useStores from '../../../hooks/useStores'
-import { Input, InputExplain } from '../../../components/Input'
+import { Input, InputStatus } from '../../../components/Input'
 import { Button } from '../../../components/Button'
 import WELogo from '../../../resources/images/we-logo-small.svg'
 import { RouteName } from '../../../router/segments'
 import { FormErrors } from '../constants'
 import { validateEmail } from '../utils'
+import { ErrorNotification } from '../../../components/Notification'
 
 const Container = styled.div`
   width: 376px;
@@ -49,6 +51,7 @@ const SignIn = () => {
   const [password, setPassword] = useState(localStorage.getItem('test_pass') || '')
   const [usernameError, setUsernameError] = useState('')
   const [passwordError, setPasswordError] = useState('')
+  const [inProgress, setInProgress] = useState(false)
 
   const onChangeLogin = (e: any) => {
     setUsername(e.target.value)
@@ -75,23 +78,45 @@ const SignIn = () => {
   }
 
   const onLoginClick = async () => {
-    // authStore.setLoggedIn(true)
-    // router.navigate(RouteName.SignInWallet)
-    // validateForm()
-    try {
-      const tokenPair = await api.signIn(username, password)
-      authStore.loginWithTokenPair(tokenPair)
-      router.navigate(RouteName.SignInWallet)
-    } catch (e) {
-      console.log('Login error:', e)
+    if (!inProgress) {
+      validateForm()
+      if (!usernameError && !passwordError) {
+        let tokenPair = null
+        try {
+          setInProgress(true)
+          tokenPair = await api.signIn(username, password)
+        } catch (e) {
+          const { errors } =  e.response.data
+          setUsernameError('login_error')
+          setPasswordError('login_error')
+          let toastText = 'Unknown error. Try again later.'
+          if (errors.includes('user.not.found') || errors.includes('wrong.password')) {
+            toastText = 'Wrong email or password'
+          }
+          toast.dismiss()
+          toast(<ErrorNotification text={toastText} />, {
+            hideProgressBar: true
+          })
+        } finally {
+          setInProgress(false)
+        }
+
+        if (tokenPair) {
+          authStore.loginWithTokenPair(tokenPair)
+          router.navigate(RouteName.SignInWallet)
+        }
+      }
     }
   }
 
   return <Container>
-    <Input autoFocus={true} placeholder={'Email'} onChange={onChangeLogin} />
-    {usernameError &&
-      <InputExplain text={usernameError} />
-    }
+    <Input
+      autoFocus={true}
+      status={usernameError ? InputStatus.error : InputStatus.default}
+      placeholder={'Email'}
+      value={username}
+      onChange={onChangeLogin}
+    />
     <Block16>
       <LoginInfoContainer>
         <WELogoWrapper />
@@ -102,10 +127,14 @@ const SignIn = () => {
       </LoginInfoContainer>
     </Block16>
     <Block24 />
-    <Input autoComplete='new-password' placeholder={'Password'} type={'password'} onChange={onChangePassword} />
-    {passwordError &&
-      <InputExplain text={passwordError} />
-    }
+    <Input
+      autoComplete='new-password'
+      status={passwordError ? InputStatus.error : InputStatus.default}
+      placeholder={'Password'}
+      type={'password'}
+      value={password}
+      onChange={onChangePassword}
+    />
     <Block16 style={{ 'textAlign': 'right' }}>
       <AdditionalText onClick={() => router.navigate(RouteName.PasswordRecovery)}>Forgot password</AdditionalText>
     </Block16>

@@ -16,15 +16,25 @@ const ButtonContainer = styled.div<ButtonProps>`
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #C4C4C4;
+  background: #F2F2F2;
+  color: #000000;
   border-radius: 4px;
   font-weight: 500;
   font-size: 16px;
   cursor: pointer;
   user-select: none;
+  transition: all .4s ease-in-out;
 
-  background: ${props => props.type === 'primary' ? 'radial-gradient(204.55% 3032.86% at 67.55% 85.45%, rgba(172, 171, 216, 0) 0%, #514EFF 100%), #1D87D6;' : '#F2F2F2;'};
-  color: ${props => props.type === 'primary' ? 'white' : '#000000'};
+  ${({ type }) => type === 'primary' && `
+    background: radial-gradient(204.55% 3032.86% at 67.55% 85.45%, rgba(172, 171, 216, 0) 0%, #514EFF 100%),linear-gradient(0deg, #1D87D6, #1D87D6);;
+    color: white;
+    background-size: 300% 100%;
+    transition: all .4s ease-in-out;
+    
+    :hover {
+      background-position: 100% 0;
+    }
+  `}
 `
 
 const ButtonSpan = styled.span`

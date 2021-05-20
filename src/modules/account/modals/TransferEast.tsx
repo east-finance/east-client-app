@@ -58,6 +58,7 @@ export const TransferEast = (props: IProps) => {
   const { configStore } = useStores()
 
   const [eastAmount, setEastAmount] = useState('')
+  const [amountError, setAmountError] = useState('')
   const [address, setAddress] = useState('')
   const [currentStep, setCurrentStep] = useState(Steps.fill)
 

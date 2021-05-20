@@ -20,10 +20,17 @@ const InputContainer = styled.input<{ status?: InputStatus }>`
   border-color: ${props => props.status === InputStatus.error ? props.theme.red : 'rgba(255, 255, 255, 0.5)'};
   border-radius: 17px;
   font-family: Cairo, Helvetica,Arial,sans-serif;
+  transition: border-color 250ms;
 
   ::placeholder {
     color: rgba(224, 224, 224, 0.75);
   }
+
+  ${({ status }) => status !== InputStatus.error && `
+    :hover {
+      border-color: #1D87D6
+    }
+  `}
 `
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {

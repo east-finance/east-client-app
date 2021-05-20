@@ -7,6 +7,7 @@ import Account from './modules/account/Account'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import styled from 'styled-components'
+import { ToastCloseButton } from './components/Notification'
 
 const ToastWrapper = styled.div`
   position: absolute;
@@ -78,7 +79,7 @@ const Content: FunctionComponent = observer( () => {
 
   return <Provider>
     <ToastWrapper id={'toast-container'}>
-      <ToastContainer />
+      <ToastContainer closeButton={ToastCloseButton} />
     </ToastWrapper>
     {content}
   </Provider>

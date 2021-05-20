@@ -32,7 +32,7 @@ const SendButtonsContainer = styled.div`
 
 export const CheckForm = (props: IProps) => {
   const { dataStore, authStore, configStore } = useStores()
-  const dockerCallFee = configStore.getDockerCallFee()
+  const fee = +(configStore.getDockerCallFee() + configStore.getTransferFee() + configStore.getAtomicFee())
   return <Container>
     <Block marginTop={58}>
       <TextTable>
@@ -54,7 +54,7 @@ export const CheckForm = (props: IProps) => {
         <TextTableRow>
           <TextTableKey>Fee</TextTableKey>
           <TextTableSecondaryValue>
-            <div>{dockerCallFee} WEST</div>
+            <div>{fee} WEST</div>
           </TextTableSecondaryValue>
         </TextTableRow>
       </TextTable>
