@@ -1,4 +1,4 @@
-import { makeAutoObservable } from 'mobx'
+import { makeAutoObservable, runInAction } from 'mobx'
 import axios from 'axios'
 import { Api } from '../api'
 import { BigNumber } from 'bignumber.js'
@@ -52,14 +52,16 @@ export default class DataStore {
         }
       }
     }).filter((item: IDataPoint | undefined) => item)
-    console.log('filteredTxs', filteredTxs)
     this.westPriceHistory = filteredTxs
   }
 
   async startPolling (address: string) {
     const updateEastBalance = async () => {
       try {
-        this.eastBalance = await this.getEastBalance(address)
+        const eastBalance = await this.getEastBalance(address)
+        runInAction(() => {
+          this.eastBalance = eastBalance
+        })
       } catch (e) {
         console.log(`Polling error: cannot get address ${address} vaults`, e.message)
       }

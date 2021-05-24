@@ -58,7 +58,7 @@ export const BuyEast = (props: IProps) => {
         }
       }
     }
-    const transferId = await window.WEWallet.getTxId({ type: 'transferV3', tx: transfer.tx })
+    const transferId = await window.WEWallet.getTxId('transferV3', transfer.tx)
     const dockerCall = {
       type: 'dockerCallV4',
       tx: {

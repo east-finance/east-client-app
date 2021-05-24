@@ -59,7 +59,7 @@ export const Pagination = (props: IProps) => {
   const { totalPages, currentPage, onPageSelected } = props
   const pages = []
   for (let i = 0; i < totalPages; i++) {
-    pages.push(<Page isActive={i === currentPage} />)
+    pages.push(<Page key={i} isActive={i === currentPage} />)
   }
   const onArrowLeftClicked = () => {
     onPageSelected(currentPage > 0 ? currentPage - 1 : totalPages - 1)

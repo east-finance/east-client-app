@@ -13,7 +13,7 @@ declare namespace WEWallet {
     auth(data: IAuthData): Promise<IAuthResponse>;
     publicState(): Promise<IPublicStateResponse>;
     initialPromise() : Promise<any>;
-    getTxId(data: any) : Promise<any>;
+    getTxId(type: string, tx: any) : Promise<any>;
     signTransaction(data: any) : Promise<any>;
     signAtomicTransaction(data: any) : Promise<any>;
     broadcast(type: string, tx: any) : Promise<any>;
