@@ -6,6 +6,12 @@ import { PrimaryTitle } from '../../../../components/PrimaryTitle'
 import { PrimaryModal } from '../../Modal'
 import { BrutalTitle } from '../../../../components/Text'
 import { Button } from '../../../../components/Button'
+import useStores from '../../../../hooks/useStores'
+import data from '@wavesenterprise/js-sdk/raw/src/grpc/transactions/Data'
+import { roundNumber } from '../../../../utils'
+import { claimOverpay, liquidateVault } from '../../../../utils/txFactory'
+import { toast } from 'react-toastify'
+import { ErrorNotification } from '../../../../components/Notification'
 
 export interface IBatchDetailsProps {
   batch: IBatch | null | undefined;
@@ -68,7 +74,57 @@ const ButtonsContainer = styled.div`
 
 export const ClaimOverpay = (props: IBatchDetailsProps) => {
   const { batch, isVisible, onClose } = props
-  const overpayAmount = 722
+  const { dataStore, configStore } = useStores()
+  let overpayAmount = 0
+
+  if (batch) {
+    const currentWestAmount = dataStore.calculateWestAmount({
+      usdpPart: configStore.getUsdpPart(),
+      westCollateral: configStore.getWestCollateral(),
+      westRate: +dataStore.westRate,
+      usdpRate: +dataStore.usdpRate,
+      inputEastAmount: +batch.eastAmount
+    })
+    const westDelta = currentWestAmount - +batch.westAmount * 1.4
+    if (westDelta > 0) {
+      overpayAmount = roundNumber(westDelta.toString(), 4)
+    }
+  }
+
+  const sendDockerCall = async () => {
+    if (batch) {
+      const state = await window.WEWallet.publicState()
+      const { account: { publicKey } } = state
+      if (state.locked) {
+        await window.WEWallet.auth({ data: 'EAST Client auth' })
+      }
+      const tx = claimOverpay({
+        publicKey: publicKey,
+        contractId: configStore.getEastContractId(),
+        vaultId: batch.vaultId,
+        fee: configStore.getDockerCallFee()
+      })
+      console.log('Claim overpay Docker call tx:', tx)
+      const result = await window.WEWallet.broadcast('dockerCallV3', tx)
+      console.log('Claim overpay broadcast result:', result)
+    }
+  }
+
+  const overpayWestClicked = async () => {
+    if (batch && overpayAmount > 0) {
+      try {
+        sendDockerCall()
+        toast('Transaction sent!')
+      } catch (e) {
+        console.error('Eror on send claim overpay', e)
+        toast.dismiss()
+        toast(<ErrorNotification text={'Error on send Claim Overpay'} />, {
+          hideProgressBar: true
+        })
+      }
+    }
+  }
+
   return <Container isVisible={isVisible}>
     {batch &&
     <div style={{ textAlign: 'center' }}>
@@ -80,13 +136,13 @@ export const ClaimOverpay = (props: IBatchDetailsProps) => {
         <PrimaryTitle>Claim overpay</PrimaryTitle>
         <Content>
           <Block marginTop={65}>
-            <BrutalTitle>{overpayAmount} WEST</BrutalTitle>
+            <BrutalTitle>~{overpayAmount} WEST</BrutalTitle>
             <Description>available for claiming</Description>
           </Block>
           <Block marginTop={95}>
             <ButtonsContainer>
-              <Button>Get 722 WEST back</Button>
-              <Button type={'primary'}>Add 100 EAST for free</Button>
+              <Button type={'primary'} onClick={overpayWestClicked}>Get {overpayAmount} WEST back</Button>
+              {/*<Button type={'primary'}>Add 100 EAST for free</Button>*/}
             </ButtonsContainer>
           </Block>
         </Content>

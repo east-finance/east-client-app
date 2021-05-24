@@ -9,6 +9,7 @@ import { validateEmail } from '../utils'
 import { FormErrors } from '../constants'
 import { toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
+import { ErrorNotification } from '../../../components/Notification'
 
 const Container = styled.div`
   width: 376px;
@@ -23,10 +24,11 @@ const SignUp = () => {
   const [password, setPassword] = useState('')
   const [confirm, setConfirm] = useState('')
   const [passwordStatus, setPasswordStatus] = useState(InputStatus.default)
+  const [inProgress, setInProgress] = useState(false)
 
   const validateForm = () => {
-    let usernameStatus = InputStatus.default
-    let passwordStatus = InputStatus.default
+    let uStatus = InputStatus.default
+    let passStatus = InputStatus.default
     let msg = ''
     if(!username) {
       msg = FormErrors.EnterAnEmail
@@ -34,20 +36,22 @@ const SignUp = () => {
       msg = FormErrors.EmailIsIncorrect
     }
     if (msg) {
-      usernameStatus = InputStatus.error
+      uStatus = InputStatus.error
     } else {
       if (!password || !confirm) {
         msg = FormErrors.EnterAPassword
       }
       if(msg) {
-        passwordStatus = InputStatus.error
+        passStatus = InputStatus.error
       }
     }
-    setUsernameStatus(usernameStatus)
-    setPasswordStatus(passwordStatus)
-    console.log('msgmsgmsg', msg)
+    setUsernameStatus(uStatus)
+    setPasswordStatus(passStatus)
     if (msg) {
-      toast(msg)
+      toast.dismiss()
+      toast(<ErrorNotification text={msg} />, {
+        hideProgressBar: true
+      })
     }
     return msg
   }
@@ -66,11 +70,40 @@ const SignUp = () => {
 
   const onSignUpClicked = async () => {
     try {
-      toast('123')
       const formError = validateForm()
-      if(!formError) {
-        const result = await api.signUp(username, password)
-        console.log('result', result)
+      if (formError) {
+        toast.dismiss()
+        toast(<ErrorNotification text={formError} />, {
+          hideProgressBar: true
+        })
+      } else {
+        try {
+          setInProgress(true)
+          const result = await api.signUp(username, password)
+          console.log('Signup result', result)
+        } catch (e) {
+          console.log('Signup error:', e.message)
+          const { errors } =  e.response.data
+          let msg = 'Unknown error. Try again later.'
+          let uStatus = InputStatus.default
+          let passStatus = InputStatus.default
+          if (errors.includes('user.already.exists')) {
+            msg = 'User already exists'
+            uStatus = InputStatus.error
+          } else if(errors.includes('password.does.not.meet.the.requirements')) {
+            msg = 'Password does not meet the requirements'
+            passStatus = InputStatus.error
+          }
+          setUsernameStatus(uStatus)
+          setPasswordStatus(passStatus)
+          toast.dismiss()
+          toast(<ErrorNotification text={msg} />, {
+            hideProgressBar: true,
+            autoClose: 5000000
+          })
+        } finally {
+          setInProgress(false)
+        }
       }
     } catch (e) {
       console.log(e)

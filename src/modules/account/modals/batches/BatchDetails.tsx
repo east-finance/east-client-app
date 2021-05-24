@@ -64,7 +64,7 @@ export const BatchDetails = (props: IBatchDetailsProps) => {
           <Title>{roundNumber(batch.eastAmount)} East</Title>
           <div  style={{ maxWidth: '80px' }}>
             <Block24>
-              <Text>West was at 0.21$</Text>
+              <Text>West was at {roundNumber(batch.westRate)}$</Text>
             </Block24>
             <Block16>
               <SubTitle>Contains</SubTitle>

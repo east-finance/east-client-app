@@ -120,7 +120,7 @@ const FracPart = styled.span`
 
 const EastBalance = (props: IEastBalanceProps) => {
   const { value } = props
-  const [integerPart, fractionalPart] = value.split('.')
+  const [integerPart, fractionalPart] = roundNumber(value).toString().split('.')
   return <div>
     <IntegerPart>{integerPart}</IntegerPart>
     {fractionalPart &&

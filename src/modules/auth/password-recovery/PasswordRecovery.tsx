@@ -1,13 +1,15 @@
 import React, { useState } from 'react'
-import { Link, useRoute } from 'react-router5'
-import { Block, Block16, Block24, Block32 } from '../../../components/Block'
+import { useRoute } from 'react-router5'
+import { Block, Block16 } from '../../../components/Block'
 import styled from 'styled-components'
 import useStores from '../../../hooks/useStores'
-import { Input, InputExplain } from '../../../components/Input'
+import { Input, InputStatus } from '../../../components/Input'
 import { Button } from '../../../components/Button'
 import { RouteName } from '../../../router/segments'
 import { FormErrors } from '../constants'
 import { validateEmail } from '../utils'
+import { toast } from 'react-toastify'
+import { ErrorNotification } from '../../../components/Notification'
 
 const Container = styled.div`
   width: 376px;
@@ -23,50 +25,77 @@ const AdditionalText = styled.div`
 `
 
 const PasswordRecovery = () => {
-  const { api, authStore } = useStores()
+  const { api } = useStores()
   const { router } = useRoute()
 
-  const [username, setUsername] = useState(localStorage.getItem('test_login') || '')
+  const [username, setUsername] = useState('')
   const [usernameError, setUsernameError] = useState('')
+  const [emailSent, setEmailSent] = useState(false)
 
   const onChangeEmail = (e: any) => {
     setUsername(e.target.value)
   }
 
   const validateForm = () => {
-    const usernameErrors = []
+    let error = ''
     if (!username) {
-      usernameErrors.push(FormErrors.EnterAnEmail)
+      error = FormErrors.EnterAnEmail
+    } else if(!validateEmail(username)) {
+      error = FormErrors.EmailIsIncorrect
     }
-    if(!validateEmail(username)) {
-      usernameErrors.push(FormErrors.EmailIsIncorrect)
-    }
-    setUsernameError(usernameErrors.length ? usernameErrors[0] : '')
+    return error
   }
 
   const onSendRecoverClick = async () => {
     try {
-      validateForm()
-      if (!usernameError) {
-        const res = await api.sendPasswordRecover(username)
-        console.log('result', res)
+      const err = validateForm()
+      if (err) {
+        setUsernameError(err)
+        toast.dismiss()
+        toast(<ErrorNotification text={err} />, {
+          hideProgressBar: true
+        })
+      } else {
+        await api.sendPasswordRecover(username)
+        setEmailSent(true)
       }
     } catch (e) {
-      console.log('Login error:', e)
+      console.error('Recover error:', e.message)
     }
   }
 
   return <Container>
-    <Block marginTop={158} />
-    <Input placeholder={'Email'} onChange={onChangeEmail} autoFocus={true} />
-    {usernameError &&
-      <InputExplain text={usernameError} />
-    }
-    <Block16>
-      <span>Enter your email, we will send recovery instructions.</span>
-    </Block16>
+    <Block marginTop={158}>
+      {!emailSent &&
+        <div>
+          <Input placeholder={'Email'} status={usernameError ? InputStatus.error : InputStatus.default} onChange={onChangeEmail} autoFocus={true} />
+          <Block16>
+            <span>Enter your email, we will send recovery instructions.</span>
+          </Block16>
+        </div>
+      }
+      {emailSent &&
+        <AdditionalText>
+          <div>
+            If {username} is registered, you will receive an email with instructions on how to reset your password.
+          </div>
+          <div>
+            If this email is not in your Inbox, please check Spam.
+          </div>
+        </AdditionalText>
+      }
+    </Block>
     <Block marginTop={130}>
-      <Button type={'primary'} onClick={onSendRecoverClick}>Reset password</Button>
+      {emailSent &&
+        <Button type={'primary'} onClick={() => setEmailSent(false)}>
+          Send another email
+        </Button>
+      }
+      {!emailSent &&
+        <Button type={'primary'} onClick={onSendRecoverClick}>
+          Reset password
+        </Button>
+      }
     </Block>
     <Block marginTop={24}>
       <AdditionalText onClick={() => router.navigate(RouteName.SignIn)}>I remembered my password</AdditionalText>

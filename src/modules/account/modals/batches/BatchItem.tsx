@@ -90,7 +90,7 @@ export const BatchItem = (props: IProps) => {
     </Block16>
     <Block marginTop={8}>
       <BatchText>
-        West was at 0.21$
+        West was at {roundNumber(batch.westRate)}$
       </BatchText>
     </Block>
     <Block16>

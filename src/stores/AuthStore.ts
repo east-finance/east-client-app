@@ -4,6 +4,7 @@ import { ITokenPair } from '../interfaces'
 import { Api } from '../api'
 import { Router } from 'router5'
 import { RouteName, RouteSegment } from '../router/segments'
+import { Route } from 'react-router5'
 
 const tokensLocalStorageKey = 'tokenPair'
 
@@ -31,21 +32,13 @@ export default class AuthStore {
     this.startWalletObserver()
   }
 
-  authInWallet = () => {
-    return window.WEWallet.auth({ data: 'EAST Client auth' })
-  }
-
-  getWalletPublicState = () => {
-    return window.WEWallet.publicState()
-  }
-
   setSelectedAddress (address: string) {
     this.address = address
   }
 
   async initStore (router: Router, api: Api): Promise<void> {
     const { name, params } = router.getState()
-    if (!name.startsWith(RouteSegment.auth)) {
+    if (![RouteName.SignIn, RouteName.SignUp, RouteName.PasswordRecovery].includes(name)) { //!name.startsWith(RouteSegment.auth)
       router.navigate(RouteName.SignIn)
       // const tokenPair = this.readTokenPair()
       // if (tokenPair) {
@@ -77,7 +70,7 @@ export default class AuthStore {
   }
 
   startWalletObserver () {
-    setInterval(() => this.pollWalletState(), 60 * 1000)
+    // setInterval(() => this.pollWalletState(), 60 * 1000)
   }
 
   async pollWalletState () {

@@ -100,3 +100,26 @@ export const liquidateVault = (props: ILiquidateVault) => {
     fee: props.fee,
   }
 }
+
+export interface IClaimOverpay {
+  publicKey: string;
+  contractId: string;
+  vaultId: string;
+  fee: string;
+}
+
+export const claimOverpay = (props: IClaimOverpay) => {
+  return {
+    senderPublicKey: props.publicKey,
+    authorPublicKey: props.publicKey,
+    contractId: props.contractId,
+    contractVersion: 1,
+    timestamp: Date.now(),
+    params: [{
+      type: 'string',
+      key: 'claim_overpay_init',
+      value: JSON.stringify({ vaultId: props.vaultId })
+    }],
+    fee: props.fee,
+  }
+}

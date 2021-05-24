@@ -114,11 +114,31 @@ export default class DataStore {
     }
   }
 
+  async getVaults (address: string): Promise<IBatch[]> {
+    const vaults = await this.api.getBatches(address)
+    return vaults.map(vault => {
+      const westRate = this.calculateWestRate({
+        usdpPart: this.configStore.getUsdpPart(),
+        westCollateral: this.configStore.getWestCollateral(),
+        eastAmount: +vault.eastAmount,
+        westAmount: +vault.westAmount
+      })
+      return {
+        ...vault,
+        westRate: westRate.toString()
+      }
+    })
+  }
+
   calculateWestAmount (data: any) {
     const { usdpPart, westCollateral, westRate, inputEastAmount } = data
-    return {
-      westAmount: inputEastAmount * ((usdpPart / westRate) + ((1 - usdpPart) / westRate * westCollateral))
-    }
+    return inputEastAmount * ((usdpPart / westRate) + ((1 - usdpPart) / westRate * westCollateral))
+  }
+
+  calculateWestRate (data: any) {
+    const { usdpPart, westCollateral, eastAmount, westAmount } = data
+    const westRate = ((usdpPart + (1 - usdpPart) * westCollateral) * eastAmount) / westAmount
+    return westRate / 1.4 // TEMPORARY FIX
   }
 
   calculateEastAmount (data: any) {

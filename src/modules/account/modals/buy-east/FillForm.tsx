@@ -56,7 +56,7 @@ export const FillForm = (props: IProps) => {
   const onChangeEast = (e: any) => {
     const { value } = e.target
     setEastAmount(value)
-    const { westAmount } = dataStore.calculateWestAmount({
+    const westAmount = dataStore.calculateWestAmount({
       usdpPart: configStore.getUsdpPart(),
       westCollateral: configStore.getWestCollateral(),
       westRate: +westRate,

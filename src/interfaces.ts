@@ -14,4 +14,5 @@ export interface IBatch {
   usdpRateTimestamp: string;
   westAmount: string;
   westRateTimestamp: string;
+  westRate: string;
 }

@@ -166,7 +166,7 @@ export const Batches = (props: IProps) => {
   //   createdAt: Date.now()
   // }]
 
-  const { api, authStore } = useStores()
+  const { api, authStore, dataStore } = useStores()
 
   const [batches, setBatches] = useState([])
   const [isLoading, setLoading] = useState(false)
@@ -178,7 +178,7 @@ export const Batches = (props: IProps) => {
     const loadBatches = async () => {
       try {
         setLoading(true)
-        const data = await api.getBatches(authStore.address)
+        const data = await dataStore.getVaults(authStore.address)
         setBatches(data)
       } catch (e) {
         console.error('Cannot load batches list', e)

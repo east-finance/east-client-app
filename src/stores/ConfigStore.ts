@@ -23,9 +23,9 @@ export default class ConfigStore {
   eastContractConfig = {
     oracleContractId: '',
     adminAddress: '',
-    'usdpPart': 0.5,
-    'westCollateral': 2.5,
-    'liquidationCollateral': 1.3
+    usdpPart: 0.5,
+    westCollateral: 2.5,
+    liquidationCollateral: 1.3
   }
 
   constructor(api: Api) {
