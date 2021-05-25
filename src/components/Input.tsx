@@ -59,7 +59,7 @@ export const InputExplain = (props: InputExplainProps) => {
 export const InputTooltip = styled.div<{ isVisible?: boolean }>`
   display: ${props => props.isVisible ? 'block' : 'none'};
   position: absolute;
-  padding: 2px 0;
+  padding: 8px 0;
   background: white;
   border-radius: 8px;
   margin: auto;

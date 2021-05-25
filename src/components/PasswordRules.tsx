@@ -1,7 +1,5 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
-import iconQuestion from '../resources/images/icon-question.png'
-import iconSuccess from '../resources/images/success.png'
 
 const Container = styled.div`
   color: black;
@@ -25,14 +23,6 @@ const IconCommon = styled.div`
   background-repeat: no-repeat;
   background-size: 24px;
   background-position: center;
-`
-
-const IconQuestion = styled(IconCommon)`background-image: url(${iconQuestion});`
-const IconSuccess = styled(IconCommon)`background-size: 18px;background-image: url(${iconSuccess});`
-const Dot = styled(IconCommon)`
-  background-color: #bbb;
-  border-radius: 50%;
-  display: inline-block;
 `
 
 export const getPasswordStrength = (value: string) => {

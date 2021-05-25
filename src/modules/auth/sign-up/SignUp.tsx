@@ -135,7 +135,7 @@ const SignUp = () => {
               onFocus={() => setPasswordFocused(true)}
               onBlur={() => setPasswordFocused(false)}
             />
-            <InputTooltip isVisible={true}>
+            <InputTooltip isVisible={isPasswordFocused}>
               <PasswordRules password={password} />
             </InputTooltip>
           </InputWrapper>
