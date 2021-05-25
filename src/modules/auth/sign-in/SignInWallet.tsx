@@ -149,10 +149,10 @@ const SignInWallet = observer(() => {
   } else {
     content = <div>
       <Block marginTop={98} />
-      <PrimaryDescription>We could not find WE Wallet extension</PrimaryDescription>
+      <PrimaryDescription>We can’t find WE Wallet extension</PrimaryDescription>
       <Block marginTop={40} />
       <Description>
-        To use existing address from Waves Enterprise blockchain, you need to install Waves Enterprise Wallet from Google Chrome Web Store
+        To use existing address from Waves Enterprise blockchain, you need to install Waves Enterprise Wallet extension from Google Chrome Web Store
       </Description>
       <Block marginTop={64} />
       <ButtonContainer>

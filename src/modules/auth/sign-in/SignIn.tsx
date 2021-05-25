@@ -66,12 +66,13 @@ const SignIn = () => {
     const passwordErrors = []
     if (!username) {
       usernameErrors.push(FormErrors.EnterAnEmail)
-    }
-    if(!validateEmail(username)) {
-      usernameErrors.push(FormErrors.EmailIsIncorrect)
-    }
-    if (!password) {
-      passwordErrors.push(FormErrors.EnterAPassword)
+    } else {
+      if(!validateEmail(username)) {
+        usernameErrors.push(FormErrors.EmailIsIncorrect)
+      }
+      if (!password) {
+        passwordErrors.push(FormErrors.EnterAPassword)
+      }
     }
     setUsernameError(usernameErrors.length ? usernameErrors[0] : '')
     setPasswordError(passwordErrors.length ? passwordErrors[0] : '')
@@ -105,6 +106,11 @@ const SignIn = () => {
           authStore.loginWithTokenPair(tokenPair)
           router.navigate(RouteName.SignInWallet)
         }
+      } else {
+        const msg = usernameError || passwordError
+        toast(<ErrorNotification text={msg} />, {
+          hideProgressBar: true
+        })
       }
     }
   }

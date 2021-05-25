@@ -78,9 +78,19 @@ const RowText = styled.div`
   font-size: 13px;
 `
 
-const CheckSymbol = styled.span`
+const CheckContainer = styled.div`
   width: 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`
+
+const DotSymbol = styled.div`
+  width: 4px;
+  height: 4px;
   text-align: center;
+  background: black;
+  border-radius: 50%;
 `
 
 interface IRowProps {
@@ -91,7 +101,14 @@ interface IRowProps {
 const ValidationRow = (props: IRowProps) => {
   const { isPassed, text } = props
   return <RowContainer isPassed={isPassed}>
-    <CheckSymbol>{isPassed ? '✓' : '·'}</CheckSymbol>
+    {isPassed &&
+      <CheckContainer>✓</CheckContainer>
+    }
+    {!isPassed &&
+      <CheckContainer>
+        <DotSymbol />
+      </CheckContainer>
+    }
     <RowText>{text}</RowText>
   </RowContainer>
 }
