@@ -28,7 +28,7 @@ const Container = styled.div`
 const Centered = styled.div`text-align: center;`
 
 const Description = styled(Centered)`
-  font-weight: 600;
+  font-weight: 500;
   font-size: 15px;
   line-height: 22px;
   color: #525252;
@@ -106,6 +106,8 @@ export const FillForm = (props: IProps) => {
       setWestError(westErrorMsg)
     }
   }
+  const usdpPartPercent = configStore.getUsdpPart() * 100
+  const westPartPercent = configStore.getWestCollateral() * 100
   return <Container>
     <Block marginTop={40}>
       <RateTitle>Current WEST price is {roundNumber(props.westRate)}$</RateTitle>
@@ -128,7 +130,7 @@ export const FillForm = (props: IProps) => {
       />
     </Block>
     <div>
-      <Description>EAST is collateralized by 50% USDP and 250% WEST.</Description>
+      <Description>EAST is collateralized by {usdpPartPercent}% USDP and {westPartPercent}% WEST.</Description>
     </div>
     <Block24>
       <Description>

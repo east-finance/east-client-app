@@ -3,16 +3,21 @@ import { useRoute } from 'react-router5'
 import { Block, Block24 } from '../../../components/Block'
 import styled from 'styled-components'
 import useStores from '../../../hooks/useStores'
-import { Input, InputStatus } from '../../../components/Input'
+import { Input, InputStatus, InputTooltip } from '../../../components/Input'
 import { Button } from '../../../components/Button'
 import { validateEmail } from '../utils'
 import { FormErrors } from '../constants'
 import { toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import { ErrorNotification } from '../../../components/Notification'
+import { getPasswordStrength, PasswordRules } from '../../../components/PasswordRules'
 
 const Container = styled.div`
   width: 376px;
+`
+
+const InputWrapper = styled.div`
+  position: relative;
 `
 
 const SignUp = () => {
@@ -22,38 +27,46 @@ const SignUp = () => {
   const [username, setUsername] = useState('')
   const [usernameStatus, setUsernameStatus] = useState(InputStatus.default)
   const [password, setPassword] = useState('')
-  const [confirm, setConfirm] = useState('')
+  const [isPasswordFocused, setPasswordFocused] = useState(false)
   const [passwordStatus, setPasswordStatus] = useState(InputStatus.default)
+  const [confirm, setConfirm] = useState('')
+  const [isConfirmFocused, setConfirmFocused] = useState(false)
   const [inProgress, setInProgress] = useState(false)
 
   const validateForm = () => {
     let uStatus = InputStatus.default
     let passStatus = InputStatus.default
-    let msg = ''
+    let message = ''
     if(!username) {
-      msg = FormErrors.EnterAnEmail
+      message = FormErrors.EnterAnEmail
     } else if(!validateEmail(username)) {
-      msg = FormErrors.EmailIsIncorrect
+      message = FormErrors.EmailIsIncorrect
     }
-    if (msg) {
+    if (message) {
       uStatus = InputStatus.error
     } else {
-      if (!password || !confirm) {
-        msg = FormErrors.EnterAPassword
+      if(!password) {
+        message = 'Enter a password'
+      } else if (!confirm) {
+        message = 'Confirm password'
+      } else {
+        if (password !== confirm) {
+          message = 'Passwords didn\'t match'
+        }
       }
-      if(msg) {
+      if(message) {
         passStatus = InputStatus.error
       }
     }
-    setUsernameStatus(uStatus)
-    setPasswordStatus(passStatus)
-    if (msg) {
-      toast.dismiss()
-      toast(<ErrorNotification text={msg} />, {
-        hideProgressBar: true
-      })
+    const passwordRulesErrors = getPasswordStrength(password)
+    if (passwordRulesErrors.length > 0) {
+      passStatus = InputStatus.error
     }
-    return msg
+    return {
+      message,
+      uStatus,
+      passStatus
+    }
   }
 
   const onChangeLogin = (e: any) => {
@@ -70,17 +83,20 @@ const SignUp = () => {
 
   const onSignUpClicked = async () => {
     try {
-      const formError = validateForm()
-      if (formError) {
-        toast.dismiss()
-        toast(<ErrorNotification text={formError} />, {
-          hideProgressBar: true
-        })
+      // toast.dismiss()
+      const { message, uStatus, passStatus } = validateForm()
+      if (uStatus || passStatus) {
+        setUsernameStatus(uStatus)
+        setPasswordStatus(passStatus)
+        if (message) {
+          toast(<ErrorNotification text={message} />, {
+            hideProgressBar: true
+          })
+        }
       } else {
         try {
           setInProgress(true)
-          const result = await api.signUp(username, password)
-          console.log('Signup result', result)
+          await api.signUp(username, password)
         } catch (e) {
           console.log('Signup error:', e.message)
           const { errors } =  e.response.data
@@ -96,10 +112,8 @@ const SignUp = () => {
           }
           setUsernameStatus(uStatus)
           setPasswordStatus(passStatus)
-          toast.dismiss()
           toast(<ErrorNotification text={msg} />, {
-            hideProgressBar: true,
-            autoClose: 5000000
+            hideProgressBar: true
           })
         } finally {
           setInProgress(false)
@@ -112,12 +126,39 @@ const SignUp = () => {
 
   return <Container>
     <Input placeholder={'Email'} status={usernameStatus} onChange={onChangeLogin} />
-    <Block24 />
-    <Input placeholder={'Password'} type={'password'} status={passwordStatus} onChange={onChangePassword} />
-    <Block24 />
-    <Input placeholder={'Confirm password'} type={'password'} status={passwordStatus} onChange={onChangeConfirm} />
-    <Block marginTop={54} />
-    <Button type={'primary'} onClick={onSignUpClicked}>Sign Up</Button>
+    <Block24>
+      <InputWrapper>
+        <Input
+          placeholder={'Password'}
+          type={'password'}
+          status={passwordStatus}
+          onChange={onChangePassword}
+          onFocus={() => setPasswordFocused(true)}
+          onBlur={() => setPasswordFocused(false)}
+        />
+        <InputTooltip isVisible={isPasswordFocused}>
+          <PasswordRules password={password} />
+        </InputTooltip>
+      </InputWrapper>
+    </Block24>
+    <Block24>
+      <InputWrapper>
+        <Input
+          placeholder={'Confirm password'}
+          type={'password'}
+          status={passwordStatus}
+          onChange={onChangeConfirm}
+          onFocus={() => setConfirmFocused(true)}
+          onBlur={() => setConfirmFocused(false)}
+        />
+        <InputTooltip isVisible={isConfirmFocused}>
+          <PasswordRules password={confirm} />
+        </InputTooltip>
+      </InputWrapper>
+    </Block24>
+    <Block marginTop={54}>
+      <Button type={'primary'} onClick={onSignUpClicked}>Sign Up</Button>
+    </Block>
   </Container>
 }
 

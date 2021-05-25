@@ -93,7 +93,7 @@ const SignIn = () => {
           if (errors.includes('user.not.found') || errors.includes('wrong.password')) {
             toastText = 'Wrong email or password'
           }
-          toast.dismiss()
+          // toast.dismiss()
           toast(<ErrorNotification text={toastText} />, {
             hideProgressBar: true
           })

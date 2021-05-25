@@ -51,7 +51,7 @@ const PasswordRecovery = () => {
       const err = validateForm()
       if (err) {
         setUsernameError(err)
-        toast.dismiss()
+        // toast.dismiss()
         toast(<ErrorNotification text={err} />, {
           hideProgressBar: true
         })

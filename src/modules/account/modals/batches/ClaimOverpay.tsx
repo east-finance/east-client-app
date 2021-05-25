@@ -117,7 +117,6 @@ export const ClaimOverpay = (props: IBatchDetailsProps) => {
         toast('Transaction sent!')
       } catch (e) {
         console.error('Eror on send claim overpay', e)
-        toast.dismiss()
         toast(<ErrorNotification text={'Error on send Claim Overpay'} />, {
           hideProgressBar: true
         })

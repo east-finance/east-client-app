@@ -56,6 +56,47 @@ export const InputExplain = (props: InputExplainProps) => {
   </InputExplainContainer>
 }
 
+export const InputTooltip = styled.div<{ isVisible?: boolean }>`
+  display: ${props => props.isVisible ? 'block' : 'none'};
+  position: absolute;
+  padding: 2px 0;
+  background: white;
+  border-radius: 8px;
+  margin: auto;
+  top: 0;
+  left: 100%;
+  width: 320px;
+  margin-left: 16px;
+  box-shadow: 0px 4px 72px rgba(0, 0, 0, 0.15);
+  z-index: 10;
+  
+  &:after {
+    content: "";
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-width: 8px;
+    border-style: solid;
+    border-color: transparent #FFFFFF transparent transparent;
+    top: 20px;
+    left: -16px;
+  }
+
+  @media only screen and (max-width: 800px) {
+    top: 70px;
+    left: 0;
+    right: 0;
+    width: 100%;
+    margin-left: unset;
+
+    &:after {
+      border-color: transparent transparent #FFFFFF transparent;
+      top: -16px;
+      left: calc(50% - 8px);
+    }
+  }
+`
+
 /* ===== SIMPLE INPUT ====== */
 
 const SimpleInputContainer = styled.div`
