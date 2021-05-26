@@ -62,32 +62,41 @@ const SignIn = () => {
   }
 
   const validateForm = () => {
-    const usernameErrors = []
-    const passwordErrors = []
+    let userMessage = ''
+    let passMessage = ''
     if (!username) {
-      usernameErrors.push(FormErrors.EnterEmail)
+      userMessage = FormErrors.EnterEmail
     } else {
       if(!validateEmail(username)) {
-        usernameErrors.push(FormErrors.EmailIsIncorrect)
+        userMessage = FormErrors.EmailIsIncorrect
       }
       if (!password) {
-        passwordErrors.push(FormErrors.EnterPassword)
+        passMessage = FormErrors.EnterPassword
       }
     }
-    setUsernameError(usernameErrors.length ? usernameErrors[0] : '')
-    setPasswordError(passwordErrors.length ? passwordErrors[0] : '')
+    return {
+      userMessage,
+      passMessage
+    }
   }
 
   const onLoginClick = async () => {
     if (!inProgress) {
-      validateForm()
-      if (!usernameError && !passwordError) {
+      const { userMessage, passMessage } = validateForm()
+      setUsernameError(userMessage)
+      setPasswordError(passMessage)
+      const msg = userMessage || passMessage
+      if (msg) {
+        toast(<ErrorNotification text={msg} />, {
+          hideProgressBar: true
+        })
+      } else {
         let tokenPair = null
         try {
           setInProgress(true)
           tokenPair = await api.signIn(username, password)
         } catch (e) {
-          let toastText = 'Unknown error. Try again later'
+          let toastText = 'Unknown error. Try again later.'
           if (e.response) {
             const { errors } =  e.response.data
             setUsernameError('login_error')
@@ -108,11 +117,6 @@ const SignIn = () => {
           authStore.loginWithTokenPair(tokenPair)
           router.navigate(RouteName.SignInWallet)
         }
-      } else {
-        // const msg = usernameError || passwordError
-        // toast(<ErrorNotification text={msg} />, {
-        //   hideProgressBar: true
-        // })
       }
     }
   }

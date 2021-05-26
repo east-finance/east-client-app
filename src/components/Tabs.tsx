@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useState } from 'react'
+import React, { useState } from 'react'
 import styled from 'styled-components'
 
 interface TabItem {
@@ -32,10 +32,17 @@ const TabsTitleItem = styled.div<{isActiveTab: boolean}>`
   cursor: ${props => props.isActiveTab ? 'default' : 'pointer'};
   opacity: ${props => props.isActiveTab ? 1 : 0.4 };
   user-select: none;
+  transition: opacity 250ms;
   
   :not(:first-child) {
     margin-left: 16px;
   }
+
+  ${({ isActiveTab }) => !isActiveTab && `
+    :hover {
+      opacity: 0.8;
+    }
+  `}
 `
 
 const TabsContent = styled.div`
