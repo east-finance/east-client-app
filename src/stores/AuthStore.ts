@@ -38,7 +38,7 @@ export default class AuthStore {
 
   async initStore (router: Router, api: Api): Promise<void> {
     const { name, params } = router.getState()
-    if (![RouteName.SignIn, RouteName.SignUp, RouteName.PasswordRecovery, RouteName.PasswordReset].includes(name)) { //!name.startsWith(RouteSegment.auth)
+    if (![RouteName.SignIn, RouteName.SignUp, RouteName.PasswordRecovery, RouteName.PasswordReset, RouteName.ConfirmUser].includes(name)) { //!name.startsWith(RouteSegment.auth)
       router.navigate(RouteName.SignIn)
       // const tokenPair = this.readTokenPair()
       // if (tokenPair) {

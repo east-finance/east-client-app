@@ -11,7 +11,7 @@ export default {
     path: '/sign-up'
   }, {
     name: RouteSegment.signInWallet,
-    path: '/sign-in-wallet'
+    path: '/connect-wallet'
   }, {
     name: RouteSegment.passwordRecovery,
     path: '/recover'
@@ -22,5 +22,8 @@ export default {
       name: RouteSegment.passwordReset,
       path: '/reset-password?token&email'
     }
+  }, {
+    name: RouteSegment.activate,
+    path: '/activate?token'
   }]
 }

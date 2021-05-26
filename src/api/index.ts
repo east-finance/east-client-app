@@ -85,6 +85,11 @@ export class Api {
     return data
   }
 
+  public confirmUser = async (token: string) => {
+    const { data } = await this._unauthorizedClient.get(`/user/confirm/${token}`)
+    return data
+  }
+
   public getAddressBalance = async (address: string) => {
     const { data } = await this._apiClient.get(`${NODE_ADDRESS}/addresses/balance/${address}`)
     return data

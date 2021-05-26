@@ -12,6 +12,7 @@ import SignInWallet from './sign-in/SignInWallet'
 import { NavigationLeft } from '../../components/Button'
 import PasswordRecovery from './password-recovery/PasswordRecovery'
 import PasswordReset from './password-reset/PasswordReset'
+import ConfirmUser from './confirm-user/ConfirmUser'
 
 const Container = styled.div`
   position: relative;
@@ -96,6 +97,9 @@ const Auth: React.FunctionComponent = () =>  {
   } else if(routeName === RouteName.PasswordReset) {
     title = 'Reset password'
     content = <PasswordReset />
+  } else if(routeName === RouteName.ConfirmUser) {
+    title = 'User confirmation'
+    content = <ConfirmUser />
   } else {
     content = <div>Another auth content</div>
   }
