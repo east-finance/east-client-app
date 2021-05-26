@@ -69,10 +69,10 @@ const SignInWallet = observer(() => {
   const { api, authStore, dataStore, configStore } = useStores()
   const { router } = useRoute()
 
-  const [noAccounts, setNoAccounts] = useState(false)
   const [selectedAddress, setSelectedAddress] = useState('')
   const [addressBalance, setAddressBalance] = useState('0')
   const [inProgress, setInProgress] = useState(false)
+  const [walletErrorCode, setWalletErrorCode] = useState(null)
 
   const onUseAddressClicked = async () => {
     try {
@@ -87,31 +87,40 @@ const SignInWallet = observer(() => {
     authStore.setLoggedIn(true)
   }
 
-  useEffect(() => {
-    const checkWallet = async () => {
-      try {
-        setInProgress(true)
-        const state = await window.WEWallet.publicState()
-        console.log('Wallet state:', state)
-        if (state.account) {
-          const { address, balance } = state.account
-          setSelectedAddress(address)
-          const balanceFormatted = new BigNumber(balance.available).dividedBy(Math.pow(10, WestDecimals)).toString()
-          setAddressBalance(balanceFormatted)
-        }
-      } catch (e) {
-        console.log('Wallet auth error:', e)
-        if (e && e.code === '14') {
-          setNoAccounts(true)
-        }
-      } finally {
-        setInProgress(false)
+  const checkWallet = async () => {
+    try {
+      setInProgress(true)
+      setWalletErrorCode(null)
+      const state = await window.WEWallet.publicState()
+      console.log('Wallet state:', state)
+      if (state.account) {
+        const { address, balance } = state.account
+        setSelectedAddress(address)
+        const balanceFormatted = new BigNumber(balance.available).dividedBy(Math.pow(10, WestDecimals)).toString()
+        setAddressBalance(balanceFormatted)
       }
+    } catch (e) {
+      console.log('Wallet auth error:', e)
+      if (e && e.code) {
+        setWalletErrorCode(e.code)
+      }
+      // if (e && e.code === '14') {
+      //   setNoAccounts(true)
+      // }
+    } finally {
+      setInProgress(false)
     }
+  }
+
+  useEffect(() => {
     let intervalId: any
     if (window.WEWallet) {
       checkWallet()
-      intervalId = setInterval(checkWallet, 5000)
+      intervalId = setInterval(() => {
+        if (!walletErrorCode) {
+          checkWallet()
+        }
+      }, 5000)
     }
 
     return function cleanup () {
@@ -144,9 +153,21 @@ const SignInWallet = observer(() => {
           <SelectedAddressInfo>To change the address, choose another one in WE Wallet</SelectedAddressInfo>
         </Block24>
       </WalletInfoContainer>
-    } else if (noAccounts) {
+    } else if (walletErrorCode === '14') {
       content = <CenteredContent>
         <Description>We can’t detect any addresses in your WE Wallet extension</Description>
+      </CenteredContent>
+    } else if(walletErrorCode === '12') {
+      content = <CenteredContent>
+        <Description>Request to WE Wallet is rejected by user.</Description>
+        <Block16>
+          <Description>Allow access in WE Wallet Permissions control and try again.</Description>
+        </Block16>
+        <Block24>
+          <ButtonContainer>
+            <Button onClick={checkWallet}>Try again</Button>
+          </ButtonContainer>
+        </Block24>
       </CenteredContent>
     } else if(inProgress) {
       content = <CenteredContent>
