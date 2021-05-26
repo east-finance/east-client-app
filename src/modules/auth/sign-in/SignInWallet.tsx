@@ -72,6 +72,7 @@ const SignInWallet = observer(() => {
   const [noAccounts, setNoAccounts] = useState(false)
   const [selectedAddress, setSelectedAddress] = useState('')
   const [addressBalance, setAddressBalance] = useState('0')
+  const [inProgress, setInProgress] = useState(false)
 
   const onUseAddressClicked = async () => {
     try {
@@ -89,6 +90,7 @@ const SignInWallet = observer(() => {
   useEffect(() => {
     const checkWallet = async () => {
       try {
+        setInProgress(true)
         const state = await window.WEWallet.publicState()
         console.log('Wallet state:', state)
         if (state.account) {
@@ -102,6 +104,8 @@ const SignInWallet = observer(() => {
         if (e && e.code === '14') {
           setNoAccounts(true)
         }
+      } finally {
+        setInProgress(false)
       }
     }
     let intervalId: any
@@ -144,10 +148,14 @@ const SignInWallet = observer(() => {
       content = <CenteredContent>
         <Description>We can’t detect any addresses in your WE Wallet extension</Description>
       </CenteredContent>
+    } else if(inProgress) {
+      content = <CenteredContent>
+        <Description>Retrieving data from WE Wallet...</Description>
+      </CenteredContent>
     } else {
-      content = <Block marginTop={98}>
+      content = <CenteredContent>
         <Description>Unknown error</Description>
-      </Block>
+      </CenteredContent>
     }
   } else {
     content = <div>
