@@ -11,6 +11,7 @@ import EastLogo from '../../resources/images/east-logo.svg'
 import SignInWallet from './sign-in/SignInWallet'
 import { NavigationLeft } from '../../components/Button'
 import PasswordRecovery from './password-recovery/PasswordRecovery'
+import PasswordReset from './password-reset/PasswordReset'
 
 const Container = styled.div`
   position: relative;
@@ -92,6 +93,9 @@ const Auth: React.FunctionComponent = () =>  {
   } else if(routeName === RouteName.PasswordRecovery) {
     title = 'Password recovery'
     content = <PasswordRecovery />
+  } else if(routeName === RouteName.PasswordReset) {
+    title = 'Reset password'
+    content = <PasswordReset />
   } else {
     content = <div>Another auth content</div>
   }

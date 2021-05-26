@@ -8,9 +8,9 @@ import { Input, InputStatus } from '../../../components/Input'
 import { Button } from '../../../components/Button'
 import WELogo from '../../../resources/images/we-logo-small.svg'
 import { RouteName } from '../../../router/segments'
-import { FormErrors } from '../constants'
 import { validateEmail } from '../utils'
 import { ErrorNotification } from '../../../components/Notification'
+import { FormErrors } from '../../../components/PasswordRules'
 
 const Container = styled.div`
   width: 376px;
@@ -45,9 +45,9 @@ const AdditionalText = styled.span`
 
 const SignIn = () => {
   const { api, authStore } = useStores()
-  const { router } = useRoute()
+  const { router, route } = useRoute()
 
-  const [username, setUsername] = useState(localStorage.getItem('test_login') || '')
+  const [username, setUsername] = useState(localStorage.getItem('test_login') || route.params.email || '')
   const [password, setPassword] = useState(localStorage.getItem('test_pass') || '')
   const [usernameError, setUsernameError] = useState('')
   const [passwordError, setPasswordError] = useState('')
@@ -65,13 +65,13 @@ const SignIn = () => {
     const usernameErrors = []
     const passwordErrors = []
     if (!username) {
-      usernameErrors.push(FormErrors.EnterAnEmail)
+      usernameErrors.push(FormErrors.EnterEmail)
     } else {
       if(!validateEmail(username)) {
         usernameErrors.push(FormErrors.EmailIsIncorrect)
       }
       if (!password) {
-        passwordErrors.push(FormErrors.EnterAPassword)
+        passwordErrors.push(FormErrors.EnterPassword)
       }
     }
     setUsernameError(usernameErrors.length ? usernameErrors[0] : '')

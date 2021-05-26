@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import styled from 'styled-components'
 
 const Container = styled.div`
@@ -16,14 +16,6 @@ const PasswordErrors = {
 }
 
 const PasswordMinLength = 8
-
-const IconCommon = styled.div`
-  width: 24px;
-  height: 24px;
-  background-repeat: no-repeat;
-  background-size: 24px;
-  background-position: center;
-`
 
 export const getPasswordStrength = (value: string) => {
   const failed = []
@@ -117,4 +109,13 @@ export const PasswordRules = (props: IProps) => {
     <ValidationRow isPassed={!errors.includes(PasswordErrors.RequiredSpecialChar)} text={'At least 1 special char (@#&% etc.)'} />
     <ValidationRow isPassed={!errors.includes(PasswordErrors.Seq)} text={'No more than two identical symbols in a row'} />
   </Container>
+}
+
+export enum FormErrors {
+  EnterEmail = 'Enter an email',
+  EnterPassword = 'Enter a password',
+  EnterConfirm = 'Enter a confirm',
+  EmailIsIncorrect = 'Email is incorrect',
+  ConfirmDidntMatch = 'Confirm didn\'t match password',
+  PasswordRules = 'Check password rules'
 }

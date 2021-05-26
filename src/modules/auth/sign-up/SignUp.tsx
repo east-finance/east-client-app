@@ -6,11 +6,10 @@ import useStores from '../../../hooks/useStores'
 import { Input, InputStatus, InputTooltip } from '../../../components/Input'
 import { Button } from '../../../components/Button'
 import { validateEmail } from '../utils'
-import { FormErrors } from '../constants'
 import { toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import { ErrorNotification } from '../../../components/Notification'
-import { getPasswordStrength, PasswordRules } from '../../../components/PasswordRules'
+import { FormErrors, getPasswordStrength, PasswordRules } from '../../../components/PasswordRules'
 
 const Container = styled.div`
   width: 376px;
@@ -48,7 +47,7 @@ const SignUp = () => {
     let passStatus = InputStatus.default
     let message = ''
     if(!username) {
-      message = FormErrors.EnterAnEmail
+      message = FormErrors.EnterEmail
     } else if(!validateEmail(username)) {
       message = FormErrors.EmailIsIncorrect
     }

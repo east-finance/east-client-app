@@ -9,6 +9,7 @@ const AUTH_SERVICE_ADDRESS = '/authServiceAddress'
 const NODE_ADDRESS = '/nodeAddress'
 const API_ADDRESS = '/apiAddress'
 const API_VERSION_PREFIX = '/v1'
+const EastClientSource = 'east-client'
 
 export class Api {
   private _unauthorizedClient: AxiosInstance = axios.create({
@@ -23,13 +24,14 @@ export class Api {
   }
 
   public signUp  = async (username: string, password: string): Promise<ITokenPair> => {
-    const { data } = await this._unauthorizedClient.post('/user', { username, password, source: 'east_client' })
+    const { data } = await this._unauthorizedClient.post('/user', { username, password, source: EastClientSource })
     return data
   }
 
   public changePassword  = async (password: string): Promise<ITokenPair> => {
     const { data } = await this._apiClient.post(`${AUTH_SERVICE_ADDRESS}/v1/user/password/change`, {
-      password, passwordRepeat: password
+      password,
+      passwordRepeat: password
     })
     return data
   }
@@ -74,7 +76,12 @@ export class Api {
   }
 
   public sendPasswordRecover = async (email: string) => {
-    const { data } = await this._unauthorizedClient.post('/user/password/restore', { email })
+    const { data } = await this._unauthorizedClient.post('/user/password/restore', { email, source: EastClientSource })
+    return data
+  }
+
+  public resetPassword = async (token: string, password: string) => {
+    const { data } = await this._unauthorizedClient.post('/user/password/reset', { token, password })
     return data
   }
 

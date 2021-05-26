@@ -2,22 +2,22 @@ import React from 'react'
 import styled from 'styled-components'
 import iconCross from '../resources/images/icon-cross.png'
 
-const Container = styled.div`
+const Container = styled.div<{ type: 'default' | 'error' }>`
   display: flex;
   align-items: center;
   font-family: Cairo,sans-serif;
   font-style: normal;
-  font-weight: bold;
+  font-weight: 600;
   font-size: 16px;
-  color: white;
+  color: ${props => props.type === 'default' ? '#0A0606' : 'white'};
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
   padding-left: 16px;
-  background: #F0212B;
-  box-shadow: 0px 32px 32px rgb(0 0 0 / 15%);
+  background: ${props => props.type === 'default' ? 'white' : '#F0212B'};
+  box-shadow: 0 32px 32px rgb(0 0 0 / 15%);
   border-radius: 4px;
 `
 
@@ -26,7 +26,13 @@ export interface IProps {
 }
 
 export const ErrorNotification = (props: IProps) => {
-  return <Container>
+  return <Container type={'error'}>
+    {props.text}
+  </Container>
+}
+
+export const TextNotification = (props: IProps) => {
+  return <Container type={'default'}>
     {props.text}
   </Container>
 }

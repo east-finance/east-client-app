@@ -6,10 +6,10 @@ import useStores from '../../../hooks/useStores'
 import { Input, InputStatus } from '../../../components/Input'
 import { Button } from '../../../components/Button'
 import { RouteName } from '../../../router/segments'
-import { FormErrors } from '../constants'
 import { validateEmail } from '../utils'
 import { toast } from 'react-toastify'
 import { ErrorNotification } from '../../../components/Notification'
+import { FormErrors } from '../../../components/PasswordRules'
 
 const Container = styled.div`
   width: 376px;
@@ -39,7 +39,7 @@ const PasswordRecovery = () => {
   const validateForm = () => {
     let error = ''
     if (!username) {
-      error = FormErrors.EnterAnEmail
+      error = FormErrors.EnterEmail
     } else if(!validateEmail(username)) {
       error = FormErrors.EmailIsIncorrect
     }
@@ -56,11 +56,23 @@ const PasswordRecovery = () => {
           hideProgressBar: true
         })
       } else {
+        setUsernameError('')
         await api.sendPasswordRecover(username)
         setEmailSent(true)
       }
     } catch (e) {
       console.error('Recover error:', e.message)
+      let toastMessage = 'Unknown error. Try again later.'
+      if (e.response) {
+        const { data: { errors } } = e.response
+        if (errors.includes('email must be an email')) {
+          toastMessage = FormErrors.EmailIsIncorrect
+          setUsernameError(FormErrors.EmailIsIncorrect)
+        }
+      }
+      toast(<ErrorNotification text={toastMessage} />, {
+        hideProgressBar: true
+      })
     }
   }
 
@@ -87,7 +99,10 @@ const PasswordRecovery = () => {
     </Block>
     <Block marginTop={130}>
       {emailSent &&
-        <Button type={'primary'} onClick={() => setEmailSent(false)}>
+        <Button type={'primary'} onClick={() => {
+          setUsernameError('')
+          setEmailSent(false)
+        }}>
           Send another email
         </Button>
       }

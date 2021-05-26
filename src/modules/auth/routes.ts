@@ -5,7 +5,7 @@ export default {
   path: '/auth',
   children: [{
     name: RouteSegment.signIn,
-    path: '/sign-in'
+    path: '/sign-in?email'
   }, {
     name: RouteSegment.signUp,
     path: '/sign-up'
@@ -15,5 +15,12 @@ export default {
   }, {
     name: RouteSegment.passwordRecovery,
     path: '/recover'
+  }, {
+    name: RouteSegment.passwordRestore,
+    path: '/restore',
+    children: {
+      name: RouteSegment.passwordReset,
+      path: '/reset-password?token&email'
+    }
   }]
 }
