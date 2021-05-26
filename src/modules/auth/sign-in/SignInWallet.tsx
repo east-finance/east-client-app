@@ -8,7 +8,6 @@ import { observer } from 'mobx-react'
 import { RouteName } from '../../../router/segments'
 import { BigNumber } from 'bignumber.js'
 import { WestDecimals } from '../../../constants'
-import { config } from '@wavesenterprise/js-sdk'
 
 const Container = styled.div`
   width: 640px;
@@ -60,6 +59,10 @@ const SelectedAddressInfo = styled.div`
 
 const AddressBalance = styled(SelectedAddress)`
   opacity: 0.5;
+`
+
+const CenteredContent = styled.div`
+  margin-top: 40%;
 `
 
 const SignInWallet = observer(() => {
@@ -138,9 +141,9 @@ const SignInWallet = observer(() => {
         </Block24>
       </WalletInfoContainer>
     } else if (noAccounts) {
-      content = <Block marginTop={98}>
-        <Description>Add new account in Waves Enterprise Wallet</Description>
-      </Block>
+      content = <CenteredContent>
+        <Description>We can’t detect any addresses in your WE Wallet extension</Description>
+      </CenteredContent>
     } else {
       content = <Block marginTop={98}>
         <Description>Unknown error</Description>

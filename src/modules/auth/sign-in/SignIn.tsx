@@ -87,12 +87,14 @@ const SignIn = () => {
           setInProgress(true)
           tokenPair = await api.signIn(username, password)
         } catch (e) {
-          const { errors } =  e.response.data
-          setUsernameError('login_error')
-          setPasswordError('login_error')
-          let toastText = 'Unknown error. Try again later.'
-          if (errors.includes('user.not.found') || errors.includes('wrong.password')) {
-            toastText = 'Wrong email or password'
+          let toastText = 'Unknown error. Try again later'
+          if (e.response) {
+            const { errors } =  e.response.data
+            setUsernameError('login_error')
+            setPasswordError('login_error')
+            if (errors.includes('user.not.found') || errors.includes('wrong.password')) {
+              toastText = 'Wrong email or password'
+            }
           }
           // toast.dismiss()
           toast(<ErrorNotification text={toastText} />, {
@@ -107,10 +109,10 @@ const SignIn = () => {
           router.navigate(RouteName.SignInWallet)
         }
       } else {
-        const msg = usernameError || passwordError
-        toast(<ErrorNotification text={msg} />, {
-          hideProgressBar: true
-        })
+        // const msg = usernameError || passwordError
+        // toast(<ErrorNotification text={msg} />, {
+        //   hideProgressBar: true
+        // })
       }
     }
   }
