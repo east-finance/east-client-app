@@ -117,6 +117,7 @@ const SignInWallet = observer(() => {
     if (window.WEWallet) {
       checkWallet()
       intervalId = setInterval(() => {
+        console.log('walletErrorCode:', walletErrorCode)
         if (!walletErrorCode) {
           checkWallet()
         }
@@ -157,11 +158,11 @@ const SignInWallet = observer(() => {
       content = <CenteredContent>
         <Description>We can’t detect any addresses in your WE Wallet extension</Description>
       </CenteredContent>
-    } else if(walletErrorCode === '12') {
+    } else if(walletErrorCode === '12' || walletErrorCode === '10') {
       content = <CenteredContent>
         <Description>Request to WE Wallet is rejected by user.</Description>
         <Block16>
-          <Description>Allow access in WE Wallet Permissions control and try again.</Description>
+          <Description>Allow access in WE Wallet &quot;Permissions control&quot; menu and try again.</Description>
         </Block16>
         <Block24>
           <ButtonContainer>
