@@ -107,9 +107,9 @@ export const AccountMenu = observer(() => {
     </MenuItemContainer>
     <MenuItemContainer>
       {batchesAvailable &&
-        <Tooltip>Batches</Tooltip>
+        <Tooltip>Transactions</Tooltip>
       }
-      <MenuItem disabled={!batchesAvailable} onClick={() => batchesAvailable && router.navigate(RouteName.Batches)}>
+      <MenuItem onClick={() => router.navigate(RouteName.TransactionsHistory)}>
         <IconSafe />
       </MenuItem>
     </MenuItemContainer>

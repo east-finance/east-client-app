@@ -4,6 +4,7 @@ import { PrimaryTitle } from '../../../components/PrimaryTitle'
 import CardBackground from '../../resources/images/card_bg.png'
 import { PrimaryModal } from '../Modal'
 import { Block } from '../../../components/Block'
+import { GradientText } from '../../../components/Text'
 
 interface IProps {
   onClose: () => void
@@ -27,16 +28,12 @@ const ItemsContainer = styled.div`
   margin-bottom: 48px;
 `
 
-const TextItem = styled.span`
+const TextItem = styled(GradientText)`
   font-family: Cairo,sans-serif;
   font-style: normal;
   font-weight: bold;
   font-size: 16px;
-  line-height: 16px;
-
-  background: radial-gradient(rgba(29,135,214,1) 0%, rgba(81,78,255,1) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  line-height: 20px;
   cursor: pointer;
 
   &:not(:first-child) {

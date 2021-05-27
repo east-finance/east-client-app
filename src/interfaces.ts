@@ -16,3 +16,20 @@ export interface IBatch {
   westRateTimestamp: string;
   westRate: string;
 }
+
+export enum TransactionType {
+  mint = 'mint',
+  transfer = 'transfer',
+  supply = 'supply'
+}
+
+export interface ITransaction {
+  transactionType: TransactionType,
+  callTxId: string;
+  callTimestamp: string,
+  info: {
+    eastAmount: number;
+    usdpAmount?: number;
+    westAmount?: number;
+  }
+}

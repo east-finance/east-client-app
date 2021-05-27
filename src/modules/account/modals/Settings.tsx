@@ -8,6 +8,7 @@ import { Block, Block16 } from '../../../components/Block'
 import { InputStatus, SimpleInput } from '../../../components/Input'
 import { CrossIcon } from '../../../components/Icons'
 import useStores from '../../../hooks/useStores'
+import { GradientText } from '../../../components/Text'
 
 interface IProps {
   onClose: () => void
@@ -57,15 +58,14 @@ const OptionsContainer = styled.div`
   margin-bottom: 60px;
 `
 
-const Option = styled.div`
+const Option = styled(GradientText)`
+  display: block;
+  margin-top: 24px;
   font-family: Cairo,sans-serif;
   font-style: normal;
   font-weight: 600;
   font-size: 16px;
   line-height: 20px;
-  background: radial-gradient(rgba(29,135,214,1) 0%, rgba(81,78,255,1) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
   cursor: pointer;
 `
 

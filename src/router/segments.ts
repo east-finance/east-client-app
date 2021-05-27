@@ -13,6 +13,7 @@ export const RouteSegment = {
   buyEast: 'buyEast',
   batches: 'batches',
   transfer: 'transfer',
+  transactions: 'transactions',
   settings: 'settings',
   faq: 'faq',
 }
@@ -28,6 +29,7 @@ export const RouteName = {
   Batches: buildRouteName(RouteSegment.account, RouteSegment.batches),
   BuyEast: buildRouteName(RouteSegment.account, RouteSegment.buyEast),
   TransferEast: buildRouteName(RouteSegment.account, RouteSegment.transfer),
+  TransactionsHistory: buildRouteName(RouteSegment.account, RouteSegment.transactions),
   AccountSettings: buildRouteName(RouteSegment.account, RouteSegment.settings),
   Faq: buildRouteName(RouteSegment.account, RouteSegment.faq),
 }

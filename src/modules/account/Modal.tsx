@@ -6,6 +6,7 @@ import gradientBackground from '../../resources/images/gradient-bg2.png'
 interface ModalProps {
   children: JSX.Element | JSX.Element[];
   onClose?: () => void;
+  style?: any;
 }
 
 const Container = styled.div`
@@ -22,7 +23,7 @@ const IconContainer = styled.div`
 `
 
 export const PrimaryModal = (props: ModalProps) => {
-  return <Container>
+  return <Container style={{...props.style}}>
     {props.onClose &&
       <IconContainer>
         <CrossIcon color={'#D1D1D1'} onClick={props.onClose} />

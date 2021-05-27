@@ -10,6 +10,9 @@ export default {
     name: RouteSegment.batches,
     path: '/batches'
   }, {
+    name: RouteSegment.transactions,
+    path: '/transactions'
+  }, {
     name: RouteSegment.transfer,
     path: '/transfer'
   }, {
