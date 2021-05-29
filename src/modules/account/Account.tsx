@@ -15,6 +15,7 @@ import useOutsideAlerter from '../../hooks/useOutsideHandler'
 import { fadeIn, fadeInControls, fadeOut } from '../../components/Animations'
 import { BackgroundVideo } from '../../components/BackgroundVideo'
 import { WestChart } from './WestChart'
+import { TransactionsHistory } from './modals/TransactionsHistory'
 
 const Container = styled.div``
 
@@ -79,6 +80,8 @@ const getPrimaryModalByRoute = () => {
     return <BuyEast onClose={onCloseModal} />
   } else if (name.startsWith(RouteName.Batches)) {
     return <Batches onClose={onCloseModal} />
+  } else if (name.startsWith(RouteName.TransactionsHistory)) {
+    return <TransactionsHistory onClose={onCloseModal} />
   } else if (name.startsWith(RouteName.TransferEast)) {
     return <TransferEast onClose={onCloseModal} />
   } else if (name.startsWith(RouteName.AccountSettings)) {
