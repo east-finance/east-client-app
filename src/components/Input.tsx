@@ -7,7 +7,7 @@ export enum InputStatus {
   error = 'error'
 }
 
-const InputContainer = styled.input<{ status?: InputStatus }>`
+const InputContainer = styled.input<{ status?: InputStatus; }>`
   height: 55px;
   width: 100%;
   box-sizing: border-box;
@@ -27,8 +27,8 @@ const InputContainer = styled.input<{ status?: InputStatus }>`
   }
 
   ${({ status }) => status !== InputStatus.error && `
-    :hover {
-      border-color: #1D87D6
+    :hover, :focus {
+      border-color: #1D87D6;
     }
   `}
 `
@@ -38,9 +38,11 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string;
 }
 
-export const Input = (props: InputProps) => {
-  return <InputContainer {...props} />
+const InputRaw = (props: InputProps, ref: any) => {
+  return <InputContainer {...props} ref={ref} />
 }
+
+export const Input = React.forwardRef(InputRaw)
 
 interface InputExplainProps {
   text: string

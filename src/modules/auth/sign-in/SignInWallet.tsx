@@ -8,6 +8,7 @@ import { observer } from 'mobx-react'
 import { RouteName } from '../../../router/segments'
 import { BigNumber } from 'bignumber.js'
 import { WestDecimals } from '../../../constants'
+import { BeforeText, RelativeContainer, Spinner } from '../../../components/Spinner'
 
 const Container = styled.div`
   width: 640px;
@@ -66,7 +67,7 @@ const CenteredContent = styled.div`
 `
 
 const SignInWallet = observer(() => {
-  const { api, authStore, dataStore, configStore } = useStores()
+  const { authStore, dataStore, configStore } = useStores()
   const { router } = useRoute()
 
   const [selectedAddress, setSelectedAddress] = useState('')
@@ -147,7 +148,12 @@ const SignInWallet = observer(() => {
         </Block>
         <Block marginTop={64}>
           <ButtonContainer>
-            <Button type={'primary'} onClick={onUseAddressClicked}>Continue with this address</Button>
+            <Button type={'primary'} disabled={inProgress} onClick={onUseAddressClicked}>
+              <RelativeContainer>
+                {inProgress && <BeforeText><Spinner /></BeforeText>}
+                Continue with this address
+              </RelativeContainer>
+            </Button>
           </ButtonContainer>
         </Block>
         <Block24>

@@ -15,7 +15,8 @@ const PasswordErrors = {
   OnlyLatin: 'OnlyLatin'
 }
 
-const PasswordMinLength = 8
+export const PasswordMinLength = 8
+export const PasswordMaxLength = 30
 
 export const getPasswordStrength = (value: string) => {
   const failed = []
@@ -24,7 +25,7 @@ export const getPasswordStrength = (value: string) => {
     return Object.values(PasswordErrors)
   }
 
-  if (value.length < PasswordMinLength) {
+  if (value.length < PasswordMinLength || value.length > PasswordMaxLength) {
     failed.push(PasswordErrors.MinLength)
   }
   if (/(.)\1{2,}/.test(value)) {
@@ -102,7 +103,7 @@ export interface IProps {
 export const PasswordRules = (props: IProps) => {
   const errors = getPasswordStrength(props.password)
   return <Container>
-    <ValidationRow isPassed={!errors.includes(PasswordErrors.MinLength)} text={`At least ${PasswordMinLength} characters`} />
+    <ValidationRow isPassed={!errors.includes(PasswordErrors.MinLength)} text={`From ${PasswordMinLength} to ${PasswordMaxLength} characters`} />
     <ValidationRow isPassed={!errors.includes(PasswordErrors.OnlyLatin)} text={'Only latin characters'} />
     <ValidationRow isPassed={!errors.includes(PasswordErrors.RequiredLowerCase) && !errors.includes(PasswordErrors.RequiredUpperCase)} text={'Both uppercase and lowercase'} />
     <ValidationRow isPassed={!errors.includes(PasswordErrors.RequiredNumber)} text={'At least 1 digit'} />
@@ -114,8 +115,10 @@ export const PasswordRules = (props: IProps) => {
 export enum FormErrors {
   EnterEmail = 'Enter an email',
   EnterPassword = 'Enter a password',
-  EnterConfirm = 'Enter a confirm',
+  EnterConfirm = 'Confirm password',
   EmailIsIncorrect = 'Email is incorrect',
-  ConfirmDidntMatch = 'Confirm didn\'t match password',
-  PasswordRules = 'Check password rules'
+  EmailIsTooLong = 'Email is too long',
+  PasswordsNotMatch = 'Passwords do not match',
+  PasswordRules = 'Check password rules',
+  ConfirmRules = 'Check confirm rules'
 }

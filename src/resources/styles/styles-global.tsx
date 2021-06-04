@@ -13,7 +13,7 @@ const StyleGlobal = createGlobalStyle`
     color: #0a0606;
     font-family: Cairo, Helvetica, Arial, sans-serif;
     font-variant: normal;
-    background: #3277aa;
+    background: white;
   }
   
   //html, body {

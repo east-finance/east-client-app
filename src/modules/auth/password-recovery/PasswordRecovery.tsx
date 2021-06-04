@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { ChangeEvent, useState } from 'react'
 import { useRoute } from 'react-router5'
 import { Block, Block16 } from '../../../components/Block'
 import styled from 'styled-components'
@@ -32,8 +32,8 @@ const PasswordRecovery = () => {
   const [usernameError, setUsernameError] = useState('')
   const [emailSent, setEmailSent] = useState(false)
 
-  const onChangeEmail = (e: any) => {
-    setUsername(e.target.value)
+  const onChangeEmail = (e: ChangeEvent<HTMLInputElement>) => {
+    setUsername(e.target.value.trim())
   }
 
   const validateForm = () => {

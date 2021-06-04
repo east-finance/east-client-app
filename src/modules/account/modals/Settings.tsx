@@ -71,7 +71,7 @@ const Option = styled(GradientText)`
 
 const ValidationErrorWrapper = styled.div`
   height: 16px;
-  font-family: Cairo;
+  font-family: Cairo,sans-serif;
   font-weight: 600;
   font-size: 13px;
   line-height: 16px;

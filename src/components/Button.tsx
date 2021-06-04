@@ -6,7 +6,7 @@ import ArrowLeftButton from '../resources/images/arrow-left-button.png'
 
 interface ButtonProps extends HTMLAttributes<HTMLDivElement> {
   disabled?: boolean;
-  type?: 'default' | 'primary';
+  type?: 'default' | 'primary' | 'submit';
   children?: any;
 }
 
@@ -19,21 +19,29 @@ const ButtonContainer = styled.div<ButtonProps>`
   background: #F2F2F2;
   color: #000000;
   border-radius: 4px;
-  font-weight: 500;
+  font-weight: 600;
   font-size: 16px;
   cursor: pointer;
   user-select: none;
-  transition: all .4s ease-in-out;
+  //transition: all .4s ease-in-out;
+
 
   ${({ type }) => type === 'primary' && `
-    background: radial-gradient(204.55% 3032.86% at 67.55% 85.45%, rgba(172, 171, 216, 0) 0%, #514EFF 100%),linear-gradient(0deg, #1D87D6, #1D87D6);;
+    background: radial-gradient(204.55% 3032.86% at 67.55% 85.45%, rgba(172, 171, 216, 0) 0%, #514EFF 100%),
+    linear-gradient(0deg, #1D87D6, #1D87D6);
     color: white;
     background-size: 300% 100%;
-    transition: all .4s ease-in-out;
     
     :hover {
       background-position: 100% 0;
     }
+  `}
+
+  ${({ disabled }) => disabled && `
+    background: #dae1e9;
+    color: rgba(4, 53, 105, 0.5);
+    cursor: default;
+    pointer-events: none;
   `}
 `
 

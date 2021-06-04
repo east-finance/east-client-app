@@ -13,14 +13,19 @@ const Container = styled.div`
   margin: 0 auto;
 `
 
+const H3 = styled.div`
+  font-weight: 600;
+  font-size: 22px;
+`
+
 const PrimaryText = styled.div`
   font-weight: 600;
-  font-size: 18px;
+  font-size: 20px;
 `
 
 const SecondaryText = styled.div`
   font-weight: 300;
-  font-size: 15px;
+  font-size: 16px;
 `
 
 const NoTokenProvided = () => {
@@ -65,7 +70,9 @@ const ConfirmationError = (props: { token: string; errorCode: string; errorMessa
 const ConfirmationSuccess = (props: { confirmedEmail: string }) => {
   const { router } = useRoute()
   return <div>
-    <PrimaryText>User successfully confirmed</PrimaryText>
+    <div style={{ textAlign: 'center' }}>
+      <H3>User successfully confirmed</H3>
+    </div>
     <Block16>
       <Button type={'primary'} onClick={() => router.navigate(RouteName.SignIn, { email: props.confirmedEmail })}>Log in to EAST</Button>
     </Block16>
@@ -100,7 +107,7 @@ const ConfirmUser = () => {
         if (errors) {
           if (errors.includes(AuthError.TokenAlreadyUsed)) {
             code = AuthError.TokenAlreadyUsed
-            msg = 'Confirmation token is already used. You can login to EAST.'
+            msg = 'User is already confirmed. You can login to EAST.'
           }
         }
       }

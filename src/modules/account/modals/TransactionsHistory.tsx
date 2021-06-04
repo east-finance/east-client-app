@@ -7,6 +7,7 @@ import { GradientText } from '../../../components/Text'
 import { ITransaction, TransactionType } from '../../../interfaces'
 import { CollateralCircle } from '../../../components/CollateralCircle'
 import { Steps } from '../../../components/Steps'
+import { Slider } from '../../../components/Slider'
 
 interface IProps {
   onClose: () => void
@@ -158,6 +159,9 @@ export const TransactionsHistory = (props: IProps) => {
     }, {
       text: '3. Confirm transaction'
     }]} currentStepIndex={2} />
+    <Block marginTop={32}>
+      <Slider min={0} max={100} defaultValue={50} />
+    </Block>
     <ItemsContainer>
       {transactions.map((tx) => <Item key={tx.callTxId} tx={tx} />)}
     </ItemsContainer>

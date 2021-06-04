@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { ChangeEvent, KeyboardEventHandler, useState } from 'react'
 import { useRoute } from 'react-router5'
 import { Block, Block16, Block24 } from '../../../components/Block'
 import styled from 'styled-components'
@@ -11,6 +11,8 @@ import { RouteName } from '../../../router/segments'
 import { validateEmail } from '../utils'
 import { ErrorNotification } from '../../../components/Notification'
 import { FormErrors } from '../../../components/PasswordRules'
+import { AuthError } from '../../../api/apiErrors'
+import { BeforeText, RelativeContainer, Spinner } from '../../../components/Spinner'
 
 const Container = styled.div`
   width: 376px;
@@ -53,12 +55,12 @@ const SignIn = () => {
   const [passwordError, setPasswordError] = useState('')
   const [inProgress, setInProgress] = useState(false)
 
-  const onChangeLogin = (e: any) => {
-    setUsername(e.target.value)
+  const onChangeLogin = (e: ChangeEvent<HTMLInputElement>) => {
+    setUsername(e.target.value.trim())
   }
 
-  const onChangePassword = (e: any) => {
-    setPassword(e.target.value)
+  const onChangePassword = (e: ChangeEvent<HTMLInputElement>) => {
+    setPassword(e.target.value.trim())
   }
 
   const validateForm = () => {
@@ -87,6 +89,7 @@ const SignIn = () => {
       setPasswordError(passMessage)
       const msg = userMessage || passMessage
       if (msg) {
+        toast.dismiss()
         toast(<ErrorNotification text={msg} />, {
           hideProgressBar: true
         })
@@ -101,11 +104,15 @@ const SignIn = () => {
             const { errors } =  e.response.data
             setUsernameError('login_error')
             setPasswordError('login_error')
-            if (errors.includes('user.not.found') || errors.includes('wrong.password')) {
-              toastText = 'Wrong email or password'
+            if (errors.includes(AuthError.UserNotFound)) {
+              toastText = 'Account with this email is not found'
+            } else if (errors.includes(AuthError.WrongPassword)) {
+              toastText = 'Wrong password'
+            } else if (errors.includes(AuthError.UserShouldBeConfirmed)) {
+              toastText = 'Account is not confirmed'
             }
           }
-          // toast.dismiss()
+          toast.dismiss()
           toast(<ErrorNotification text={toastText} />, {
             hideProgressBar: true
           })
@@ -121,13 +128,23 @@ const SignIn = () => {
     }
   }
 
+  const onLoginPressed = (e: any) => {
+    if(e.keyCode === 13) {
+      if (!inProgress) {
+        e.preventDefault()
+        onLoginClick()
+      }
+    }
+  }
+
   return <Container>
     <Input
       autoFocus={true}
       status={usernameError ? InputStatus.error : InputStatus.default}
       placeholder={'Email'}
-      value={username}
+      defaultValue={username}
       onChange={onChangeLogin}
+      onKeyDown={onLoginPressed}
     />
     <Block16>
       <LoginInfoContainer>
@@ -144,14 +161,24 @@ const SignIn = () => {
       status={passwordError ? InputStatus.error : InputStatus.default}
       placeholder={'Password'}
       type={'password'}
-      value={password}
+      defaultValue={password}
       onChange={onChangePassword}
+      onKeyDown={onLoginPressed}
     />
     <Block16 style={{ 'textAlign': 'right' }}>
       <AdditionalText onClick={() => router.navigate(RouteName.PasswordRecovery)}>Forgot password</AdditionalText>
     </Block16>
     <Block marginTop={65} />
-    <Button type={'primary'} onClick={onLoginClick}>Login</Button>
+    <Button type={'primary'} disabled={inProgress} onClick={onLoginClick}>
+      <RelativeContainer>
+        {inProgress &&
+        <BeforeText>
+          <Spinner />
+        </BeforeText>
+        }
+        Login
+      </RelativeContainer>
+    </Button>
   </Container>
 }
 

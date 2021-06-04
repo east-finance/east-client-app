@@ -50,6 +50,10 @@ const NavigationContainer = styled.div`
   position: absolute;
   left: 40px;
   top: 332px;
+
+  @media only screen and (max-width: 800px) {
+    opacity: 0;
+  }
 `
 
 const Auth: React.FunctionComponent = () =>  {
@@ -93,7 +97,15 @@ const Auth: React.FunctionComponent = () =>  {
     title = 'Login with WE Wallet'
   } else if(routeName === RouteName.PasswordRecovery) {
     title = 'Password recovery'
-    content = <PasswordRecovery />
+    // content = <PasswordRecovery />
+    content = <div>
+      <NavigationContainer>
+        <NavigationLeft onClick={() => {
+          router.navigate(RouteName.SignIn)
+        }} />
+      </NavigationContainer>
+      <PasswordRecovery />
+    </div>
   } else if(routeName === RouteName.PasswordReset) {
     title = 'Reset password'
     content = <PasswordReset />

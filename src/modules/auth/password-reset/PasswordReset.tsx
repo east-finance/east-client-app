@@ -69,7 +69,7 @@ const PasswordRecovery = () => {
         if (!confirm) {
           confMessage = FormErrors.EnterConfirm
         } else if (password !== confirm) {
-          confMessage = FormErrors.ConfirmDidntMatch
+          confMessage = FormErrors.PasswordsNotMatch
         }
       }
     }
