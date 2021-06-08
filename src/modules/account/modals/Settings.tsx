@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
-import { ToastContainer, toast } from 'react-toastify'
+import { toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import { PrimaryTitle } from '../../../components/PrimaryTitle'
 import { PrimaryModal, SecondaryModal, SecondaryModalButton } from '../Modal'

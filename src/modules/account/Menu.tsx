@@ -1,10 +1,12 @@
 import React from 'react'
 import styled from 'styled-components'
 import iconPlus from '../../resources/images/icon-plus.png'
-import iconSafe from '../../resources/images/icon-safe.png'
-import iconTransfer from '../../resources/images/icon-transfer.png'
+import iconLock from '../../resources/images/icon-lock.png'
+import iconTime from '../../resources/images/icon-time.png'
+import iconExport from '../../resources/images/icon-export.png'
 import iconSettings from '../../resources/images/icon-settings.png'
 import iconQuestion from '../../resources/images/icon-question.png'
+import iconCloseRed from '../../resources/images/icon-close-red.png'
 import { RouteName } from '../../router/segments'
 import { useRoute } from 'react-router5'
 import useStores from '../../hooks/useStores'
@@ -79,6 +81,14 @@ const MenuItem = styled.div<{ disabled?: boolean; }>`
   `}
 `
 
+const Delimiter = styled.div`
+  width: 2px;
+  height: 48px;
+  background: white;
+  margin-left: 40px;
+  margin-right: -5px;
+`
+
 const IconCommon = styled.div`
   width: 32px;
   height: 32px;
@@ -87,13 +97,15 @@ const IconCommon = styled.div`
 `
 
 const IconPlus = styled(IconCommon)`background-image: url(${iconPlus});`
-const IconSafe = styled(IconCommon)`background-image: url(${iconSafe});`
-const IconTransfer = styled(IconCommon)`background-image: url(${iconTransfer});padding-bottom: 4px;`
+const IconLock = styled(IconCommon)`background-image: url(${iconLock});`
+const IconTime = styled(IconCommon)`background-image: url(${iconTime});`
+const IconExport = styled(IconCommon)`background-image: url(${iconExport});`
 const IconSettings = styled(IconCommon)`background-image: url(${iconSettings});`
 const IconQuestion = styled(IconCommon)`background-image: url(${iconQuestion});`
+const IconClose = styled(IconCommon)`background-image: url(${iconCloseRed});`
 
 export const AccountMenu = observer(() => {
-  const { authStore, dataStore } = useStores()
+  const { dataStore } = useStores()
   const isUserHaveEast = parseInt(dataStore.eastBalance) > 0
   const { router } = useRoute()
   const batchesAvailable = isUserHaveEast
@@ -109,28 +121,36 @@ export const AccountMenu = observer(() => {
       {batchesAvailable &&
         <Tooltip>Transactions</Tooltip>
       }
-      <MenuItem onClick={() => router.navigate(RouteName.TransactionsHistory)}>
-        <IconSafe />
-      </MenuItem>
+      <MenuItem onClick={() => router.navigate(RouteName.TransactionsHistory)}><IconLock /></MenuItem>
     </MenuItemContainer>
     <MenuItemContainer>
       {transferAvailable &&
         <Tooltip>Transfer</Tooltip>
       }
       <MenuItem disabled={!transferAvailable} onClick={() => transferAvailable && router.navigate(RouteName.TransferEast)}>
-        <IconTransfer />
+        <IconExport />
       </MenuItem>
+    </MenuItemContainer>
+    <Delimiter />
+    <MenuItemContainer>
+      <Tooltip>Transactions</Tooltip>
+      <MenuItem onClick={() => router.navigate(RouteName.TransactionsHistory)}><IconTime /></MenuItem>
     </MenuItemContainer>
     <MenuItemContainer>
       <Tooltip>Settings</Tooltip>
-      <MenuItem onClick={() => router.navigate(RouteName.AccountSettings)}>
-        <IconSettings />
-      </MenuItem>
+      <MenuItem onClick={() => router.navigate(RouteName.AccountSettings)}><IconSettings /></MenuItem>
     </MenuItemContainer>
     <MenuItemContainer>
       <Tooltip>FAQ</Tooltip>
       <MenuItem onClick={() => router.navigate(RouteName.Faq)}>
         <IconQuestion />
+      </MenuItem>
+    </MenuItemContainer>
+    <Delimiter />
+    <MenuItemContainer>
+      <Tooltip>Close</Tooltip>
+      <MenuItem disabled onClick={() => router.navigate(RouteName.Faq)}>
+        <IconClose />
       </MenuItem>
     </MenuItemContainer>
   </Container>

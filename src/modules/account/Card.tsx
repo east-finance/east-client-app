@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import styled from 'styled-components'
 import CardBackground from '../../resources/images/card_bg.png'
+import NoiseImg from '../../resources/images/noise.png'
 import iconPlus from '../../resources/images/plus.png'
 import { Block, Block24 } from '../../components/Block'
 import { observer } from 'mobx-react'
@@ -22,7 +23,7 @@ const ContentWrapper = styled.div<{ isActive?: boolean }>`
   box-sizing: border-box;
   padding: 32px 72px 16px 24px;
   //background: radial-gradient(97.31% 97.31% at 50% 2.69%, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0) 79%), #000000;
-  background-image: url(${CardBackground});
+  background-image: url(${NoiseImg}), url(${CardBackground});
   background-repeat: no-repeat;
   background-size: cover;
   box-shadow: 0 32px 32px rgba(0, 0, 0, 0.15);
@@ -37,11 +38,6 @@ const ContentWrapper = styled.div<{ isActive?: boolean }>`
 
 const TopContainer = styled.div`
 
-`
-
-const TextShadow = styled.div`
-  color: rgba(10,60,150, 0.8);
-  text-shadow: 1px 4px 6px #def, 0 0 0 #000, 1px 4px 6px #def;
 `
 
 const TokenName = styled.div`
@@ -83,13 +79,18 @@ const PlusImage = styled.div`
   background-repeat: no-repeat;
   background-size: 80px;
   background-image: url(${iconPlus});
+  transition: transform 250ms;
+
+  :hover {
+    transform: scale(1.1);
+  }
 `
 
 const AddEast = styled.div`
   font-family: Staatliches;
   font-style: normal;
   font-weight: normal;
-  font-size: 24px;
+  font-size: 20px;
   line-height: 16px;
   letter-spacing: 2px;
   text-transform: uppercase;
@@ -134,42 +135,31 @@ export const AccountCard = observer(() => {
   const { authStore, dataStore } = useStores()
   const { address } = authStore
 
-  const [westBalance, setWestBalance] = useState('')
-
-  const isPositiveBalance = parseInt(dataStore.eastBalance) > 0
-
-  useEffect(() => {
-    const getBalances = async () => {
-      const west = await dataStore.getWestBalance(address)
-      setWestBalance(west)
-    }
-    if (address) {
-      getBalances()
-    }
-  }, [address])
+  const { westBalance, eastBalance } = dataStore
+  const isPositiveBalance = parseInt(eastBalance) > 0
 
   return <Container isOutlined={!isPositiveBalance}>
     {!isPositiveBalance &&
       <PlusContainer>
         <PlusImage onClick={() => router.navigate(RouteName.BuyEast)}/>
         <Block24>
-          <AddEast onClick={() => router.navigate(RouteName.BuyEast)}>Add East</AddEast>
+          <AddEast onClick={() => router.navigate(RouteName.BuyEast)}>Issue East</AddEast>
         </Block24>
       </PlusContainer>
     }
     <ContentWrapper isActive={isPositiveBalance}>
       <TopContainer>
-        <EastBalance value={dataStore.eastBalance} />
+        <EastBalance value={eastBalance} />
         <Block marginTop={4}>
           <TokenName>EAST</TokenName>
         </Block>
       </TopContainer>
       {address &&
-      <BottomContainer>
-        <BottomItem>{address}</BottomItem>
-        <Block marginTop={8} />
-        <BottomItem>{roundNumber(westBalance) + ' WEST'}</BottomItem>
-      </BottomContainer>
+        <BottomContainer>
+          <BottomItem>{address}</BottomItem>
+          <Block marginTop={8} />
+          <BottomItem>{roundNumber(westBalance) + ' WEST'}</BottomItem>
+        </BottomContainer>
       }
     </ContentWrapper>
   </Container>

@@ -103,11 +103,11 @@ export const InputTooltip = styled.div<{ isVisible?: boolean }>`
 
 const SimpleInputContainer = styled.div`
   position: relative;
-  height: 56px;
+  height: 48px;
   font-family: Cairo,sans-serif;
   width: 100%;
   font-style: normal;
-  padding-top: 16px;
+  padding-top: 12px;
 `
 
 const SimpleInputLabel = styled.div<{ isOpened: boolean, status?: InputStatus }>`

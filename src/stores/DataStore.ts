@@ -19,11 +19,12 @@ export interface IDataPoint {
 export default class DataStore {
   api
   configStore
-  westPriceHistory: IDataPoint[] = []
   pollingId: any = null
+  westBalance = '0.0'
   eastBalance = '0.0'
   westRate = ''
   usdpRate = ''
+  westPriceHistory: IDataPoint[] = []
 
   constructor(api: Api, configStore: ConfigStore) {
     makeAutoObservable(this)
@@ -56,14 +57,25 @@ export default class DataStore {
   }
 
   async startPolling (address: string) {
-    const updateEastBalance = async () => {
+    const updateWestBalance = async () => {
       try {
-        const eastBalance = await this.getEastBalance(address)
+        const balance = await this.getWestBalance(address)
         runInAction(() => {
-          this.eastBalance = eastBalance
+          this.westBalance = balance
         })
       } catch (e) {
-        console.log(`Polling error: cannot get address ${address} vaults`, e.message)
+        console.log(`Polling error: cannot get address ${address} west balance`, e.message)
+      }
+    }
+
+    const updateEastBalance = async () => {
+      try {
+        const balance = await this.getEastBalance(address)
+        runInAction(() => {
+          this.eastBalance = balance
+        })
+      } catch (e) {
+        console.log(`Polling error: cannot get address ${address} east balance`, e.message)
       }
     }
 
@@ -74,6 +86,7 @@ export default class DataStore {
     }
 
     const updateData = async () => {
+      await updateWestBalance()
       await updateEastBalance()
       await updateTokenRates()
       // await this.pollOracleTxs()
@@ -81,7 +94,7 @@ export default class DataStore {
 
     clearInterval(this.pollingId)
     await updateData()
-    this.pollingId = setInterval(updateData, 10000)
+    this.pollingId = setInterval(updateData, 20000)
   }
 
   async getEastBalance(address: string): Promise<string> {

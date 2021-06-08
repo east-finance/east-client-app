@@ -29,7 +29,7 @@ const Container = styled.div`
   font-weight: 500;
   font-size: 15px;
   line-height: 22px;
-  color: #525252;
+  color: #00805E;
 `
 
 const SendButtonsContainer = styled.div`
@@ -39,10 +39,10 @@ const SendButtonsContainer = styled.div`
 
 export const BuyWestSuccess = (props: IProps) => {
   return <Container>
-    <Block marginTop={56}>
+    <Block marginTop={72}>
       <IconSuccess />
     </Block>
-    <Block marginTop={40}>
+    <Block marginTop={32}>
       <div>The request has been created.</div>
       <div>You will receive your EAST after the transaction is completed. It may take a few minutes.</div>
     </Block>

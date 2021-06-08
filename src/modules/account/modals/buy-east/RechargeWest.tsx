@@ -1,11 +1,13 @@
-import React, { useState } from 'react'
+import React from 'react'
 import styled from 'styled-components'
 import copy from 'copy-to-clipboard'
-import { Block, Block16, Block24 } from '../../../../components/Block'
-import { Button, NavigationLeftGradientButton } from '../../../../components/Button'
+import { Block } from '../../../../components/Block'
+import { NavigationLeftGradientButton } from '../../../../components/Button'
 import useStores from '../../../../hooks/useStores'
 import iconCopy from '../../../../resources/images/icon-copy.png'
 import { roundNumber } from '../../../../utils'
+import { toast } from 'react-toastify'
+import { InfoNotification, NotificationType, ToastCloseButton } from '../../../../components/Notification'
 
 interface IProps {
   rechargeWestAmount: string;
@@ -27,12 +29,17 @@ const IconCopy = styled(IconCommon)`
 `
 
 const Container = styled.div`
-  width: 376px;
   margin: 0 auto;
   font-family: Cairo,sans-serif;
+  color: ${props => props.theme.darkBlue};
 `
 
-const Centered = styled.div`text-align: center;`
+const Amount = styled.span`
+  font-weight: bold;
+  color: ${props => props.theme.yellow}
+`
+
+const Centered = styled.div`text-align: center; width: 376px; margin: 0 auto;`
 
 const Description = styled(Centered)`
   font-size: 15px;
@@ -45,12 +52,13 @@ const SendButtonsContainer = styled.div`
 `
 
 const AddressContainer = styled.div`
+  width: 100%;
   padding: 4px 8px;
-  background: rgba(224, 224, 224, 0.75);
+  background: rgba(4, 53, 105, 0.15);
   border-radius: 8px;
   font-family: Cairo,sans-serif;
   font-weight: bold;
-  font-size: 16px;
+  font-size: 22px;
   line-height: 24px;
   color: #0A0606;
   display: flex;
@@ -58,32 +66,51 @@ const AddressContainer = styled.div`
   justify-content: space-between;
 `
 
+const Info = styled.div`
+  text-align: center;
+  color: rgba(4, 53, 105, 0.5);
+  font-size: 15px;
+  line-height: 24px;
+`
+
 export const RechargeWest = (props: IProps) => {
   const { authStore } = useStores()
   const onCopyClicked = () => {
     copy(authStore.address)
+    toast(<InfoNotification text={'Copied!'} />, {
+      hideProgressBar: true,
+      closeButton: <ToastCloseButton type={NotificationType.default} closeToast={() => toast.dismiss()} />
+    })
   }
+  const westAmount = roundNumber(props.rechargeWestAmount, 4)
   return <Container>
+    <Block marginTop={64}>
+      <Description>
+        Add <Amount>{westAmount} WEST</Amount> to your address to get {props.eastAmount} EAST.
+      </Description>
+    </Block>
     <Block marginTop={40}>
       <Description>
-        Add {roundNumber(props.rechargeWestAmount, 4)} WEST to your address to get {props.eastAmount} EAST.
+        Use your address
       </Description>
-      <Block16>
-        <Description>
-          Use your address
-        </Description>
-      </Block16>
-      <Block marginTop={24}>
-        <AddressContainer>
-          <div>{authStore.address}</div>
-          <div><IconCopy onClick={onCopyClicked} /></div>
-        </AddressContainer>
-      </Block>
     </Block>
-    <Block16>
+    <Block marginTop={8}>
+      <AddressContainer>
+        <div>{authStore.address}</div>
+        <div><IconCopy onClick={onCopyClicked} /></div>
+      </AddressContainer>
+    </Block>
+    <Block marginTop={40}>
+      <Centered>
+        <Info>
+          Transfers between different blockchains sometimes take up to a couple of hours
+        </Info>
+      </Centered>
+    </Block>
+    <Block marginTop={40}>
       <SendButtonsContainer>
         <NavigationLeftGradientButton onClick={props.onPrevClicked} />
       </SendButtonsContainer>
-    </Block16>
+    </Block>
   </Container>
 }

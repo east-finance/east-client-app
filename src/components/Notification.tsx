@@ -2,7 +2,43 @@ import React from 'react'
 import styled from 'styled-components'
 import iconCross from '../resources/images/icon-cross.svg'
 
-const Container = styled.div<{ type: 'default' | 'error' }>`
+export enum NotificationType {
+  default = 'default',
+  error = 'error'
+}
+
+export interface IToastCloseButton {
+  type: NotificationType;
+  closeToast: () => void;
+}
+
+const CloseButtonContainer = styled.div`
+  width: 32px;
+  height: 32px;
+  z-index: 1;
+  padding-top: 8px;
+`
+
+const IconCross = styled.div<{ type: NotificationType }>`
+  width: 32px;
+  height: 32px;
+  background-repeat: no-repeat;
+  background-size: 32px;
+  mask-image: url(${iconCross});
+  background-color: black;
+
+  ${({ type }) => (type === NotificationType.error) && `
+     background-color: red;
+  `}
+`
+
+export const ToastCloseButton = (props: IToastCloseButton) => {
+  return <CloseButtonContainer onClick={props.closeToast}>
+    <IconCross type={props.type} />
+  </CloseButtonContainer>
+}
+
+const Container = styled.div<{ type: NotificationType }>`
   display: flex;
   align-items: center;
   font-family: Cairo,sans-serif;
@@ -20,7 +56,7 @@ const Container = styled.div<{ type: 'default' | 'error' }>`
   box-shadow: 0 32px 32px rgb(0 0 0 / 15%);
   border-radius: 4px;
 
-  ${({ type }) => (type === 'error') && `
+  ${({ type }) => (type === NotificationType.error) && `
     border: 1px solid rgba(240, 33, 43, 0.4);
     color: #F0222B;
     font-weight: bold;
@@ -31,40 +67,10 @@ export interface IProps {
   text: string;
 }
 
-export const ErrorNotification = (props: IProps) => {
-  return <Container type={'error'}>
-    {props.text}
-  </Container>
-}
+export const ErrorNotification = (props: IProps) => <Container type={NotificationType.error}>
+  {props.text}
+</Container>
 
-export const TextNotification = (props: IProps) => {
-  return <Container type={'default'}>
-    {props.text}
-  </Container>
-}
-
-export interface IToastCloseButton {
-  closeToast: () => void;
-}
-
-const CloseButtonContainer = styled.div`
-  width: 32px;
-  height: 32px;
-  z-index: 1;
-  padding-top: 8px;
-`
-
-const IconCross = styled.div`
-  width: 32px;
-  height: 32px;
-  background-repeat: no-repeat;
-  background-size: 32px;
-  mask-image: url(${iconCross});
-  background-color: red;
-`
-
-export const ToastCloseButton = (props: IToastCloseButton) => {
-  return <CloseButtonContainer onClick={props.closeToast}>
-    <IconCross />
-  </CloseButtonContainer>
-}
+export const InfoNotification = (props: IProps) => <Container type={NotificationType.default}>
+  {props.text}
+</Container>

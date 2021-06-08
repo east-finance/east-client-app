@@ -38,8 +38,7 @@ const ButtonContainer = styled.div<ButtonProps>`
   `}
 
   ${({ disabled }) => disabled && `
-    background: #dae1e9;
-    color: rgba(4, 53, 105, 0.5);
+    opacity: 0.5;
     cursor: default;
     pointer-events: none;
   `}

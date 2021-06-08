@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { PrimaryTitle } from '../../../../components/PrimaryTitle'
-import { PrimaryModal } from '../../Modal'
+import { ModalStatus, PrimaryModal } from '../../Modal'
 import { CheckForm } from './CheckForm'
 import { Steps } from './constants'
 import { FillForm, FillFormData } from './FillForm'
@@ -14,13 +14,14 @@ interface IProps {
 
 export const BuyEast = (props: IProps) => {
   const { configStore, dataStore, authStore } = useStores()
-  const [currentStep, setCurrentStep] = useState(Steps.fill)
+  const [currentStep, setCurrentStep] = useState(Steps.success)
   const [eastAmount, setEastAmount] = useState('')
   const [westAmount, setWestAmount] = useState('')
   const [westBalance, setWestBalance] = useState('0')
 
   const [westRate, setWestRate] = useState(dataStore.westRate)
   const [usdpRate, setUsdpRate] = useState(dataStore.usdpRate)
+  const [inProgress, setInProgress] = useState(false)
 
   useEffect(() => {
     const getData = async () => {
@@ -38,7 +39,6 @@ export const BuyEast = (props: IProps) => {
 
   const sendAtomic = async () => {
     const state = await window.WEWallet.publicState()
-    console.log('WALLET state', state)
     const { account: { address, publicKey } } = state
     const ownerAddress = configStore.getEastOwnerAddress()
     const eastContractId = configStore.getEastContractId()
@@ -88,17 +88,37 @@ export const BuyEast = (props: IProps) => {
   }
 
   let content = null
+  let modalStatus = ModalStatus.success
   const formProps = {
     eastAmount,
     westAmount,
     westRate,
-    usdpRate
+    usdpRate,
+    inProgress
   }
   if (currentStep === Steps.fill) {
-    const onNextClicked = (data: FillFormData) => {
-      setEastAmount(data.eastAmount)
-      setWestAmount(data.westAmount)
-      setCurrentStep(Steps.check)
+    // const onNextClicked = (data: FillFormData) => {
+    //   setEastAmount(data.eastAmount)
+    //   setWestAmount(data.westAmount)
+    //   setCurrentStep(Steps.check)
+    // }
+    const onNextClicked = async (data: FillFormData) => {
+      try {
+        setInProgress(true)
+        setEastAmount(data.eastAmount)
+        setWestAmount(data.westAmount)
+        const westBalance = await dataStore.getWestBalance(authStore.address)
+        setWestBalance(westBalance)
+        if (+data.westAmount > +westBalance) {
+          setCurrentStep(Steps.rechargeWest)
+        } else {
+          setCurrentStep(Steps.check)
+        }
+      } catch (e) {
+        console.error('sendAtomic Error:', e)
+      } finally {
+        setInProgress(false)
+      }
     }
     content = <FillForm {...formProps} onNextClicked={onNextClicked} />
   } else if (currentStep === Steps.check) {
@@ -124,15 +144,16 @@ export const BuyEast = (props: IProps) => {
     const onPrevClicked = () => setCurrentStep(Steps.fill)
     content = <CheckForm {...formProps} onNextClicked={onNextClicked} onPrevClicked={onPrevClicked} />
   } else if (currentStep === Steps.rechargeWest) {
-    const onPrevClicked = () => setCurrentStep(Steps.check)
+    const onPrevClicked = () => setCurrentStep(Steps.fill)
     const rechargeWestAmount = (+westAmount - +westBalance).toString()
     content = <RechargeWest rechargeWestAmount={rechargeWestAmount} eastAmount={eastAmount} westAmount={westAmount} onPrevClicked={onPrevClicked} />
+    modalStatus = ModalStatus.warning
   } else if (currentStep === Steps.success) {
     content = <BuyWestSuccess onClose={props.onClose} />
   }
 
-  return <PrimaryModal {...props}>
-    <PrimaryTitle>Convert WEST into EAST</PrimaryTitle>
+  return <PrimaryModal {...props} status={modalStatus}>
+    <PrimaryTitle>issue east stablecoin</PrimaryTitle>
     <div>{content}</div>
   </PrimaryModal>
 }

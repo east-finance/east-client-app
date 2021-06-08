@@ -1,32 +1,44 @@
-import React, { useRef } from 'react'
+import React from 'react'
 import styled from 'styled-components'
 import { CrossIcon } from '../../components/Icons'
 import gradientBackground from '../../resources/images/gradient-bg2.png'
 
+export enum ModalStatus {
+  success = 'success',
+  warning = 'warning'
+}
+
 interface ModalProps {
+  status?: ModalStatus;
   children: JSX.Element | JSX.Element[];
   onClose?: () => void;
   style?: any;
 }
 
-const Container = styled.div`
-  background: #FFFFFF;
+const Container = styled.div<{ status?: ModalStatus }>`
+  background-color: rgba(255, 255, 255, 0.8);
+  background-image: linear-gradient(0deg, rgba(248, 249, 250, 0) 85%, ${props => props.status === ModalStatus.warning ? props.theme.yellow : props.theme.greenToxic} 100%);
   box-shadow: 0 4px 72px rgba(0, 0, 0, 0.15);
-  border-radius: 22px;
-  padding: 32px 60px;
+  border-radius: 41px;
+  padding: 16px 60px 32px;
 `
 
 const IconContainer = styled.div`
   position: absolute;
   top: 16px;
   right: 16px;
+  transition: transform 250ms;
+  
+  :hover {
+    transform: scale(1.1);
+  }
 `
 
 export const PrimaryModal = (props: ModalProps) => {
-  return <Container style={{...props.style}}>
+  return <Container status={props.status} style={{...props.style}}>
     {props.onClose &&
       <IconContainer>
-        <CrossIcon color={'#D1D1D1'} onClick={props.onClose} />
+        <CrossIcon color={'rgba(4, 53, 105, 0.5);'} onClick={props.onClose} />
       </IconContainer>
     }
     {props.children}
