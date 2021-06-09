@@ -119,15 +119,9 @@ export const CollateralCircle = (props: IProps) => {
   const status = getCollateralStatus(percent)
   const fullCircleLength = Math.ceil(2 * Math.PI * 58)
   const primaryDashOffset = - (fullCircleLength - (fullCircleLength * absolutePercent))
-  console.log('fullCircleLength', fullCircleLength)
-  console.log('primaryDashOffset', primaryDashOffset)
-  console.log('absolutePercent', absolutePercent)
   return <Container>
     <TextContainer color={CollateralColor[status]}>
       <PrimaryText>{props.percent}%</PrimaryText>
-      <Block marginTop={4}>
-        <SecondaryText>Collateral</SecondaryText>
-      </Block>
     </TextContainer>
     {/*<SVGSecondary>*/}
     {/*  <defs>*/}
@@ -145,4 +139,27 @@ export const CollateralCircle = (props: IProps) => {
       }} />
     </SVGPrimary>
   </Container>
+}
+
+const Test = styled.div`
+  margin: 25px 0;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  border: 12px solid transparent;
+  background-size: 100% 100%, 50% 50%, 50% 50%, 50% 50%, 50% 50%;
+  background-repeat: no-repeat;
+  background-image: linear-gradient(white, white), 
+                    linear-gradient(30deg, red 36%, lightgrey 30%),
+                    linear-gradient(120deg, yellow 36%, lightgrey 30%),
+                    linear-gradient(300deg, blue 36%, lightgrey 30%),
+                    linear-gradient(210deg, green 36%, lightgrey 30%);
+  background-position: center center, left top, right top, left bottom, right bottom;
+  background-origin: content-box, border-box, border-box, border-box, border-box;
+  background-clip: content-box, border-box, border-box, border-box, border-box;
+  transform: rotate(30deg);
+`
+
+export const CollateralCircle2 = () => {
+  return <Test />
 }

@@ -8,7 +8,7 @@ import { observer } from 'mobx-react'
 import { RouteName } from '../../../router/segments'
 import { BigNumber } from 'bignumber.js'
 import { WestDecimals } from '../../../constants'
-import { BeforeText, RelativeContainer, Spinner } from '../../../components/Spinner'
+import { ButtonSpinner, RelativeContainer } from '../../../components/Spinner'
 
 const Container = styled.div`
   width: 640px;
@@ -77,10 +77,13 @@ const SignInWallet = observer(() => {
 
   const onUseAddressClicked = async () => {
     try {
+      setInProgress(true)
       await configStore.loadEastContractConfig()
       await configStore.loadNodeConfig()
     } catch (e) {
       console.error('Cannot get remote configs', e.message)
+    } finally {
+      setInProgress(false)
     }
     authStore.setSelectedAddress(selectedAddress)
     dataStore.startPolling(selectedAddress)
@@ -90,7 +93,6 @@ const SignInWallet = observer(() => {
 
   const checkWallet = async () => {
     try {
-      setInProgress(true)
       setWalletErrorCode(null)
       const state = await window.WEWallet.publicState()
       console.log('Wallet state:', state)
@@ -108,8 +110,6 @@ const SignInWallet = observer(() => {
       // if (e && e.code === '14') {
       //   setNoAccounts(true)
       // }
-    } finally {
-      setInProgress(false)
     }
   }
 
@@ -150,7 +150,7 @@ const SignInWallet = observer(() => {
           <ButtonContainer>
             <Button type={'primary'} disabled={inProgress} onClick={onUseAddressClicked}>
               <RelativeContainer>
-                {inProgress && <BeforeText><Spinner /></BeforeText>}
+                {inProgress && <ButtonSpinner />}
                 Continue with this address
               </RelativeContainer>
             </Button>

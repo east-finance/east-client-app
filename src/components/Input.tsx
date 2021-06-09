@@ -1,4 +1,4 @@
-import React, { InputHTMLAttributes, useState } from 'react'
+import React, { InputHTMLAttributes, useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
 import { Block, Block16 } from './Block'
 
@@ -101,13 +101,23 @@ export const InputTooltip = styled.div<{ isVisible?: boolean }>`
 
 /* ===== SIMPLE INPUT ====== */
 
-const SimpleInputContainer = styled.div`
+const SimpleInputContainer = styled.div<{ status?: InputStatus, value: any }>`
   position: relative;
-  height: 48px;
   font-family: Cairo,sans-serif;
   width: 100%;
   font-style: normal;
-  padding-top: 12px;
+  padding-top: 32px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid ${props => props.theme.darkBlue15};
+  transition: border-color 250ms;
+  
+  ${({ value }) => value && `
+    border-color: #7796b0;
+  `}
+  
+  ${({ status }) => status === InputStatus.error && `
+    border-color: #F0222B;
+  `}
 `
 
 const SimpleInputLabel = styled.div<{ isOpened: boolean, status?: InputStatus }>`
@@ -115,9 +125,9 @@ const SimpleInputLabel = styled.div<{ isOpened: boolean, status?: InputStatus }>
   font-weight: 500;
   line-height: 16px;
   pointer-events: none;
-  transition: top 250ms ease, color 250ms ease, font-size 250ms ease;
-  color: ${props => props.isOpened ? '#8D8D8D' : '#8D8D8D'};
-  top: ${props => props.isOpened ? '-8px' : '16px'};
+  transition: bottom 250ms ease, color 250ms ease, font-size 250ms ease;
+  color: ${props => props.theme.darkBlue50};
+  bottom: ${props => props.isOpened ? '34px' : '12px'};
   font-size: ${props => props.isOpened ? '13px' : '15px'};
 
   ${({ status }) => status === InputStatus.error && `
@@ -130,7 +140,7 @@ const SimpleInputComponent = styled.input`
   width: 100%;
   padding: 0;
   box-sizing: border-box;
-  color: #0A0606;
+  color: ${props => props.theme.darkBlue};
   font-weight: 500;
   font-size: 15px;
   line-height: 16px;
@@ -140,24 +150,22 @@ const SimpleInputComponent = styled.input`
   background: transparent;
 `
 
-const SimpleInputLine = styled.div<{ status?: InputStatus }>`
-  height: 1px;
-  width: 100%;
-  background: #C4C4C4;
-
-  ${({ status }) => status === InputStatus.error && `
-    background: #F0222B;
-  `}
-`
-
 export interface SimpleInputProps extends InputProps {
   isFocused?: boolean;
+  maxDecimals?: number;
 }
 
 export const SimpleInput = (props: SimpleInputProps) => {
   const { label } = props
+  const inputRef = useRef(null)
   const [value, setValue] = useState(props.value || '')
   const [isFocused, setFocused] = useState(props.isFocused || false)
+  const maxDecimals = props.maxDecimals || 8
+
+  useEffect(() => {
+    setValue(props.value ? props.value.toString() : '')
+  }, [props.value])
+
   const onFocus = (e: any) => {
     setFocused(true)
     if (props.onFocus) {
@@ -169,6 +177,18 @@ export const SimpleInput = (props: SimpleInputProps) => {
     if (props.onBlur) {
       props.onBlur(e)
     }
+    // Remove last chars for number with decimals
+    if (props.type === 'number') {
+      let value = e.target.value
+      const delimiter = value.includes(',') ? ',' : value.includes('.') ? '.' : null
+      if (delimiter) {
+        const [mainPart, decimalPart] = value.split(delimiter)
+        if (decimalPart.length > maxDecimals) {
+          value = mainPart + delimiter + decimalPart.slice(0, maxDecimals)
+          setValue(value)
+        }
+      }
+    }
   }
   const onChange = (e: any) => {
     setValue(e.target.value)
@@ -176,7 +196,7 @@ export const SimpleInput = (props: SimpleInputProps) => {
       props.onChange(e)
     }
   }
-  return <SimpleInputContainer>
+  return <SimpleInputContainer status={props.status} value={value || props.value}>
     {label &&
       <SimpleInputLabel
         isOpened={isFocused || props.isFocused || !!value || !!props.value}
@@ -185,10 +205,14 @@ export const SimpleInput = (props: SimpleInputProps) => {
         {label}
       </SimpleInputLabel>
     }
-    <SimpleInputComponent {...props} onFocus={onFocus} onBlur={onBlur} onChange={onChange} />
-    <Block marginTop={8}>
-      <SimpleInputLine status={props.status} />
-    </Block>
+    <SimpleInputComponent
+      {...props}
+      ref={inputRef}
+      value={value}
+      onFocus={onFocus}
+      onBlur={onBlur}
+      onChange={onChange}
+    />
   </SimpleInputContainer>
 }
 

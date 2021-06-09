@@ -5,9 +5,6 @@ import { PrimaryModal } from '../Modal'
 import { Block } from '../../../components/Block'
 import { GradientText } from '../../../components/Text'
 import { ITransaction, TransactionType } from '../../../interfaces'
-import { CollateralCircle } from '../../../components/CollateralCircle'
-import { Steps } from '../../../components/Steps'
-import { Slider } from '../../../components/Slider'
 
 interface IProps {
   onClose: () => void
@@ -149,19 +146,8 @@ export const TransactionsHistory = (props: IProps) => {
     }
   }]
 
-  return <PrimaryModal {...props} style={{ padding: '24px 24px 0' }}>
+  return <PrimaryModal {...props} style={{ padding: '24px 24px 0', overflow: 'hidden' }}>
     <PrimaryTitle>Transaction history</PrimaryTitle>
-    <CollateralCircle percent={250} />
-    <Steps steps={[{
-      text: '1. Supply collateral'
-    }, {
-      text: '2. Issue EAST'
-    }, {
-      text: '3. Confirm transaction'
-    }]} currentStepIndex={2} />
-    <Block marginTop={32}>
-      <Slider min={0} max={100} defaultValue={50} />
-    </Block>
     <ItemsContainer>
       {transactions.map((tx) => <Item key={tx.callTxId} tx={tx} />)}
     </ItemsContainer>

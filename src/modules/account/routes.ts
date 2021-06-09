@@ -7,8 +7,11 @@ export default {
     name: RouteSegment.buyEast,
     path: '/buy-east'
   }, {
-    name: RouteSegment.batches,
-    path: '/batches'
+    name: RouteSegment.addEast,
+    path: '/addEast'
+  }, {
+    name: RouteSegment.takeWest,
+    path: '/takeWest'
   }, {
     name: RouteSegment.transactions,
     path: '/transactions'
@@ -21,5 +24,8 @@ export default {
   }, {
     name: RouteSegment.faq,
     path: '/faq'
+  }, {
+    name: RouteSegment.closeVault,
+    path: '/closeVault'
   }]
 }

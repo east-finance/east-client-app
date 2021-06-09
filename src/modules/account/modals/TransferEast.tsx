@@ -7,6 +7,7 @@ import { InputStatus, SimpleInput } from '../../../components/Input'
 import { Button, NavigationLeftGradientButton } from '../../../components/Button'
 import { dockerCallTransfer } from '../../../utils/txFactory'
 import useStores from '../../../hooks/useStores'
+import { ITag, Tags } from '../../../components/Tags'
 
 interface IProps {
   onClose: () => void
@@ -55,7 +56,9 @@ enum Steps {
 }
 
 export const TransferEast = (props: IProps) => {
-  const { configStore } = useStores()
+  const { configStore, dataStore } = useStores()
+
+  const eastAvailable = dataStore.eastBalance
 
   const [eastAmount, setEastAmount] = useState('')
   const [amountError, setAmountError] = useState('')
@@ -69,6 +72,12 @@ export const TransferEast = (props: IProps) => {
     if (eastAmount && address) {
       setCurrentStep(Steps.confirm)
     }
+  }
+
+  const options = [{text: '25%', value: '0.25' }, { text: '50%', value: '0.5' }, { text: '75%', value: '0.75' }, { text: '100%', value: '1' }]
+  const onSelectOption = (tag: ITag) => {
+    const amount = +tag.value * dataStore.westBalance
+    setEastAmount(amount.toString())
   }
 
   const onConfirmTransfer = async () => {
@@ -89,9 +98,17 @@ export const TransferEast = (props: IProps) => {
     title = 'transfer east'
     content = <Container>
       <Block marginTop={109}>
-        <SimpleInput type={'number'} label={'Amount of EAST'} value={eastAmount} onChange={(e:  any) => setEastAmount(e.target.value)} />
+        <SimpleInput
+          type={'number'}
+          label={`Amount of EAST (${eastAvailable} available)`}
+          value={eastAmount}
+          onChange={(e: any) => setEastAmount(e.target.value)}
+        />
+        <Block marginTop={8}>
+          <Tags data={options} onClick={onSelectOption} />
+        </Block>
       </Block>
-      <SimpleInput label={'Address'} value={address} onChange={(e:  any) => setAddress(e.target.value)} />
+      <SimpleInput label={'Enter recipient’s address'} value={address} onChange={(e:  any) => setAddress(e.target.value)} />
       <Block marginTop={86}>
         <Button type={'primary'} onClick={onClickContinue}>Continue</Button>
       </Block>

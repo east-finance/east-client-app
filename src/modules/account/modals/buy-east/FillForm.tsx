@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { Block, Block24 } from '../../../../components/Block'
 import { InputStatus, SimpleInput } from '../../../../components/Input'
@@ -43,8 +43,30 @@ export const FillForm = observer((props: IProps) => {
   const { dataStore, configStore } = useStores()
   const [eastAmount, setEastAmount] = useState(props.eastAmount)
   const [westAmount, setWestAmount] = useState(props.westAmount)
-  const [eastError, setEastError] = useState('')
-  const [westError, setWestError] = useState('')
+  const [errors, setErrors] = useState({ east: '', west: '' })
+
+  useEffect(() => {
+    // setErrors(validateForm())
+  }, [eastAmount, westAmount])
+
+  const validateForm = () => {
+    let east = ''
+    let west = ''
+    if (!eastAmount || +eastAmount === 0) {
+      east = 'Empty east amount'
+    } else if (+eastAmount < 0) {
+      east = 'Negative east amount'
+    }
+    if (!westAmount || +westAmount === 0) {
+      west = 'Empty east amount'
+    } else if (+westAmount < 0) {
+      east = 'Negative west amount'
+    }
+    return {
+      east,
+      west
+    }
+  }
 
   const setEastByWestAmount = (west: string) => {
     const { eastAmount } = dataStore.calculateEastAmount({
@@ -85,22 +107,13 @@ export const FillForm = observer((props: IProps) => {
   }
 
   const onNextClicked = () => {
-    if (eastAmount && westAmount) {
+    const errors = validateForm()
+    setErrors(errors)
+    if (!errors.east && !errors.west) {
       props.onNextClicked({
         eastAmount,
         westAmount
       })
-    } else {
-      let eastErrorMsg = ''
-      let westErrorMsg = ''
-      if(!eastAmount) {
-        eastErrorMsg = 'Zero amount'
-      }
-      if (!westAmount) {
-        westErrorMsg = 'Zero amount'
-      }
-      setEastError(eastErrorMsg)
-      setWestError(westErrorMsg)
     }
   }
   const usdpPartPercent = configStore.getUsdpPart() * 100
@@ -112,13 +125,14 @@ export const FillForm = observer((props: IProps) => {
     setWestAmount(amount.toString())
     setEastByWestAmount(amount.toString())
   }
+  console.log('errors', errors)
   return <Container>
     <Block marginTop={72}>
       <SimpleInput
         type={'number'}
         label={'Amount of EAST'}
         value={eastAmount}
-        status={eastError ? InputStatus.error : InputStatus.default}
+        status={errors.east ? InputStatus.error : InputStatus.default}
         onChange={onChangeEast}
       />
       <Block marginTop={4} />
@@ -126,11 +140,13 @@ export const FillForm = observer((props: IProps) => {
         type={'number'}
         label={`Amount of WEST (${westAvailable} available)`}
         value={westAmount}
-        status={westError ? InputStatus.error : InputStatus.default}
+        status={errors.west ? InputStatus.error : InputStatus.default}
         onChange={onChangeWest}
       />
       {+dataStore.westBalance > 0 &&
-        <Tags data={buyOptions} onClick={onSelectOption} />
+        <Block marginTop={8}>
+          <Tags data={buyOptions} onClick={onSelectOption} />
+        </Block>
       }
     </Block>
     <Block marginTop={56}>

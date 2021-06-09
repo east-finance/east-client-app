@@ -1,11 +1,10 @@
 import styled, { keyframes } from 'styled-components'
+import React from 'react'
 
 
 const SpinnerBorder = keyframes`
   100% {
-    transform: rotate(
-            360deg
-    );
+    transform: rotate(360deg);
   }
 `
 
@@ -37,5 +36,11 @@ export const BeforeText = styled.div`
   align-items: center;
   height: 100%;
 `
+
+export const ButtonSpinner = () => {
+  return <BeforeText>
+    <Spinner />
+  </BeforeText>
+}
 
 

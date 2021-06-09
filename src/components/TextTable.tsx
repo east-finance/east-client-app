@@ -6,10 +6,13 @@ export const TextTable = styled.div`
 `
 
 export const TextTableRow = styled.div`
-  margin-top: 24px;
   display: flex;
   justify-content: end;
   align-items: baseline;
+  
+  &:not(:first-child) {
+      margin-top: 24px;
+  }
 `
 
 export const TextTableKey = styled.div`

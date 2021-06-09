@@ -27,18 +27,19 @@ const ButtonContainer = styled.div<ButtonProps>`
 
 
   ${({ type }) => type === 'primary' && `
-    background: radial-gradient(204.55% 3032.86% at 67.55% 85.45%, rgba(172, 171, 216, 0) 0%, #514EFF 100%),
-    linear-gradient(0deg, #1D87D6, #1D87D6);
+    background-image: linear-gradient(to right, #545ff5 0%, #3b8ad9 51%, #4687dc 100%);
+    background-size: 200% auto;
+    transition: background-position 0.5s;
     color: white;
-    background-size: 300% 100%;
     
     :hover {
-      background-position: 100% 0;
+      background-position: right center;
     }
   `}
 
   ${({ disabled }) => disabled && `
-    opacity: 0.5;
+    background: #dae1e9;
+    color: #6f8ba8;
     cursor: default;
     pointer-events: none;
   `}

@@ -1,5 +1,4 @@
 import { makeAutoObservable, runInAction } from 'mobx'
-import axios from 'axios'
 import { Api } from '../api'
 import { BigNumber } from 'bignumber.js'
 import { WestDecimals } from '../constants'
@@ -94,7 +93,7 @@ export default class DataStore {
 
     clearInterval(this.pollingId)
     await updateData()
-    this.pollingId = setInterval(updateData, 20000)
+    this.pollingId = setInterval(updateData, 600 * 1000)
   }
 
   async getEastBalance(address: string): Promise<string> {

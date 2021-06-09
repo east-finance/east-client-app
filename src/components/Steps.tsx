@@ -12,18 +12,22 @@ export interface IProps {
 
 const Container = styled.div`
   display: flex;
+  font-weight: 400;
+  font-size: 13px;
+  line-height: 16px;
 `
 
 const StepContainer = styled.div<{ isActive: boolean; isPassed: boolean; }>`
   display: inline-block;
-  background: #D1D1D1;
-  color: white;
+  background: rgba(255, 255, 255, 0.3);
   border-radius: 28px;
   padding: 8px 12px;
-  opacity: ${props => props.isPassed ? 0.6 : 1};
+  font-size: 13px;
+  line-height: 16px;
 
   ${({ isActive, isPassed }) => (isActive || isPassed) && `
-    background: radial-gradient(204.55% 3032.86% at 67.55% 85.45%, rgba(172, 171, 216, 0) 0%, #514EFF 100%), #1D87D6;
+    background: radial-gradient(204.55% 3032.86% at 67.55% 85.45%, rgba(172, 171, 216, 0) 0%, #514EFF 100%), #1D87D6;\
+    color: #FFFFFF;
   `}
 `
 
@@ -31,10 +35,10 @@ const StepsLink = styled.div<{ isActive: boolean; isPassed: boolean; }>`
   width: 24px;
   height: 2px;
   display: inline-block;
-  background: #D1D1D1;
+  background: rgba(255, 255, 255, 0.3);
 
   ${({ isPassed, isActive }) => (isPassed || isActive) && `
-    background: radial-gradient(204.55% 3032.86% at 67.55% 85.45%, rgba(172, 171, 216, 0) 0%, #514EFF 100%), #1D87D6;
+    background: #1D87D6;
   `}
 `
 

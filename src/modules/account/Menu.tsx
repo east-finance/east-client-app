@@ -71,6 +71,7 @@ const MenuItem = styled.div<{ disabled?: boolean; }>`
 
   ${({ disabled }) => disabled && `
     opacity: 0.2;
+    pointer-events: none;
   `}
 
   ${({ disabled }) => !disabled && `
@@ -106,22 +107,19 @@ const IconClose = styled(IconCommon)`background-image: url(${iconCloseRed});`
 
 export const AccountMenu = observer(() => {
   const { dataStore } = useStores()
-  const isUserHaveEast = parseInt(dataStore.eastBalance) > 0
+  const isUserHaveEast = +dataStore.eastBalance > 0
   const { router } = useRoute()
-  const batchesAvailable = isUserHaveEast
   const transferAvailable = isUserHaveEast
   return <Container>
     <MenuItemContainer>
       <Tooltip>Buy EAST</Tooltip>
-      <MenuItem onClick={() => router.navigate(RouteName.BuyEast)}>
+      <MenuItem onClick={() => router.navigate(isUserHaveEast ? RouteName.AddEast : RouteName.BuyEast)}>
         <IconPlus />
       </MenuItem>
     </MenuItemContainer>
     <MenuItemContainer>
-      {batchesAvailable &&
-        <Tooltip>Transactions</Tooltip>
-      }
-      <MenuItem onClick={() => router.navigate(RouteName.TransactionsHistory)}><IconLock /></MenuItem>
+      <Tooltip>Take WEST</Tooltip>
+      <MenuItem onClick={() => router.navigate(RouteName.TakeWest)}><IconLock /></MenuItem>
     </MenuItemContainer>
     <MenuItemContainer>
       {transferAvailable &&
@@ -149,7 +147,7 @@ export const AccountMenu = observer(() => {
     <Delimiter />
     <MenuItemContainer>
       <Tooltip>Close</Tooltip>
-      <MenuItem disabled onClick={() => router.navigate(RouteName.Faq)}>
+      <MenuItem disabled={!isUserHaveEast} onClick={() => router.navigate(RouteName.CloseVault)}>
         <IconClose />
       </MenuItem>
     </MenuItemContainer>

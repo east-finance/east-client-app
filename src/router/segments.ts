@@ -11,11 +11,14 @@ export const RouteSegment = {
   passwordReset: 'password-reset',
   account: 'account',
   buyEast: 'buyEast',
+  addEast: 'addEast',
+  takeWest: 'takeWest',
   batches: 'batches',
   transfer: 'transfer',
   transactions: 'transactions',
   settings: 'settings',
   faq: 'faq',
+  closeVault: 'closeVault'
 }
 
 export const RouteName = {
@@ -28,10 +31,13 @@ export const RouteName = {
   Account: buildRouteName(RouteSegment.account),
   Batches: buildRouteName(RouteSegment.account, RouteSegment.batches),
   BuyEast: buildRouteName(RouteSegment.account, RouteSegment.buyEast),
+  AddEast: buildRouteName(RouteSegment.account, RouteSegment.addEast),
+  TakeWest: buildRouteName(RouteSegment.account, RouteSegment.takeWest),
   TransferEast: buildRouteName(RouteSegment.account, RouteSegment.transfer),
   TransactionsHistory: buildRouteName(RouteSegment.account, RouteSegment.transactions),
   AccountSettings: buildRouteName(RouteSegment.account, RouteSegment.settings),
   Faq: buildRouteName(RouteSegment.account, RouteSegment.faq),
+  CloseVault: buildRouteName(RouteSegment.account, RouteSegment.closeVault),
 }
 
 export const DefaultRouteName = RouteName.SignIn

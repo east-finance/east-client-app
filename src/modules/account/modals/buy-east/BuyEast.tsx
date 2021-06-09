@@ -14,7 +14,7 @@ interface IProps {
 
 export const BuyEast = (props: IProps) => {
   const { configStore, dataStore, authStore } = useStores()
-  const [currentStep, setCurrentStep] = useState(Steps.success)
+  const [currentStep, setCurrentStep] = useState(Steps.fill)
   const [eastAmount, setEastAmount] = useState('')
   const [westAmount, setWestAmount] = useState('')
   const [westBalance, setWestBalance] = useState('0')
