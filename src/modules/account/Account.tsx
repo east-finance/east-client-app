@@ -1,4 +1,4 @@
-import React, { useRef } from 'react'
+import React, { useRef, useState } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react'
 import { AccountCard } from './Card'
@@ -6,7 +6,6 @@ import { AccountMenu } from './Menu'
 import EastLogo from '../../resources/images/east-logo.svg'
 import { FAQ } from './modals/FAQ'
 import { Settings } from './modals/Settings'
-import { Batches } from './modals/batches/Batches'
 import { TransferEast } from './modals/TransferEast'
 import { BuyEast } from './modals/buy-east/BuyEast'
 import { useRoute } from 'react-router5'
@@ -16,14 +15,21 @@ import { fadeIn, fadeInControls, fadeOut } from '../../components/Animations'
 import { BackgroundVideo } from '../../components/BackgroundVideo'
 import { WestChart } from './WestChart'
 import { TransactionsHistory } from './modals/TransactionsHistory'
+import { AddEast } from './modals/add_east/AddEast'
+import { TakeWest } from './modals/take_west/TakeWest'
+import { CloseVault } from './modals/close-vault/CloseVault'
+import { DetailedCard } from './DetailedCard'
+import useStores from '../../hooks/useStores'
 
 const Container = styled.div``
 
-const CardContainer = styled.div`
+const CardsContainer = styled.div`
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
   margin-top: 159px;
+  cursor: pointer;
 `
 
 const MenuContainer = styled.div`
@@ -78,8 +84,10 @@ const getPrimaryModalByRoute = () => {
 
   if (name.startsWith(RouteName.BuyEast)) {
     return <BuyEast onClose={onCloseModal} />
-  } else if (name.startsWith(RouteName.Batches)) {
-    return <Batches onClose={onCloseModal} />
+  } else if (name.startsWith(RouteName.AddEast)) {
+    return <AddEast onClose={onCloseModal} />
+  } else if (name.startsWith(RouteName.TakeWest)) {
+    return <TakeWest onClose={onCloseModal} />
   } else if (name.startsWith(RouteName.TransactionsHistory)) {
     return <TransactionsHistory onClose={onCloseModal} />
   } else if (name.startsWith(RouteName.TransferEast)) {
@@ -88,10 +96,28 @@ const getPrimaryModalByRoute = () => {
     return <Settings onClose={onCloseModal} />
   } else if (name.startsWith(RouteName.Faq)) {
     return <FAQ onClose={onCloseModal} />
+  } else if (name.startsWith(RouteName.CloseVault)) {
+    return <CloseVault onClose={onCloseModal} />
   }
 
   return null
 }
+
+const AccountCards = observer(() => {
+  const { dataStore } = useStores()
+
+  const [isFrontShown, setFrontShown] = useState<null | boolean>(null)
+  const isPositiveBalance = parseInt(dataStore.eastBalance) > 0
+  const onClick = () => {
+    setFrontShown(isFrontShown === null ? false : !isFrontShown)
+  }
+  return <CardsContainer>
+    <AccountCard isShown={isFrontShown} onClick={onClick} />
+    {isPositiveBalance &&
+      <DetailedCard isShown={isFrontShown === null ? null : !isFrontShown} onClick={onClick} />
+    }
+  </CardsContainer>
+})
 
 const Account = observer( () => {
   const { router } = useRoute()
@@ -115,9 +141,7 @@ const Account = observer( () => {
       <ChartContainer>
         <WestChart />
       </ChartContainer>
-      <CardContainer>
-        <AccountCard />
-      </CardContainer>
+      <AccountCards />
       <MenuContainer>
         <AccountMenu />
       </MenuContainer>

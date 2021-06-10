@@ -7,7 +7,9 @@ import ArrowLeftButton from '../resources/images/arrow-left-button.png'
 interface ButtonProps extends HTMLAttributes<HTMLDivElement> {
   disabled?: boolean;
   type?: 'default' | 'primary' | 'submit';
+  size?: 'default' | 'small';
   children?: any;
+  style?: any;
 }
 
 const ButtonContainer = styled.div<ButtonProps>`
@@ -23,8 +25,11 @@ const ButtonContainer = styled.div<ButtonProps>`
   font-size: 16px;
   cursor: pointer;
   user-select: none;
-  //transition: all .4s ease-in-out;
-
+  
+  ${({ size }) => size === 'small' && `
+    height: 32px;
+    border-radius: 42px;
+  `}
 
   ${({ type }) => type === 'primary' && `
     background-image: linear-gradient(to right, #545ff5 0%, #3b8ad9 51%, #4687dc 100%);
@@ -45,22 +50,11 @@ const ButtonContainer = styled.div<ButtonProps>`
   `}
 `
 
-const ButtonSpan = styled.span`
-  /* Fallback: Set a background color. */
-  background-color: red;
-
-  /* Create the gradient. */
-  //background-image: linear-gradient(45deg, #f3ec78, #af4261);
+const GradientText = styled.span`
   background: radial-gradient(204.55% 3032.86% at 67.55% 85.45%, rgba(172, 171, 216, 0) 0%, #514EFF 100%),
   linear-gradient(0deg, #1D87D6, #1D87D6);
-
-
-  /* Set the background size and repeat properties. */
   background-size: 100%;
   background-repeat: repeat;
-
-  /* Use the text as a mask for the background. */
-  /* This will show the gradient as a text color rather than element bg. */
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   -moz-background-clip: text;
@@ -68,9 +62,9 @@ const ButtonSpan = styled.span`
 `
 
 export const Button: FunctionComponent<ButtonProps> = (props: ButtonProps) => {
-  const content = props.type === 'primary'
+  const content = (props.type === 'primary' || props.size === 'small')
     ? <span>{props.children}</span>
-    : <ButtonSpan>{props.children}</ButtonSpan>
+    : <GradientText>{props.children}</GradientText>
   return <ButtonContainer {...props}>
     {content}
   </ButtonContainer>

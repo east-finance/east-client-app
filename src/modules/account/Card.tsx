@@ -1,5 +1,5 @@
 import React from 'react'
-import styled from 'styled-components'
+import styled, { keyframes, css } from 'styled-components'
 import CardBackground from '../../resources/images/card_bg.png'
 import NoiseImg from '../../resources/images/noise.png'
 import iconPlus from '../../resources/images/plus.png'
@@ -10,11 +10,38 @@ import { roundNumber } from '../../utils'
 import { RouteName } from '../../router/segments'
 import { useRoute } from 'react-router5'
 
-const Container = styled.div<{ isOutlined?: boolean }>`
+const FrontToFrontAgain = keyframes`
+  from {transform: translate(0,0);z-index:-1}
+  30% {transform: translate(-260px,0) rotate(-15deg);z-index:10;}
+  to {transform: translate(0,0) rotate(0deg);z-index:10;}
+`
+
+const FrontToBack = keyframes`
+  from {transform: translate(0,0);}
+  30% {transform: translate(-260px,0) rotate(-15deg);}
+  to {transform: translate(0,0) rotate(0deg);}
+`
+
+const aniTime = '1000ms'
+const bezier = 'ease'
+
+const animationCondition = (isShown: null | boolean) => {
+  if (isShown === true) {
+    return css`${FrontToFrontAgain} ${aniTime} ${bezier} forwards`
+  } else if(isShown === false) {
+    return css`${FrontToBack} ${aniTime} ${bezier} forwards`
+  } else {
+    return 'none'
+  }
+}
+
+const Container = styled.div<{ isOutlined?: boolean, isShown: null | boolean }>`
   ${({ isOutlined }) => isOutlined && `
     border: 1px solid white;
     border-radius: 6px;
   `}
+
+  animation: ${props => animationCondition(props.isShown)}
 `
 
 const ContentWrapper = styled.div<{ isActive?: boolean }>`
@@ -22,7 +49,6 @@ const ContentWrapper = styled.div<{ isActive?: boolean }>`
   height: 260px;
   box-sizing: border-box;
   padding: 32px 72px 16px 24px;
-  //background: radial-gradient(97.31% 97.31% at 50% 2.69%, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0) 79%), #000000;
   background-image: url(${NoiseImg}), url(${CardBackground});
   background-repeat: no-repeat;
   background-size: cover;
@@ -130,7 +156,7 @@ const EastBalance = (props: IEastBalanceProps) => {
   </div>
 }
 
-export const AccountCard = observer(() => {
+export const AccountCard = observer((props: { isShown: null | boolean, onClick: () => void }) => {
   const { router } = useRoute()
   const { authStore, dataStore } = useStores()
   const { address } = authStore
@@ -138,7 +164,7 @@ export const AccountCard = observer(() => {
   const { westBalance, eastBalance } = dataStore
   const isPositiveBalance = parseInt(eastBalance) > 0
 
-  return <Container isOutlined={!isPositiveBalance}>
+  return <Container {...props} isOutlined={!isPositiveBalance}>
     {!isPositiveBalance &&
       <PlusContainer>
         <PlusImage onClick={() => router.navigate(RouteName.BuyEast)}/>

@@ -44,9 +44,9 @@ const PrimaryText = styled.div`
 `
 
 const SecondaryText = styled.div`
-  font-weight: bold;
-  font-size: 16px;
-  line-height: 16px;
+  font-weight: 400;
+  font-size: 15px;
+  line-height: 20px;
   opacity: 0.6;
 `
 
@@ -91,6 +91,7 @@ const SVGSecondary = styled.svg`
 
 interface IProps {
   percent: number;
+  text?: string;
 }
 
 /*
@@ -122,6 +123,11 @@ export const CollateralCircle = (props: IProps) => {
   return <Container>
     <TextContainer color={CollateralColor[status]}>
       <PrimaryText>{props.percent}%</PrimaryText>
+      {props.text &&
+        <Block marginTop={4}>
+          <SecondaryText>{props.text}</SecondaryText>
+        </Block>
+      }
     </TextContainer>
     {/*<SVGSecondary>*/}
     {/*  <defs>*/}

@@ -80,15 +80,15 @@ const SignInWallet = observer(() => {
       setInProgress(true)
       await configStore.loadEastContractConfig()
       await configStore.loadNodeConfig()
+      authStore.setSelectedAddress(selectedAddress)
+      await dataStore.startPolling(selectedAddress)
+      router.navigate(RouteName.Account)
+      authStore.setLoggedIn(true)
     } catch (e) {
       console.error('Cannot get remote configs', e.message)
     } finally {
       setInProgress(false)
     }
-    authStore.setSelectedAddress(selectedAddress)
-    dataStore.startPolling(selectedAddress)
-    router.navigate(RouteName.Account)
-    authStore.setLoggedIn(true)
   }
 
   const checkWallet = async () => {
