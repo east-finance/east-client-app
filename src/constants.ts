@@ -5,3 +5,8 @@ export enum BatchOperation {
   postponeLiquidation = 'postponeLiquidation',
   overpay = 'overpay'
 }
+
+export enum OracleStreamId {
+  WestRate = '000003_latest',
+  UsdapRate = '000010_latest'
+}

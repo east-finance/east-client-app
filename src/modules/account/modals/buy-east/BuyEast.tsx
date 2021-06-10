@@ -20,16 +20,15 @@ export const BuyEast = (props: IProps) => {
   const [westBalance, setWestBalance] = useState('0')
 
   const [westRate, setWestRate] = useState(dataStore.westRate)
-  const [usdpRate, setUsdpRate] = useState(dataStore.usdpRate)
+  const [usdapRate, setUsdapRate] = useState(dataStore.usdapRate)
   const [inProgress, setInProgress] = useState(false)
 
   useEffect(() => {
     const getData = async () => {
       try {
-        const { westRate, usdpRate } = await dataStore.getOracleTokenPrices(configStore.getOracleContractId())
+        const { westRate, usdapRate } = await dataStore.getTokenRates()
         setWestRate(westRate)
-        setUsdpRate(usdpRate)
-        console.log('oracle data', westRate, usdpRate)
+        setUsdapRate(usdapRate)
       } catch (e) {
         console.error('Cannot get oracle data', e.message)
       }
@@ -93,7 +92,7 @@ export const BuyEast = (props: IProps) => {
     eastAmount,
     westAmount,
     westRate,
-    usdpRate,
+    usdapRate,
     inProgress
   }
   if (currentStep === Steps.fill) {

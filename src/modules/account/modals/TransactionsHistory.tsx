@@ -1,10 +1,11 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { PrimaryTitle } from '../../../components/PrimaryTitle'
 import { PrimaryModal } from '../Modal'
 import { Block } from '../../../components/Block'
 import { GradientText } from '../../../components/Text'
 import { ITransaction, TransactionType } from '../../../interfaces'
+import useStores from '../../../hooks/useStores'
 
 interface IProps {
   onClose: () => void
@@ -79,6 +80,24 @@ const Item = (props: { tx: ITransaction}) => {
 }
 
 export const TransactionsHistory = (props: IProps) => {
+  const { api, authStore } = useStores()
+  const [inProgress, setInProgress] = useState(false)
+
+  useEffect(() => {
+    const loadTxs = async () => {
+      try {
+        setInProgress(true)
+        const txs = await api.getTransactionsHistory(authStore.address)
+        console.log('txs', txs)
+      } catch(e) {
+        console.error('Load txs error:', e.message)
+      } finally {
+        setInProgress(false)
+      }
+    }
+    loadTxs()
+  }, [])
+
   const transactions: ITransaction[] = [{
     transactionType: TransactionType.transfer,
     callTxId: '9',

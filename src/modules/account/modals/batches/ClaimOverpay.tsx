@@ -82,7 +82,7 @@ export const ClaimOverpay = (props: IBatchDetailsProps) => {
       usdpPart: configStore.getUsdpPart(),
       westCollateral: configStore.getWestCollateral(),
       westRate: +dataStore.westRate,
-      usdpRate: +dataStore.usdpRate,
+      usdapRate: +dataStore.usdapRate,
       inputEastAmount: +batch.eastAmount
     })
     const westDelta = currentWestAmount - +batch.westAmount * 1.4

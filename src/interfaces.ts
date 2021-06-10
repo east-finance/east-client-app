@@ -11,7 +11,7 @@ export interface IBatch {
   createdAt: string;
   eastAmount: string;
   usdpAmount: string;
-  usdpRateTimestamp: string;
+  usdapRateTimestamp: string;
   westAmount: string;
   westRateTimestamp: string;
   westRate: string;

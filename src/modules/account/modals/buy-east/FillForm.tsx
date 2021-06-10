@@ -16,7 +16,7 @@ export interface FillFormData {
 
 interface IProps {
   westRate: string;
-  usdpRate: string;
+  usdapRate: string;
   eastAmount: string;
   westAmount: string;
   inProgress: boolean;
@@ -39,7 +39,7 @@ const Description = styled(Centered)`
 `
 
 export const FillForm = observer((props: IProps) => {
-  const { westRate, usdpRate } = props
+  const { westRate, usdapRate } = props
   const { dataStore, configStore } = useStores()
   const [eastAmount, setEastAmount] = useState(props.eastAmount)
   const [westAmount, setWestAmount] = useState(props.westAmount)
@@ -73,7 +73,7 @@ export const FillForm = observer((props: IProps) => {
       usdpPart: configStore.getUsdpPart(),
       westCollateral: configStore.getWestCollateral(),
       westRate: +westRate,
-      usdpRate: +usdpRate,
+      usdapRate: +usdapRate,
       inputWestAmount: +west
     })
     if (eastAmount > 0) {
@@ -90,7 +90,7 @@ export const FillForm = observer((props: IProps) => {
       usdpPart: configStore.getUsdpPart(),
       westCollateral: configStore.getWestCollateral(),
       westRate: +westRate,
-      usdpRate: +usdpRate,
+      usdapRate: +usdapRate,
       inputEastAmount: +value
     })
     if (westAmount > 0) {

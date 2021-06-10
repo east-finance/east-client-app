@@ -4,37 +4,20 @@ import {
   IBatch,
   ITokenPair,
 } from '../interfaces'
+import { OracleStreamId } from '../constants'
+import { IEastBalanceResponse, IOracleValue } from './ApiInterfaces'
 
 const AUTH_SERVICE_ADDRESS = '/authServiceAddress'
 const NODE_ADDRESS = '/nodeAddress'
 const API_ADDRESS = '/apiAddress'
 const API_VERSION_PREFIX = '/v1'
-const EastClientSource = 'east-client'
+const source = 'east-client'
 
 export class Api {
   private _unauthorizedClient: AxiosInstance = axios.create({
     baseURL: AUTH_SERVICE_ADDRESS + API_VERSION_PREFIX
   })
   private _apiClient!: AxiosInstance
-
-  public signIn  = async (username: string, password: string): Promise<ITokenPair> => {
-    const { data: tokenPair } = await this._unauthorizedClient.post('/auth/login', { username, password })
-    await this.setupApi(tokenPair)
-    return tokenPair
-  }
-
-  public signUp  = async (username: string, password: string): Promise<ITokenPair> => {
-    const { data } = await this._unauthorizedClient.post('/user', { username, password, source: EastClientSource })
-    return data
-  }
-
-  public changePassword  = async (password: string): Promise<ITokenPair> => {
-    const { data } = await this._apiClient.post(`${AUTH_SERVICE_ADDRESS}/v1/user/password/change`, {
-      password,
-      passwordRepeat: password
-    })
-    return data
-  }
 
   public setupApi = async (tokenPair: ITokenPair) => {
     const refreshCallback = async (token: string) => {
@@ -60,23 +43,29 @@ export class Api {
     return tokenPair
   }
 
-  public getNodeConfig = async () => {
-    const { data } = await this._apiClient.get(`${NODE_ADDRESS}/node/config`)
+  // Auth requests
+
+  public signIn  = async (username: string, password: string): Promise<ITokenPair> => {
+    const { data: tokenPair } = await this._unauthorizedClient.post('/auth/login', { username, password })
+    await this.setupApi(tokenPair)
+    return tokenPair
+  }
+
+  public signUp  = async (username: string, password: string): Promise<ITokenPair> => {
+    const { data } = await this._unauthorizedClient.post('/user', { username, password, source })
     return data
   }
 
-  public getAddressesTransactions = async (address: string) => {
-    const { data } = await this._apiClient.get(`${NODE_ADDRESS}/transactions/address/${address}/limit/500`)
-    return data
-  }
-
-  public getContractState = async (contractId: string, matches = '', limit = 20) => {
-    const { data } = await this._apiClient.get(`${NODE_ADDRESS}/contracts/${contractId}?matches=${matches}&limit=${limit}`)
+  public changePassword  = async (password: string): Promise<ITokenPair> => {
+    const { data } = await this._apiClient.post(`${AUTH_SERVICE_ADDRESS}/v1/user/password/change`, {
+      password,
+      passwordRepeat: password
+    })
     return data
   }
 
   public sendPasswordRecover = async (email: string) => {
-    const { data } = await this._unauthorizedClient.post('/user/password/restore', { email, source: EastClientSource })
+    const { data } = await this._unauthorizedClient.post('/user/password/restore', { email, source })
     return data
   }
 
@@ -90,8 +79,36 @@ export class Api {
     return data
   }
 
+  // Node requests
+
+  public getNodeConfig = async () => {
+    const { data } = await this._apiClient.get(`${NODE_ADDRESS}/node/config`)
+    return data
+  }
+
   public getAddressBalance = async (address: string) => {
     const { data } = await this._apiClient.get(`${NODE_ADDRESS}/addresses/balance/${address}`)
+    return data
+  }
+
+  public getContractState = async (contractId: string, matches = '', limit = 20) => {
+    const { data } = await this._apiClient.get(`${NODE_ADDRESS}/contracts/${contractId}?matches=${matches}&limit=${limit}`)
+    return data
+  }
+
+  // API requests
+
+  public getOracleValues = async (streamId: OracleStreamId, limit?: number): Promise<IOracleValue[]> => {
+    let url = `${API_ADDRESS}/v1/user/oracles?streamId=${streamId}`
+    if (limit) {
+      url += `&limit=${limit}`
+    }
+    const { data } = await this._apiClient.get(url)
+    return data
+  }
+
+  public getUserEastBalance = async (address: string): Promise<IEastBalanceResponse> => {
+    const { data } = await this._apiClient.get(`${API_ADDRESS}/v1/user/balance?address=${address}`)
     return data
   }
 
@@ -100,8 +117,13 @@ export class Api {
     return data
   }
 
-  public getContractStateValue = async (contractId: string, key: string): Promise<{ key: string; type: string; value: string }> => {
-    const { data } = await this._apiClient.get(`${NODE_ADDRESS}/contracts/${contractId}/${key}`)
+  public getVault = async (address: string): Promise<IEastBalanceResponse> => {
+    const { data } = await this._apiClient.get(`${API_ADDRESS}/v1/user/vault?address=${address}`)
+    return data
+  }
+
+  public getTransactionsHistory = async (address: string, limit?: number, offset?: number): Promise<IEastBalanceResponse> => {
+    const { data } = await this._apiClient.get(`${API_ADDRESS}/v1/user/transactions?address=${address}`)
     return data
   }
 }

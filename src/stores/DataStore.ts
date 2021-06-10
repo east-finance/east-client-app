@@ -1,7 +1,7 @@
 import { makeAutoObservable, runInAction } from 'mobx'
 import { Api } from '../api'
 import { BigNumber } from 'bignumber.js'
-import { WestDecimals } from '../constants'
+import { OracleStreamId, WestDecimals } from '../constants'
 import { IBatch } from '../interfaces'
 import ConfigStore from './ConfigStore'
 
@@ -22,7 +22,7 @@ export default class DataStore {
   westBalance = '0.0'
   eastBalance = '0.0'
   westRate = ''
-  usdpRate = ''
+  usdapRate = ''
   westPriceHistory: IDataPoint[] = []
 
   constructor(api: Api, configStore: ConfigStore) {
@@ -37,22 +37,13 @@ export default class DataStore {
     })
   }
 
-  async pollOracleTxs () {
-    // TODO remove hardcode
-    const [data] = await this.api.getAddressesTransactions('3NfpckQUCNA3Bi2t92BWvcszna4NJ7inA7f')
-    console.log('data', data)
-    const filteredTxs = data.reverse().map((tx: any) => {
-      const { type, params = [], timestamp, height } = tx
-      if (type === 104 && params.find((param: any) => param.value.includes(`${StreamId.WEST_USD}_regular_data_request_`))) {
-        const { value } = params.find((param: any) => param.key === 'value')
-        return {
-          value: +value,
-          timestamp,
-          height
-        }
-      }
-    }).filter((item: IDataPoint | undefined) => item)
-    this.westPriceHistory = filteredTxs
+  async getTokenRates () {
+    const [{ value: westRate }] = await this.api.getOracleValues(OracleStreamId.WestRate, 1)
+    const [{ value: usdapRate }] = await this.api.getOracleValues(OracleStreamId.UsdapRate, 1)
+    return {
+      westRate,
+      usdapRate
+    }
   }
 
   async startPolling (address: string) {
@@ -79,16 +70,15 @@ export default class DataStore {
     }
 
     const updateTokenRates = async () => {
-      const { westRate, usdpRate } = await this.getOracleTokenPrices(this.configStore.getOracleContractId())
+      const { westRate, usdapRate } = await this.getTokenRates()
       this.westRate = westRate
-      this.usdpRate = usdpRate
+      this.usdapRate = usdapRate
     }
 
     const updateData = async () => {
       await updateWestBalance()
       await updateEastBalance()
       await updateTokenRates()
-      // await this.pollOracleTxs()
     }
 
     clearInterval(this.pollingId)
@@ -97,35 +87,13 @@ export default class DataStore {
   }
 
   async getEastBalance(address: string): Promise<string> {
-    const contractId =  this.configStore.getEastContractId()
-    if (contractId) {
-      const { value } = await this.api.getContractStateValue(contractId, `balance_${address}`)
-      return value
-    }
-    return ''
+    const { eastAmount } = await this.api.getUserEastBalance(address)
+    return eastAmount || '0'
   }
 
   async getWestBalance(address: string): Promise<string> {
     const { balance } = await this.api.getAddressBalance(address)
     return new BigNumber(balance).dividedBy(Math.pow(10, WestDecimals)).toString()
-  }
-
-  async getOracleTokenPrices (contractId: string) {
-    const data = await this.api.getContractState(contractId, '(000003|000010)_latest') //(000003|000010)_regular_data_request_.*
-    let westRate = '0'
-    let usdpRate = '0'
-    data.forEach((item: any) => {
-      const { value, timestamp } = JSON.parse(item.value)
-      if (item.key === '000010_latest') {
-        usdpRate = value
-      } else if(item.key === '000003_latest') {
-        westRate = value
-      }
-    })
-    return {
-      westRate,
-      usdpRate
-    }
   }
 
   async getVaults (address: string): Promise<IBatch[]> {
@@ -156,12 +124,12 @@ export default class DataStore {
   }
 
   calculateEastAmount (data: any) {
-    const { usdpPart, westCollateral, westRate, usdpRate, inputWestAmount} = data
+    const { usdpPart, westCollateral, westRate, usdapRate, inputWestAmount} = data
     const usdpPartInPosition = usdpPart / ((1 - usdpPart) * westCollateral + usdpPart)
     const transferAmount = parseFloat(inputWestAmount + '')
     const westToUsdpAmount = usdpPartInPosition * transferAmount
     const eastAmount = (westToUsdpAmount * westRate) / usdpPart
-    const usdpAmount = westToUsdpAmount * westRate / usdpRate
+    const usdpAmount = westToUsdpAmount * westRate / usdapRate
     return {
       eastAmount,
       usdpAmount
