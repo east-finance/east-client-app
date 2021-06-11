@@ -5,6 +5,11 @@ import { Steps } from '../../../../components/Steps'
 import { Block } from '../../../../components/Block'
 import { SupplyCollateral } from './SupplyCollateral'
 import styled from 'styled-components'
+import { FillFormData, FillIssueForm } from './FillIssueForm'
+import { observer } from 'mobx-react'
+import useStores from '../../../../hooks/useStores'
+import { EastOpType } from '../../../../interfaces'
+import { AddWestToAddress } from '../../common/AddWestToAddress'
 
 interface IProps {
   onClose: () => void
@@ -12,8 +17,9 @@ interface IProps {
 
 enum IssueSteps {
   SupplyCollateral = 0,
-  IssueEast = 1,
-  ConfirmTransaction = 2
+  FillForm = 1,
+  ConfirmTransaction = 2,
+  Success = 3
 }
 
 const Centered = styled.div`
@@ -21,25 +27,62 @@ const Centered = styled.div`
   justify-content: center;
 `
 
-export const AddEast = (props: IProps) => {
+export const AddEast = observer((props: IProps) => {
+  const { dataStore, configStore } = useStores()
+  const [refillWestAmount, setRefillWestAmount] = useState('')
   const [stepIndex, setStepIndex] = useState(IssueSteps.SupplyCollateral)
+  const [formData, setFormData] = useState({ eastAmount: '', westAmount: '' })
+  const fee = +configStore.getFeeByOpType(EastOpType.supply)
 
-  const content = <SupplyCollateral westAmount={'400'} onSuccess={() => { console.log('123') }} />
-  const modalStatus = ModalStatus.warning
+  let content = <div />
+  let modalStatus = ModalStatus.warning
+  if (refillWestAmount) {
+    const onPrevClicked = () => {
+      setRefillWestAmount('')
+      setStepIndex(IssueSteps.FillForm)
+    }
+    content = <Block marginTop={64}>
+      <AddWestToAddress westAmount={Math.ceil(+refillWestAmount).toString()} eastAmount={formData.eastAmount} onPrevClicked={onPrevClicked} />
+    </Block>
+  } else if (stepIndex === IssueSteps.SupplyCollateral) {
+    const onSuccess = () => {
+      setStepIndex(IssueSteps.FillForm)
+    }
+    content = <SupplyCollateral westAmount={'400'} onSuccess={onSuccess} />
+  } else if (stepIndex === IssueSteps.FillForm) {
+    modalStatus = ModalStatus.success
+    const onNextClicked = (formData: FillFormData) => {
+      setFormData(formData)
+      setStepIndex(IssueSteps.ConfirmTransaction)
+      const westDelta = (+formData.westAmount + fee) - +dataStore.westBalance
+      if (westDelta > 0) {
+        setRefillWestAmount(westDelta.toString())
+      }
+    }
+    content = <FillIssueForm
+      eastAmount={formData.eastAmount}
+      westAmount={formData.westAmount}
+      onNextClicked={onNextClicked}
+    />
+  }
 
   return <PrimaryModal {...props} status={modalStatus}>
     <PrimaryTitle>issue east stablecoin</PrimaryTitle>
-    <Block marginTop={40}>
-      <Centered>
-        <Steps steps={[{
-          text: '1. Supply collateral'
-        }, {
-          text: '2. Issue EAST'
-        }, {
-          text: '3. Confirm transaction'
-        }]} currentStepIndex={stepIndex} />
-      </Centered>
-    </Block>
+    <div>
+      {!refillWestAmount &&
+        <Block marginTop={40}>
+          <Centered>
+            <Steps steps={[{
+              text: '1. Supply collateral'
+            }, {
+              text: '2. Issue EAST'
+            }, {
+              text: '3. Confirm transaction'
+            }]} currentStepIndex={stepIndex} />
+          </Centered>
+        </Block>
+      }
+    </div>
     {content}
   </PrimaryModal>
-}
+})

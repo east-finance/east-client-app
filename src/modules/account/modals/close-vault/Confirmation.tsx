@@ -15,6 +15,7 @@ import {
 } from '../../../../components/TextTable'
 import { roundNumber } from '../../../../utils'
 import { BeforeText, ButtonSpinner, RelativeContainer, Spinner } from '../../../../components/Spinner'
+import { IVault } from '../../../../interfaces'
 
 interface IProps {
   onPrevClicked: () => void;
@@ -46,6 +47,7 @@ const ButtonsContainer = styled.div`
 
 export const CloseVaultConfirmation = observer((props: IProps) => {
   const { configStore, dataStore } = useStores()
+  const vault: IVault = dataStore.vault
 
   const [inProgress, setInProgress] = useState(false)
 
@@ -83,8 +85,8 @@ export const CloseVaultConfirmation = observer((props: IProps) => {
         <TextTableRow>
           <TextTableKey>You will unlock</TextTableKey>
           <TextTableSecondaryValue>
-            <div>800 WEST</div>
-            <div>50 USDap</div>
+            <div>{vault.westAmount} WEST</div>
+            <div>{vault.usdpAmount} USDap</div>
           </TextTableSecondaryValue>
         </TextTableRow>
       </TextTable>

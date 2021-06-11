@@ -7,10 +7,12 @@ import iconCopy from '../../../resources/images/icon-copy.png'
 import { toast } from 'react-toastify'
 import { InfoNotification, NotificationType, ToastCloseButton } from '../../../components/Notification'
 import { roundNumber } from '../../../utils'
+import { ButtonsContainer, NavigationLeftGradientButton } from '../../../components/Button'
 
 interface IProps {
   westAmount: string;
   eastAmount: string;
+  onPrevClicked: () => void;
 }
 
 const IconCommon = styled.div`
@@ -44,15 +46,14 @@ const Description = styled(Centered)`
 `
 
 const AddressContainer = styled.div`
-  width: 100%;
-  padding: 4px 8px;
+  padding: 12px 8px;
   background: rgba(4, 53, 105, 0.15);
   border-radius: 8px;
   font-family: Cairo,sans-serif;
   font-weight: bold;
-  font-size: 22px;
+  font-size: 23px;
   line-height: 24px;
-  color: #0A0606;
+  color: #043569;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -65,6 +66,29 @@ const Info = styled.div`
   line-height: 24px;
 `
 
+const ExchangeList = styled.div`
+  display: flex;
+  justify-content: center;
+
+  > a:not(:first-child) {
+    margin-left: 24px;
+  }
+`
+
+const ExchangeItem = styled.a`
+  width: 40px;
+  height: 40px;
+  border-radius: 20px;
+  background-color: #C4C4C4;
+  background-repeat: no-repeat;
+  cursor: pointer;
+  border: 1px solid transparent;
+
+  :hover {
+    border-color: black;
+  }
+`
+
 export const AddWestToAddress = (props: IProps) => {
   const { authStore } = useStores()
   const onCopyClicked = () => {
@@ -74,7 +98,7 @@ export const AddWestToAddress = (props: IProps) => {
       closeButton: <ToastCloseButton type={NotificationType.default} closeToast={() => toast.dismiss()} />
     })
   }
-  const westAmount = roundNumber(props.westAmount, 4)
+  const westAmount = roundNumber(props.westAmount, 8)
   return <Container>
     <Description>
       Add <Amount>{westAmount} WEST</Amount> to your address to get {props.eastAmount} EAST.
@@ -90,12 +114,25 @@ export const AddWestToAddress = (props: IProps) => {
         <div><IconCopy onClick={onCopyClicked} /></div>
       </AddressContainer>
     </Block>
+    <Block marginTop={24}>
+      <ExchangeList>
+        <ExchangeItem href={'https://waves.exchange/'} target={'_blank'} />
+        <ExchangeItem href={'https://waves.exchange/'} target={'_blank'} />
+        <ExchangeItem href={'https://waves.exchange/'} target={'_blank'} />
+        <ExchangeItem href={'https://waves.exchange/'} target={'_blank'} />
+      </ExchangeList>
+    </Block>
     <Block marginTop={40}>
       <Centered>
         <Info>
           Transfers between different blockchains sometimes take up to a couple of hours
         </Info>
       </Centered>
+    </Block>
+    <Block marginTop={32}>
+      <ButtonsContainer>
+        <NavigationLeftGradientButton onClick={props.onPrevClicked} />
+      </ButtonsContainer>
     </Block>
   </Container>
 }

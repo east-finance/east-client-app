@@ -8,6 +8,7 @@ import { Button, NavigationLeftGradientButton } from '../../../components/Button
 import { dockerCallTransfer } from '../../../utils/txFactory'
 import useStores from '../../../hooks/useStores'
 import { ITag, Tags } from '../../../components/Tags'
+import { roundNumber } from '../../../utils'
 
 interface IProps {
   onClose: () => void
@@ -76,7 +77,7 @@ export const TransferEast = (props: IProps) => {
 
   const options = [{text: '25%', value: '0.25' }, { text: '50%', value: '0.5' }, { text: '75%', value: '0.75' }, { text: '100%', value: '1' }]
   const onSelectOption = (tag: ITag) => {
-    const amount = +tag.value * dataStore.westBalance
+    const amount = roundNumber((+tag.value * dataStore.eastBalance).toString(), 8)
     setEastAmount(amount.toString())
   }
 

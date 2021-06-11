@@ -55,7 +55,7 @@ const SignUp = () => {
 
   const [inProgress, setInProgress] = useState(false)
   const [isRegistered, setRegistered] = useState(false)
-  const [validateTimerId, setValidateTimerId] = useState<NodeJS.Timeout | null>(null)
+  const [validateTimerId, setValidateTimerId] = useState<any>(null)
 
   const throttleValidation = (prop: FormProp) => {
     if (validateTimerId) {

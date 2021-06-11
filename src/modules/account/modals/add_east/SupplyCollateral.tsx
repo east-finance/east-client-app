@@ -59,7 +59,7 @@ export const SupplyCollateral = (props: IProps) => {
       await new Promise(resolve => {
         setTimeout(resolve, 100)
       })
-      router.navigate(RouteName.BuyEast)
+      props.onSuccess()
     } catch (e) {
       console.error('Add WEST error:', e.message)
     } finally {
@@ -78,7 +78,7 @@ export const SupplyCollateral = (props: IProps) => {
     <Block32>
       <Centered>Collaterization leveling required.</Centered>
       <Centered>Add {props.westAmount} WEST into the Vault.</Centered>
-      <Centered>On wallet: {roundNumber(dataStore.westBalance)} WEST.</Centered>
+      <Centered>On wallet: {roundNumber(dataStore.westBalance, 8)} WEST.</Centered>
     </Block32>
     <Block marginTop={28}>
       <ButtonContainer>

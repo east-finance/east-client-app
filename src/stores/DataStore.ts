@@ -2,7 +2,7 @@ import { makeAutoObservable, runInAction } from 'mobx'
 import { Api } from '../api'
 import { BigNumber } from 'bignumber.js'
 import { OracleStreamId, WestDecimals } from '../constants'
-import { IBatch } from '../interfaces'
+import { IBatch, IVault } from '../interfaces'
 import ConfigStore from './ConfigStore'
 
 enum StreamId {
@@ -19,6 +19,19 @@ export default class DataStore {
   api
   configStore
   pollingId: any = null
+  vault: IVault = {
+    id: 0,
+    address: '',
+    createdAt: '',
+    eastAmount: '',
+    usdpAmount: '',
+    usdpRate: '',
+    usdpRateTimestamp: '',
+    vaultId: '',
+    westAmount: '',
+    westRate: '',
+    westRateTimestamp: ''
+  }
   westBalance = '0.0'
   eastBalance = '0.0'
   westRate = ''
@@ -32,9 +45,7 @@ export default class DataStore {
   }
 
   sleep(timeout: number) {
-    return new Promise(resolve => {
-      setTimeout(resolve, timeout)
-    })
+    return new Promise(resolve => setTimeout(resolve, timeout))
   }
 
   async getTokenRates () {
@@ -47,43 +58,35 @@ export default class DataStore {
   }
 
   async startPolling (address: string) {
-    const updateWestBalance = async () => {
-      try {
-        const balance = await this.getWestBalance(address)
-        runInAction(() => {
-          this.westBalance = balance
-        })
-      } catch (e) {
-        console.log(`Polling error: cannot get address ${address} west balance`, e.message)
-      }
-    }
-
-    const updateEastBalance = async () => {
-      try {
-        const balance = await this.getEastBalance(address)
-        runInAction(() => {
-          this.eastBalance = balance
-        })
-      } catch (e) {
-        console.log(`Polling error: cannot get address ${address} east balance`, e.message)
-      }
-    }
-
     const updateTokenRates = async () => {
       const { westRate, usdapRate } = await this.getTokenRates()
       this.westRate = westRate
       this.usdapRate = usdapRate
     }
 
-    const updateData = async () => {
-      await updateWestBalance()
-      await updateEastBalance()
-      await updateTokenRates()
+    const updateUserVault = async () => {
+      const vault = await this.api.getVault(address)
+      this.vault = vault
+      this.eastBalance = vault.eastAmount
     }
 
+    const updateWestBalance = async () => {
+      const westBalance = await this.getWestBalance(address)
+      this.westBalance = westBalance
+    }
+
+    const updateData = async () => {
+      try {
+        await updateUserVault()
+        await updateWestBalance()
+        await updateTokenRates()
+      } catch(e) {
+        console.error(`Cannot get user (addr: "${address}") data`, e.message)
+      }
+    }
     clearInterval(this.pollingId)
     await updateData()
-    this.pollingId = setInterval(updateData, 600 * 1000)
+    this.pollingId = setInterval(updateData, 10 * 1000)
   }
 
   async getEastBalance(address: string): Promise<string> {

@@ -1,8 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import { Block } from '../../../../components/Block'
-import { NavigationLeftGradientButton } from '../../../../components/Button'
-import { AddWestToAddress } from '../../common/AddWest'
+import { AddWestToAddress } from '../../common/AddWestToAddress'
 
 interface IProps {
   rechargeWestAmount: string;
@@ -17,20 +16,10 @@ const Container = styled.div`
   color: ${props => props.theme.darkBlue};
 `
 
-const SendButtonsContainer = styled.div`
-  display: flex;
-  justify-content: center;
-`
-
 export const RechargeWest = (props: IProps) => {
   return <Container>
     <Block marginTop={64}>
-      <AddWestToAddress westAmount={props.rechargeWestAmount} eastAmount={props.eastAmount} />
-    </Block>
-    <Block marginTop={40}>
-      <SendButtonsContainer>
-        <NavigationLeftGradientButton onClick={props.onPrevClicked} />
-      </SendButtonsContainer>
+      <AddWestToAddress westAmount={props.rechargeWestAmount} eastAmount={props.eastAmount} onPrevClicked={props.onPrevClicked} />
     </Block>
   </Container>
 }

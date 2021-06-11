@@ -26,7 +26,7 @@ const StepContainer = styled.div<{ isActive: boolean; isPassed: boolean; }>`
   line-height: 16px;
 
   ${({ isActive, isPassed }) => (isActive || isPassed) && `
-    background: radial-gradient(204.55% 3032.86% at 67.55% 85.45%, rgba(172, 171, 216, 0) 0%, #514EFF 100%), #1D87D6;\
+    background-image: linear-gradient(to right, #545ff5 0%, #3b8ad9 51%, #4687dc 100%);
     color: #FFFFFF;
   `}
 `

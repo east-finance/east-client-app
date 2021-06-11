@@ -33,3 +33,26 @@ export interface ITransaction {
     westAmount?: number;
   }
 }
+
+export interface IVault {
+  id: number;
+  address: string;
+  createdAt: string;
+  eastAmount: string;
+  usdpAmount: string;
+  usdpRate: string;
+  usdpRateTimestamp: string;
+  vaultId: string;
+  westAmount: string;
+  westRate: string;
+  westRateTimestamp: string;
+}
+
+export enum EastOpType {
+  mint = 'mint',
+  transfer = 'transfer',
+  reissue = 'reissue',
+  supply = 'supply',
+  close_init = 'close_init',
+  claim_overpay_init = 'claim_overpay_init'
+}

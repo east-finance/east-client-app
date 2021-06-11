@@ -12,6 +12,7 @@ import {
 } from '../../../../components/TextTable'
 import { roundNumber } from '../../../../utils'
 import { observer } from 'mobx-react'
+import { IVault } from '../../../../interfaces'
 
 interface IProps {
   onNextClicked: () => void;
@@ -41,6 +42,7 @@ const Fee = styled.div`
 
 export const CloseVaultInfo = observer((props: IProps) => {
   const { configStore, dataStore } = useStores()
+  const vault: IVault = dataStore.vault
 
   return <Container>
     <Block marginTop={40}>
@@ -52,12 +54,12 @@ export const CloseVaultInfo = observer((props: IProps) => {
       <TextTable>
         <TextTableRow>
           <TextTableKey>You have</TextTableKey>
-          <TextTablePrimaryValue>{roundNumber(dataStore.eastBalance)} EAST</TextTablePrimaryValue>
+          <TextTablePrimaryValue>{vault.eastAmount} EAST</TextTablePrimaryValue>
         </TextTableRow>
         <TextTableRow>
           <TextTableKey>You will pay</TextTableKey>
           <TextTablePrimaryValue>
-            <div>{roundNumber(dataStore.eastBalance)} EAST</div>
+            <div>{vault.eastAmount} EAST</div>
             <Block marginTop={8}>
               <Fee>+ {configStore.getDockerCallFee()} WEST fee</Fee>
             </Block>
@@ -66,8 +68,8 @@ export const CloseVaultInfo = observer((props: IProps) => {
         <TextTableRow>
           <TextTableKey>You will unlock</TextTableKey>
           <TextTableSecondaryValue>
-            <div>800 WEST</div>
-            <div>50 USDap</div>
+            <div>{vault.westAmount} WEST</div>
+            <div>{vault.usdpAmount} USDap</div>
           </TextTableSecondaryValue>
         </TextTableRow>
       </TextTable>

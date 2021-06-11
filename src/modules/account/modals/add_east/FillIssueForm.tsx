@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { Block, Block24 } from '../../../../components/Block'
 import { InputStatus, SimpleInput } from '../../../../components/Input'
-import { Button } from '../../../../components/Button'
+import { Button, ButtonsContainer, NavigationLeftGradientButton } from '../../../../components/Button'
 import useStores from '../../../../hooks/useStores'
 import { roundNumber } from '../../../../utils'
 import { observer } from 'mobx-react'
@@ -15,16 +15,13 @@ export interface FillFormData {
 }
 
 interface IProps {
-  westRate: string;
-  usdapRate: string;
   eastAmount: string;
   westAmount: string;
-  inProgress: boolean;
   onNextClicked: (formData: FillFormData) => void
 }
 
 const Container = styled.div`
-  width: 376px;
+  width: 464px;
   margin: 0 auto;
   font-family: Cairo,sans-serif;
 `
@@ -38,11 +35,11 @@ const Description = styled(Centered)`
   color: #525252;
 `
 
-export const FillForm = observer((props: IProps) => {
-  const { westRate, usdapRate } = props
+export const FillIssueForm = observer((props: IProps) => {
   const { dataStore, configStore } = useStores()
-  const [eastAmount, setEastAmount] = useState(props.eastAmount)
-  const [westAmount, setWestAmount] = useState(props.westAmount)
+  const { westRate, usdapRate } = dataStore
+  const [eastAmount, setEastAmount] = useState(props.eastAmount || '')
+  const [westAmount, setWestAmount] = useState(props.westAmount || '')
   const [errors, setErrors] = useState({ east: '', west: '' })
 
   useEffect(() => {
@@ -129,7 +126,7 @@ export const FillForm = observer((props: IProps) => {
     setErrors(validateForm())
   }
   return <Container>
-    <Block marginTop={72}>
+    <Block marginTop={16}>
       <SimpleInput
         type={'number'}
         label={'Enter amount of EAST'}
@@ -153,20 +150,12 @@ export const FillForm = observer((props: IProps) => {
         </Block>
       }
     </Block>
-    <Block marginTop={56}>
-      <Description>EAST is collateralized by {usdpPartPercent}% USDP and {westPartPercent}% WEST.</Description>
-    </Block>
-    <Block24>
-      <Button type={'primary'} disabled={props.inProgress} onClick={onNextClicked}>
-        <RelativeContainer>
-          {props.inProgress &&
-            <BeforeText>
-              <Spinner />
-            </BeforeText>
-          }
+    <Block marginTop={62}>
+      <ButtonsContainer>
+        <Button type={'primary'} onClick={onNextClicked} style={{ width: '304px' }}>
           Continue to confirmation
-        </RelativeContainer>
-      </Button>
-    </Block24>
+        </Button>
+      </ButtonsContainer>
+    </Block>
   </Container>
 })

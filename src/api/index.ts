@@ -3,6 +3,7 @@ import { ApiTokenRefresher } from '@wavesenterprise/api-token-refresher'
 import {
   IBatch,
   ITokenPair,
+  IVault,
 } from '../interfaces'
 import { OracleStreamId } from '../constants'
 import { IEastBalanceResponse, IOracleValue } from './ApiInterfaces'
@@ -117,7 +118,7 @@ export class Api {
     return data
   }
 
-  public getVault = async (address: string): Promise<IEastBalanceResponse> => {
+  public getVault = async (address: string): Promise<IVault> => {
     const { data } = await this._apiClient.get(`${API_ADDRESS}/v1/user/vault?address=${address}`)
     return data
   }

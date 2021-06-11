@@ -104,3 +104,12 @@ export const NavigationLeftGradient = (props: ButtonProps) => {
 export const NavigationLeftGradientButton = (props: ButtonProps) => {
   return <NaviLeftContainerGrad {...props} />
 }
+
+export const ButtonsContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  
+  > div:not(:first-child) {
+    margin-left: 8px;
+  }
+`

@@ -196,11 +196,12 @@ export const SimpleInput = (props: SimpleInputProps) => {
       props.onChange(e)
     }
   }
-  return <SimpleInputContainer status={props.status} value={value || props.value}>
+  const status = isFocused ? InputStatus.default : props.status
+  return <SimpleInputContainer status={status} value={value || props.value}>
     {label &&
       <SimpleInputLabel
         isOpened={isFocused || props.isFocused || !!value || !!props.value}
-        status={props.status}
+        status={status}
       >
         {label}
       </SimpleInputLabel>

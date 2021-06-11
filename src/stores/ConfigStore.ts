@@ -3,6 +3,7 @@ import axios from 'axios'
 import { Api } from '../api'
 import { BigNumber } from 'bignumber.js'
 import { WestDecimals } from '../constants'
+import { EastOpType } from '../interfaces'
 
 export default class ConfigStore {
   api
@@ -103,5 +104,18 @@ export default class ConfigStore {
 
   getAtomicFee () {
     return this.nodeConfig.minimumFee['120']
+  }
+
+  getFeeByOpType (opType: EastOpType): string {
+    const callFee = +this.getDockerCallFee()
+    const transferFee = +this.getTransferFee()
+    const atomicFee = +this.getAtomicFee()
+    const allTxsFee = (transferFee + callFee + atomicFee).toString()
+    switch(opType) {
+    case EastOpType.mint: return allTxsFee
+    case EastOpType.supply: return allTxsFee
+    default:
+      return '0'
+    }
   }
 }
