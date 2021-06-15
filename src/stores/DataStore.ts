@@ -1,9 +1,10 @@
-import { makeAutoObservable, runInAction } from 'mobx'
+import { makeAutoObservable } from 'mobx'
 import { Api } from '../api'
 import { BigNumber } from 'bignumber.js'
 import { OracleStreamId, WestDecimals } from '../constants'
-import { IBatch, IVault } from '../interfaces'
+import { IVault } from '../interfaces'
 import ConfigStore from './ConfigStore'
+import { roundNumber } from '../utils'
 
 enum StreamId {
   WEST_USD = '000003'
@@ -34,8 +35,8 @@ export default class DataStore {
   }
   westBalance = '0.0'
   eastBalance = '0.0'
-  westRate = ''
-  usdapRate = ''
+  westRate = '0'
+  usdapRate = '0'
   westPriceHistory: IDataPoint[] = []
 
   constructor(api: Api, configStore: ConfigStore) {
@@ -66,6 +67,7 @@ export default class DataStore {
 
     const updateUserVault = async () => {
       const vault = await this.api.getVault(address)
+      console.log('Vault:', vault)
       this.vault = vault
       this.eastBalance = vault.eastAmount
     }
@@ -99,22 +101,6 @@ export default class DataStore {
     return new BigNumber(balance).dividedBy(Math.pow(10, WestDecimals)).toString()
   }
 
-  async getVaults (address: string): Promise<IBatch[]> {
-    const vaults = await this.api.getBatches(address)
-    return vaults.map(vault => {
-      const westRate = this.calculateWestRate({
-        usdpPart: this.configStore.getUsdpPart(),
-        westCollateral: this.configStore.getWestCollateral(),
-        eastAmount: +vault.eastAmount,
-        westAmount: +vault.westAmount
-      })
-      return {
-        ...vault,
-        westRate: westRate.toString()
-      }
-    })
-  }
-
   calculateWestAmount (data: any) {
     const { usdpPart, westCollateral, westRate, inputEastAmount } = data
     return inputEastAmount * ((usdpPart / westRate) + ((1 - usdpPart) / westRate * westCollateral))
@@ -137,5 +123,18 @@ export default class DataStore {
       eastAmount,
       usdpAmount
     }
+  }
+
+  calculateCurrentVaultWestAmount () {
+    const westPart = 1 - this.configStore.getUsdpPart()
+    const westCollateral = this.configStore.getWestCollateral()
+    const westExpectedUsdValue = +this.eastBalance * westPart * +this.usdapRate * westCollateral
+    const expectedWestAmount = westExpectedUsdValue / +this.westRate
+    return expectedWestAmount
+  }
+
+  calculateVaultWestProfit () {
+    const diff = roundNumber(this.calculateCurrentVaultWestAmount() - +this.vault.westAmount, 8)
+    return diff
   }
 }

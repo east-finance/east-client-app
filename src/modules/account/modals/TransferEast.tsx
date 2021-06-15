@@ -4,7 +4,7 @@ import { PrimaryTitle } from '../../../components/PrimaryTitle'
 import { PrimaryModal } from '../Modal'
 import { Block, Block16, Block24 } from '../../../components/Block'
 import { InputStatus, SimpleInput } from '../../../components/Input'
-import { Button, NavigationLeftGradientButton } from '../../../components/Button'
+import { Button, ButtonsContainer, NavigationLeftGradientButton } from '../../../components/Button'
 import { dockerCallTransfer } from '../../../utils/txFactory'
 import useStores from '../../../hooks/useStores'
 import { ITag, Tags } from '../../../components/Tags'
@@ -15,25 +15,22 @@ interface IProps {
 }
 
 const Container = styled.div`
-  width: 376px;
+  width: 464px;
   margin: 0 auto;
 `
 
 const SubTitle = styled.div`
-  color: #0A0606;
   text-align: center;
   font-weight: bold;
   font-size: 16px;
 `
 
 const ConfirmTitle = styled.div`
-  color: #000000;
   opacity: 0.6;
   font-size: 15px;
 `
 
 const SendAmount = styled.div`
-  color: #000000;
   font-weight: bold;
   font-size: 24px;
   line-height: 24px;
@@ -43,12 +40,13 @@ const SendAddress = styled.div`
   font-weight: 600;
   font-size: 18px;
   line-height: 22px;
-  color: #525252;
 `
 
-const SendButtonsContainer = styled.div`
-  display: flex;
-  justify-content: space-between;
+const Fee = styled.div`
+  color: #043569;
+  font-weight: bold;
+  font-size: 16px;
+  line-height: 16px;
 `
 
 enum Steps {
@@ -62,15 +60,33 @@ export const TransferEast = (props: IProps) => {
   const eastAvailable = dataStore.eastBalance
 
   const [eastAmount, setEastAmount] = useState('')
-  const [amountError, setAmountError] = useState('')
-  const [address, setAddress] = useState('')
+  const [userAddress, setUserAddress] = useState('')
+  const [formErrors, setFormErrors] = useState({ east: '', address: '' })
   const [currentStep, setCurrentStep] = useState(Steps.fill)
 
   let content = null
   let title = ''
 
+  const validateForm = () => {
+    let east = ''
+    let address = ''
+    if (!eastAmount || +eastAmount === 0) {
+      east = 'Enter EAST amount'
+    } else if (+eastAmount > eastAvailable) {
+      east = 'Not enought EAST on balance'
+    }
+    if (!userAddress) {
+      address = 'Enter address'
+    }
+    return {
+      east, address
+    }
+  }
+
   const onClickContinue = () => {
-    if (eastAmount && address) {
+    const { east, address } = validateForm()
+    setFormErrors({ east, address })
+    if (!east && !address) {
       setCurrentStep(Steps.confirm)
     }
   }
@@ -88,7 +104,7 @@ export const TransferEast = (props: IProps) => {
     const tx = dockerCallTransfer({
       publicKey,
       contractId: configStore.getEastContractId(),
-      recipient: address,
+      recipient: userAddress,
       eastAmount: +eastAmount
     })
     const result = await window.WEWallet.broadcast('dockerCallV3', tx)
@@ -98,10 +114,11 @@ export const TransferEast = (props: IProps) => {
   if (currentStep === Steps.fill) {
     title = 'transfer east'
     content = <Container>
-      <Block marginTop={109}>
+      <Block marginTop={96}>
         <SimpleInput
           type={'number'}
-          label={`Amount of EAST (${eastAvailable} available)`}
+          status={formErrors.east ? InputStatus.error : InputStatus.default}
+          label={`Enter amount of EAST (${eastAvailable} available)`}
           value={eastAmount}
           onChange={(e: any) => setEastAmount(e.target.value)}
         />
@@ -109,9 +126,14 @@ export const TransferEast = (props: IProps) => {
           <Tags data={options} onClick={onSelectOption} />
         </Block>
       </Block>
-      <SimpleInput label={'Enter recipient’s address'} value={address} onChange={(e:  any) => setAddress(e.target.value)} />
-      <Block marginTop={86}>
-        <Button type={'primary'} onClick={onClickContinue}>Continue</Button>
+      <SimpleInput
+        status={formErrors.address ? InputStatus.error : InputStatus.default}
+        label={'Enter recipient’s address'}
+        value={userAddress}
+        onChange={(e:  any) => setUserAddress(e.target.value)}
+      />
+      <Block marginTop={96}>
+        <Button style={{ width: '304px', margin: '0 auto' }} type={'primary'} onClick={onClickContinue}>Continue</Button>
       </Block>
     </Container>
   } else {
@@ -128,14 +150,20 @@ export const TransferEast = (props: IProps) => {
         <Block24 />
         <ConfirmTitle>To the address</ConfirmTitle>
         <Block marginTop={8}>
-          <SendAddress>{address}</SendAddress>
+          <SendAddress>{userAddress}</SendAddress>
+        </Block>
+        <Block marginTop={24}>
+          <ConfirmTitle>Fee</ConfirmTitle>
+          <Block marginTop={8}>
+            <Fee>{configStore.getDockerCallFee()} WEST</Fee>
+          </Block>
         </Block>
       </Block>
       <Block marginTop={64}>
-        <SendButtonsContainer>
+        <ButtonsContainer style={{ width: '80%', margin: '0 auto' }}>
           <NavigationLeftGradientButton onClick={() => setCurrentStep(Steps.fill)} />
-          <Button type={'primary'} style={{ width: '300px' }} onClick={onConfirmTransfer}>Confirm and continue</Button>
-        </SendButtonsContainer>
+          <Button type={'primary'} onClick={onConfirmTransfer}>Confirm and continue</Button>
+        </ButtonsContainer>
       </Block>
     </Container>
   }

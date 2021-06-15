@@ -93,20 +93,20 @@ export const ClaimOverpay = (props: IBatchDetailsProps) => {
 
   const sendDockerCall = async () => {
     if (batch) {
-      const state = await window.WEWallet.publicState()
-      const { account: { publicKey } } = state
-      if (state.locked) {
-        await window.WEWallet.auth({ data: 'EAST Client auth' })
-      }
-      const tx = claimOverpay({
-        publicKey: publicKey,
-        contractId: configStore.getEastContractId(),
-        vaultId: batch.vaultId,
-        fee: configStore.getDockerCallFee()
-      })
-      console.log('Claim overpay Docker call tx:', tx)
-      const result = await window.WEWallet.broadcast('dockerCallV3', tx)
-      console.log('Claim overpay broadcast result:', result)
+      // const state = await window.WEWallet.publicState()
+      // const { account: { publicKey } } = state
+      // if (state.locked) {
+      //   await window.WEWallet.auth({ data: 'EAST Client auth' })
+      // }
+      // const tx = claimOverpay({
+      //   publicKey: publicKey,
+      //   contractId: configStore.getEastContractId(),
+      //   vaultId: batch.vaultId,
+      //   fee: configStore.getDockerCallFee()
+      // })
+      // console.log('Claim overpay Docker call tx:', tx)
+      // const result = await window.WEWallet.broadcast('dockerCallV3', tx)
+      // console.log('Claim overpay broadcast result:', result)
     }
   }
 

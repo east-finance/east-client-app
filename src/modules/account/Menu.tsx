@@ -107,8 +107,9 @@ const IconClose = styled(IconCommon)`background-image: url(${iconCloseRed});`
 
 export const AccountMenu = observer(() => {
   const { dataStore } = useStores()
-  const isUserHaveEast = +dataStore.eastBalance > 0
   const { router } = useRoute()
+  const isUserHaveEast = +dataStore.eastBalance > 0
+  const vaultProfit = dataStore.calculateVaultWestProfit()
   const transferAvailable = isUserHaveEast
   return <Container>
     <MenuItemContainer>
@@ -118,8 +119,10 @@ export const AccountMenu = observer(() => {
       </MenuItem>
     </MenuItemContainer>
     <MenuItemContainer>
-      <Tooltip>Take WEST</Tooltip>
-      <MenuItem onClick={() => router.navigate(RouteName.TakeWest)}><IconLock /></MenuItem>
+      {vaultProfit > 0 &&
+        <Tooltip>Take WEST</Tooltip>
+      }
+      <MenuItem disabled={vaultProfit <= 0} onClick={() => router.navigate(RouteName.TakeWest)}><IconLock /></MenuItem>
     </MenuItemContainer>
     <MenuItemContainer>
       {transferAvailable &&
@@ -146,7 +149,9 @@ export const AccountMenu = observer(() => {
     </MenuItemContainer>
     <Delimiter />
     <MenuItemContainer>
-      <Tooltip>Close</Tooltip>
+      {isUserHaveEast &&
+        <Tooltip>Close</Tooltip>
+      }
       <MenuItem disabled={!isUserHaveEast} onClick={() => router.navigate(RouteName.CloseVault)}>
         <IconClose />
       </MenuItem>

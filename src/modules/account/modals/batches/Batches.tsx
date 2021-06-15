@@ -177,9 +177,9 @@ export const Batches = (props: IProps) => {
   useEffect(() => {
     const loadBatches = async () => {
       try {
-        setLoading(true)
-        const data = await dataStore.getVaults(authStore.address)
-        setBatches(data)
+        // setLoading(true)
+        // const data = await dataStore.getVaults(authStore.address)
+        // setBatches(data)
       } catch (e) {
         console.error('Cannot load batches list', e)
       } finally {

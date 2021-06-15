@@ -16,9 +16,11 @@ import {
 import { roundNumber } from '../../../../utils'
 import { BeforeText, ButtonSpinner, RelativeContainer, Spinner } from '../../../../components/Spinner'
 import { IVault } from '../../../../interfaces'
+import { closeVault } from '../../../../utils/txFactory'
 
 interface IProps {
   onPrevClicked: () => void;
+  onSuccess: () => void;
 }
 
 const Container = styled.div`
@@ -51,10 +53,28 @@ export const CloseVaultConfirmation = observer((props: IProps) => {
 
   const [inProgress, setInProgress] = useState(false)
 
+  const sendCloseVault = async () => {
+    const state = await window.WEWallet.publicState()
+    const { account: { publicKey } } = state
+    if (state.locked) {
+      await window.WEWallet.auth({ data: 'EAST Client auth' })
+    }
+    const tx = closeVault({
+      publicKey: publicKey,
+      contractId: configStore.getEastContractId(),
+      fee: configStore.getDockerCallFee()
+    })
+    console.log('Close vault Docker call tx:', tx)
+    const result = await window.WEWallet.broadcast('dockerCallV3', tx)
+    console.log('Close vault broadcast result:', result)
+  }
+
   const closePosition = async () => {
     try {
       setInProgress(true)
-      await new Promise(resolve => setTimeout(resolve, 2000))
+      // await new Promise(resolve => setTimeout(resolve, 2000))
+      await sendCloseVault()
+      props.onSuccess()
     } catch (e) {
       console.error('Error on close vault', e.message)
     } finally {

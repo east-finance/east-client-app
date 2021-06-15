@@ -94,9 +94,9 @@ export const circInX = keyframes`
 
 export const shineBatch = keyframes`
   0% {
-    background-position: -32px;
+    background-position: 0px;
   }
-  40%, 100% {
-    background-position: 208px;
+  100% {
+    background-position: 576px;
   }
 `

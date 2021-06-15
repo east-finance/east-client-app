@@ -22,6 +22,11 @@ const StyleGlobal = createGlobalStyle`
   //  margin: 0;
   //}
 
+  a {
+    color: #2e8ad7;
+    text-decoration: none;
+  }
+
   @media (max-width: 767px) {
     #videoBG {
       display: none;

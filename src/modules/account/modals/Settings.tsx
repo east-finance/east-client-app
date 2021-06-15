@@ -198,7 +198,7 @@ export const Settings = (props: IProps) => {
         <Block16 />
         <OptionsContainer>
           <Option onClick={onPassChangeClicked}>Change password</Option>
-          <Option>View SEED phrase</Option>
+          {/* <Option>View SEED phrase</Option> */}
           <Option onClick={() => authStore.logout()}>Logout</Option>
         </OptionsContainer>
       </Container>

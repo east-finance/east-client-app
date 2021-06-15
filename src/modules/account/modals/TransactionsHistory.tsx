@@ -1,29 +1,38 @@
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
+import moment from 'moment'
 import { PrimaryTitle } from '../../../components/PrimaryTitle'
 import { PrimaryModal } from '../Modal'
 import { Block } from '../../../components/Block'
 import { GradientText } from '../../../components/Text'
-import { ITransaction, TransactionType } from '../../../interfaces'
+import { EastOpType, ITransaction } from '../../../interfaces'
 import useStores from '../../../hooks/useStores'
+import { shineBatch } from '../../../components/Animations'
+import { roundNumber } from '../../../utils'
+import { useRoute } from 'react-router5'
 
 interface IProps {
   onClose: () => void
 }
 
-const ItemColumn = styled.div``
+const ItemColumn = styled.div`
+  text-align: left;
+`
 
 const ItemsContainer = styled.div`
   margin-top: 32px;
-  max-height: 430px;
+  max-height: 380px;
+  height: 380px;
   overflow-y: scroll;
 `
 
 const ItemContainer = styled.div`
   display: flex;
+  height: 76px;
+  box-sizing: border-box;
   justify-content: space-between;
   align-items: center;
-  padding: 16px;
+  padding: 18px 16px;
   background: linear-gradient(180deg, #F2F2F2 0%, #EDEDED 100%);
   border-radius: 4px;
   margin-bottom: 8px;
@@ -33,22 +42,27 @@ const ItemContainer = styled.div`
   }
 `
 
+const TxItemSkeleton = styled(ItemContainer)`
+  background-image: linear-gradient(90deg, #ddd 0px,  #e8e8e8 40px, #ddd 80px);
+  background-size: 576px;
+  animation: ${shineBatch} 1.6s infinite linear;
+`
+
 const LinkWrapper = styled.div`
   background: rgba(224, 224, 224, 0.25);
   border-radius: 8px;
 `
 
 const ExplorerLink = styled(GradientText)`
-  font-family: Cairo;
-  font-size: 15px;
-  line-height: 18px;
-  padding: 8px 16px;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 16px;
   cursor: pointer;
 `
 
 const PrimaryText = styled.div`
   font-weight: bold;
-  font-size: 20px;
+  font-size: 16px;
   line-height: 16px;
 `
 
@@ -59,28 +73,61 @@ const SecondaryText = styled.div`
   color: #000000;
 `
 
-const Item = (props: { tx: ITransaction}) => {
+const Time = styled.div`
+  font-size: 15px;
+  line-height: 18px;
+  color: ${props => props.theme.darkBlue50};
+`
+
+const TxItem = (props: { tx: ITransaction}) => {
+  const { configStore } = useStores()
+  const { router } = useRoute()
   const { tx } = props
+  const { transactionType, eastAmountDiff, callTimestamp } = tx
+  const date = moment(callTimestamp).format('MMM Do')
+  const time = moment(callTimestamp).format('hh:mm a')
+  const isReceived = +eastAmountDiff > 0
+  let eastDiff = roundNumber(eastAmountDiff, 8).toString()
+  if (isReceived) {
+    eastDiff = '+' + eastDiff
+  }
+  console.log('tx', tx)
+  let primaryText = ''
+  let description = ''
+  if (transactionType === EastOpType.transfer) {
+    primaryText = `${eastDiff} EAST`
+    description = isReceived ? 'Transfer from another address' : 'Transfer to the address'
+  } else if (transactionType === EastOpType.mint) {
+    primaryText = `${eastDiff} EAST`
+    description = 'Added to the vault'
+  } else if (transactionType === EastOpType.close) {
+    primaryText = `${eastDiff} EAST`
+    description = 'Vault closed'
+  }
+  const onExplorerLinkClicked = (txId: string) => {
+    const clientAddress = configStore.getClientAddress()
+    window.open(`${clientAddress}/explorer/transactions/id/${txId}`, '_blank')
+  }
   return <ItemContainer>
     <ItemColumn>
-      <PrimaryText>+500 EAST</PrimaryText>
+      <PrimaryText>{primaryText}</PrimaryText>
       <Block marginTop={8}>
-        <SecondaryText>20.05.2020 21:15</SecondaryText>
+        <ExplorerLink onClick={() => onExplorerLinkClicked(tx.callTxId)}>Explorer</ExplorerLink>
       </Block>
     </ItemColumn>
-    <ItemColumn>
-      <SecondaryText>Added to the vault</SecondaryText>
+    <ItemColumn style={{ width: '308px' }}>
+      <SecondaryText>{description}</SecondaryText>
     </ItemColumn>
     <ItemColumn>
-      <LinkWrapper>
-        <ExplorerLink>In explorer</ExplorerLink>
-      </LinkWrapper>
+      <Time>{date}</Time>
+      <Time>{time}</Time>
     </ItemColumn>
   </ItemContainer>
 }
 
 export const TransactionsHistory = (props: IProps) => {
   const { api, authStore } = useStores()
+  const [transactions, setTransactions] = useState<ITransaction[]>([])
   const [inProgress, setInProgress] = useState(false)
 
   useEffect(() => {
@@ -88,7 +135,7 @@ export const TransactionsHistory = (props: IProps) => {
       try {
         setInProgress(true)
         const txs = await api.getTransactionsHistory(authStore.address)
-        console.log('txs', txs)
+        setTransactions(txs)
       } catch(e) {
         console.error('Load txs error:', e.message)
       } finally {
@@ -98,77 +145,15 @@ export const TransactionsHistory = (props: IProps) => {
     loadTxs()
   }, [])
 
-  const transactions: ITransaction[] = [{
-    transactionType: TransactionType.transfer,
-    callTxId: '9',
-    callTimestamp: '2021-05-24T07:48:01.628Z',
-    info: {
-      eastAmount: 500
-    }
-  }, {
-    transactionType: TransactionType.transfer,
-    callTxId: '8',
-    callTimestamp: '2021-05-24T07:48:01.628Z',
-    info: {
-      eastAmount: 500
-    }
-  }, {
-    transactionType: TransactionType.transfer,
-    callTxId: '7',
-    callTimestamp: '2021-05-24T07:48:01.628Z',
-    info: {
-      eastAmount: 500
-    }
-  }, {
-    transactionType: TransactionType.transfer,
-    callTxId: '6',
-    callTimestamp: '2021-05-24T07:48:01.628Z',
-    info: {
-      eastAmount: 500
-    }
-  }, {
-    transactionType: TransactionType.transfer,
-    callTxId: '5',
-    callTimestamp: '2021-05-24T07:48:01.628Z',
-    info: {
-      eastAmount: 500
-    }
-  }, {
-    transactionType: TransactionType.transfer,
-    callTxId: '4',
-    callTimestamp: '2021-05-24T07:48:01.628Z',
-    info: {
-      eastAmount: 500
-    }
-  }, {
-    transactionType: TransactionType.transfer,
-    callTxId: '3',
-    callTimestamp: '2021-05-24T07:48:01.628Z',
-    info: {
-      eastAmount: 500
-    }
-  }, {
-    transactionType: TransactionType.transfer,
-    callTxId: '2',
-    callTimestamp: '2021-05-24T07:48:01.628Z',
-    info: {
-      eastAmount: 500
-    }
-  }, {
-    transactionType: TransactionType.mint,
-    callTxId: '1',
-    callTimestamp: '2021-05-21T12:41:42.708Z',
-    info: {
-      eastAmount: 260.24,
-      usdpAmount: 70,
-      westAmount: 130
-    }
-  }]
+  const skeletons = Array(5).fill(null)
 
   return <PrimaryModal {...props} style={{ padding: '24px 24px 0', overflow: 'hidden' }}>
     <PrimaryTitle>Transaction history</PrimaryTitle>
     <ItemsContainer>
-      {transactions.map((tx) => <Item key={tx.callTxId} tx={tx} />)}
+      {inProgress
+        ? skeletons.map((_, index) => <TxItemSkeleton key={index} />)
+        : transactions.map((tx, index) => <TxItem key={index} tx={tx} />)
+      }
     </ItemsContainer>
   </PrimaryModal>
 }

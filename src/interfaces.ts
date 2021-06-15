@@ -4,6 +4,16 @@ export interface ITokenPair {
   token_type: string;
 }
 
+export enum EastOpType {
+  mint = 'mint',
+  transfer = 'transfer',
+  reissue = 'reissue',
+  supply = 'supply',
+  close_init = 'close_init',
+  close = 'close',
+  claim_overpay_init = 'claim_overpay_init'
+}
+
 export interface IBatch {
   id: number;
   vaultId: string;
@@ -15,23 +25,6 @@ export interface IBatch {
   westAmount: string;
   westRateTimestamp: string;
   westRate: string;
-}
-
-export enum TransactionType {
-  mint = 'mint',
-  transfer = 'transfer',
-  supply = 'supply'
-}
-
-export interface ITransaction {
-  transactionType: TransactionType,
-  callTxId: string;
-  callTimestamp: string,
-  info: {
-    eastAmount: number;
-    usdpAmount?: number;
-    westAmount?: number;
-  }
 }
 
 export interface IVault {
@@ -48,11 +41,22 @@ export interface IVault {
   westRateTimestamp: string;
 }
 
-export enum EastOpType {
-  mint = 'mint',
-  transfer = 'transfer',
-  reissue = 'reissue',
-  supply = 'supply',
-  close_init = 'close_init',
-  claim_overpay_init = 'claim_overpay_init'
+export interface ITransaction {
+  address: string;
+  callHeight: number;
+  callTimestamp: string;
+  callTxId: string;
+  eastAmountDiff: string;
+  executedHeight: number;
+  initHeight: null | number;
+  params: {
+    transferId?: string;
+    eastAmount?: number;
+    to?: string;
+  };
+  requestTxId: null | string;
+  status: string;
+  transactionType: EastOpType;
+  usdpAmountDiff: null | string;
+  westAmountDiff: null | string;
 }

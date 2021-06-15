@@ -4,6 +4,7 @@ import { PrimaryTitle } from '../../../../components/PrimaryTitle'
 import { CloseVaultInfo } from './Info'
 import { CloseVaultConfirmation } from './Confirmation'
 import useStores from '../../../../hooks/useStores'
+import { TxSendSuccess } from '../../common/TxSendSuccess'
 
 interface IProps {
   onClose: () => void
@@ -11,17 +12,23 @@ interface IProps {
 
 enum Steps {
   info = 0,
-  confirmation = 1
+  confirmation = 1,
+  success = 2
 }
 
 export const CloseVault = (props: IProps) => {
   const [currentStep, setCurrentStep] = useState(Steps.info)
 
-  const modalStatus = currentStep === Steps.info ? ModalStatus.success : ModalStatus.warning
-  const title = currentStep === Steps.info ? 'close vault' : 'are you sure?'
-  const content = currentStep === Steps.info
-    ? <CloseVaultInfo onNextClicked={() => setCurrentStep(Steps.confirmation)} />
-    : <CloseVaultConfirmation onPrevClicked={() => setCurrentStep(Steps.info)} />
+  let modalStatus = ModalStatus.success
+  let title = 'close vault'
+  let content = <CloseVaultInfo onNextClicked={() => setCurrentStep(Steps.confirmation)} />
+  if (currentStep === Steps.confirmation) {
+    modalStatus = ModalStatus.warning
+    title = 'are you sure?'
+    content =  <CloseVaultConfirmation onPrevClicked={() => setCurrentStep(Steps.info)} onSuccess={() => setCurrentStep(Steps.success)} />
+  } else if (currentStep === Steps.success) {
+    content = <TxSendSuccess text={'Vault will be closed after the transaction is completed. It may take a few minutes.'} />
+  }
 
   return <PrimaryModal {...props} status={modalStatus}>
     <PrimaryTitle>{title}</PrimaryTitle>

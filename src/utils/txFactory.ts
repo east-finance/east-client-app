@@ -104,11 +104,16 @@ export const liquidateVault = (props: ILiquidateVault) => {
 export interface IClaimOverpay {
   publicKey: string;
   contractId: string;
-  vaultId: string;
   fee: string;
+  amount?: number;
 }
 
 export const claimOverpay = (props: IClaimOverpay) => {
+  const { amount } = props
+  let value = ''
+  if (amount) {
+    value = JSON.stringify({ amount })
+  }
   return {
     senderPublicKey: props.publicKey,
     authorPublicKey: props.publicKey,
@@ -118,8 +123,30 @@ export const claimOverpay = (props: IClaimOverpay) => {
     params: [{
       type: 'string',
       key: 'claim_overpay_init',
-      value: JSON.stringify({ vaultId: props.vaultId })
+      value
     }],
     fee: props.fee,
+  }
+}
+
+export interface ICloseVault {
+  publicKey: string;
+  contractId: string;
+  fee: string;
+}
+
+export const closeVault = (params: ICloseVault) => {
+  return {
+    senderPublicKey: params.publicKey,
+    authorPublicKey: params.publicKey,
+    contractId: params.contractId,
+    contractVersion: 1,
+    timestamp: Date.now(),
+    params: [{
+      type: 'string',
+      key: 'close_init',
+      value: ''
+    }],
+    fee: params.fee,
   }
 }

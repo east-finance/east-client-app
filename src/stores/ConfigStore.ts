@@ -10,6 +10,7 @@ export default class ConfigStore {
 
   config = {
     eastContractId: '',
+    clientAddress: ''
   }
 
   nodeConfig = {
@@ -77,6 +78,10 @@ export default class ConfigStore {
     return this.config.eastContractId || ''
   }
 
+  getClientAddress () {
+    return this.config.clientAddress || ''
+  }
+
   getEastOwnerAddress () {
     return this.eastContractConfig.adminAddress || ''
   }
@@ -114,6 +119,7 @@ export default class ConfigStore {
     switch(opType) {
     case EastOpType.mint: return allTxsFee
     case EastOpType.supply: return allTxsFee
+    case EastOpType.transfer: return callFee.toString()
     default:
       return '0'
     }
