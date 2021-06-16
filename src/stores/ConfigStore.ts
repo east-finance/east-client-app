@@ -100,26 +100,32 @@ export default class ConfigStore {
 
   getDockerCallFee () {
     const fee = this.nodeConfig.minimumFee['104']
-    return new BigNumber(fee).dividedBy(Math.pow(10, WestDecimals)).toString()
+    return fee
+    // return new BigNumber(fee).dividedBy(Math.pow(10, WestDecimals)).toString()
   }
 
   getTransferFee () {
-    return this.nodeConfig.minimumFee['4']
+    const fee = this.nodeConfig.minimumFee['4']
+    return fee
+    // return new BigNumber(fee).dividedBy(Math.pow(10, WestDecimals)).toString()
   }
 
   getAtomicFee () {
-    return this.nodeConfig.minimumFee['120']
+    const fee = this.nodeConfig.minimumFee['120']
+    return fee
+    // return new BigNumber(fee).dividedBy(Math.pow(10, WestDecimals)).toString()
   }
 
   getFeeByOpType (opType: EastOpType): string {
     const callFee = +this.getDockerCallFee()
     const transferFee = +this.getTransferFee()
     const atomicFee = +this.getAtomicFee()
-    const allTxsFee = (transferFee + callFee + atomicFee).toString()
+    const allTxsFee = (transferFee + callFee + atomicFee)
     switch(opType) {
-    case EastOpType.mint: return allTxsFee
-    case EastOpType.supply: return allTxsFee
+    case EastOpType.mint: return allTxsFee.toString()
+    case EastOpType.supply: return (allTxsFee + callFee).toString()
     case EastOpType.transfer: return callFee.toString()
+    case EastOpType.close_init: return callFee.toString()
     default:
       return '0'
     }

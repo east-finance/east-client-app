@@ -5,6 +5,7 @@ import { Button, ButtonsContainer, NavigationLeftGradientButton } from '../../..
 import { ButtonSpinner, RelativeContainer } from '../../../../components/Spinner'
 import { TextTable, TextTableKey, TextTablePrimaryValue, TextTableRow, TextTableSecondaryValue } from '../../../../components/TextTable'
 import useStores from '../../../../hooks/useStores'
+import { EastOpType } from '../../../../interfaces'
 
 interface IProps {
   westRate: string;
@@ -29,7 +30,7 @@ const Description = styled.div`
 
 export const CheckForm = (props: IProps) => {
   const { configStore } = useStores()
-  const fee = +(configStore.getDockerCallFee() + configStore.getTransferFee() + configStore.getAtomicFee())
+  const totalFee = +configStore.getFeeByOpType(EastOpType.mint)
   return <Container>
     <Block marginTop={58}>
       <TextTable>
@@ -51,7 +52,7 @@ export const CheckForm = (props: IProps) => {
         <TextTableRow>
           <TextTableKey>Fee</TextTableKey>
           <TextTableSecondaryValue>
-            <div>{fee} WEST</div>
+            <div>{totalFee} WEST</div>
           </TextTableSecondaryValue>
         </TextTableRow>
       </TextTable>

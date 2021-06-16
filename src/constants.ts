@@ -10,3 +10,5 @@ export enum OracleStreamId {
   WestRate = '000003_latest',
   UsdapRate = '000010_latest'
 }
+
+export const DefaultCollateral = 2.5

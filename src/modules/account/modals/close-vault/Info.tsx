@@ -12,7 +12,7 @@ import {
 } from '../../../../components/TextTable'
 import { roundNumber } from '../../../../utils'
 import { observer } from 'mobx-react'
-import { IVault } from '../../../../interfaces'
+import { EastOpType, IVault } from '../../../../interfaces'
 
 interface IProps {
   onNextClicked: () => void;
@@ -44,6 +44,8 @@ export const CloseVaultInfo = observer((props: IProps) => {
   const { configStore, dataStore } = useStores()
   const vault: IVault = dataStore.vault
 
+  const totalFee = +configStore.getFeeByOpType(EastOpType.close_init)
+
   return <Container>
     <Block marginTop={40}>
       <Description>
@@ -61,7 +63,7 @@ export const CloseVaultInfo = observer((props: IProps) => {
           <TextTablePrimaryValue>
             <div>{vault.eastAmount} EAST</div>
             <Block marginTop={8}>
-              <Fee>+ {configStore.getDockerCallFee()} WEST fee</Fee>
+              <Fee>+ {totalFee} WEST fee</Fee>
             </Block>
           </TextTablePrimaryValue>
         </TextTableRow>

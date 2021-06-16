@@ -116,10 +116,10 @@ export const AddWestToAddress = (props: IProps) => {
     </Block>
     <Block marginTop={24}>
       <ExchangeList>
-        <ExchangeItem href={'https://waves.exchange/'} target={'_blank'} />
-        <ExchangeItem href={'https://waves.exchange/'} target={'_blank'} />
-        <ExchangeItem href={'https://waves.exchange/'} target={'_blank'} />
-        <ExchangeItem href={'https://waves.exchange/'} target={'_blank'} />
+        <ExchangeItem href={'https://waves.exchange/withdraw/WEST'} target={'_blank'} />
+        <ExchangeItem href={'https://waves.exchange/withdraw/WEST'} target={'_blank'} />
+        <ExchangeItem href={'https://waves.exchange/withdraw/WEST'} target={'_blank'} />
+        <ExchangeItem href={'https://waves.exchange/withdraw/WEST'} target={'_blank'} />
       </ExchangeList>
     </Block>
     <Block marginTop={40}>

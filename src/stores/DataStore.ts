@@ -1,7 +1,7 @@
 import { makeAutoObservable, runInAction } from 'mobx'
 import { Api } from '../api'
 import { BigNumber } from 'bignumber.js'
-import { OracleStreamId, WestDecimals } from '../constants'
+import { DefaultCollateral, OracleStreamId, WestDecimals } from '../constants'
 import { IVault } from '../interfaces'
 import ConfigStore from './ConfigStore'
 import { roundNumber } from '../utils'
@@ -43,6 +43,18 @@ export default class DataStore {
     makeAutoObservable(this)
     this.api = api
     this.configStore = configStore
+  }
+
+  get vaultCollateral () {
+    const westPart = 1 - this.configStore.getUsdpPart()
+    const currentWestCollateral = Math.ceil(+this.vault.westAmount * +this.westRate) / (westPart * +this.vault.eastAmount)
+    return currentWestCollateral
+  }
+
+  get supplyVaultWestAmount () {
+    const westPart = 1 - this.configStore.getUsdpPart()
+    const westAmount = DefaultCollateral * (westPart * +this.vault.eastAmount) / +this.westRate
+    return westAmount
   }
 
   sleep(timeout: number) {

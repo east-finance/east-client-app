@@ -12,6 +12,7 @@ import { roundNumber } from '../../../utils'
 import { TxSendSuccess } from '../common/TxSendSuccess'
 import { ButtonSpinner, RelativeContainer } from '../../../components/Spinner'
 import { observer } from 'mobx-react'
+import { EastOpType } from '../../../interfaces'
 
 interface IProps {
   onClose: () => void
@@ -61,6 +62,7 @@ enum Steps {
 export const TransferEast = observer((props: IProps) => {
   const { configStore, dataStore } = useStores()
 
+  const totalFee = +configStore.getFeeByOpType(EastOpType.transfer)
   const eastAvailable = dataStore.eastBalance
 
   const [eastAmount, setEastAmount] = useState('')
@@ -167,7 +169,7 @@ export const TransferEast = observer((props: IProps) => {
         <Block marginTop={24}>
           <ConfirmTitle>Fee</ConfirmTitle>
           <Block marginTop={8}>
-            <Fee>{configStore.getDockerCallFee()} WEST</Fee>
+            <Fee>{totalFee} WEST</Fee>
           </Block>
         </Block>
       </Block>

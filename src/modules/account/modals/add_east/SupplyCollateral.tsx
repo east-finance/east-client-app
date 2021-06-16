@@ -9,15 +9,18 @@ import useStores from '../../../../hooks/useStores'
 import { roundNumber } from '../../../../utils'
 import { useRoute } from 'react-router5'
 import { RouteName } from '../../../../router/segments'
+import { IVault } from '../../../../interfaces'
 
 export interface IProps {
-  westAmount: string;
+  westAmount: number;
+  vaultCollateral: number;
   onSuccess: () => void;
 }
 
 const Container = styled.div`
   font-size: 15px;
   line-height: 20px;
+  font-family: Cairo;
 `
 
 const Centered = styled.div`
@@ -49,28 +52,80 @@ const ButtonContainer = styled.div`
 `
 
 export const SupplyCollateral = (props: IProps) => {
-  const { dataStore } = useStores()
-  const { router } = useRoute()
+  const { dataStore, configStore } = useStores()
   const [inProgress, setInProgress] = useState(false)
+  const [isMining, setIsMining] = useState(false)
+
+  const sendSupply = async () => {
+    const state = await window.WEWallet.publicState()
+    const { account: { address, publicKey } } = state
+    const ownerAddress = configStore.getEastOwnerAddress()
+    const eastContractId = configStore.getEastContractId()
+    if (state.locked) {
+      await window.WEWallet.auth({ data: 'EAST Client auth' })
+    }
+    const transfer = {
+      type: 'transferV3',
+      tx: {
+        recipient: ownerAddress,
+        assetId: 'WAVES',
+        amount: +props.westAmount * Math.pow(10, 8),
+        fee: configStore.getTransferFee(),
+        attachment: '',
+        timestamp: Date.now(),
+        atomicBadge: {
+          trustedSender: address
+        }
+      }
+    }
+    const transferId = await window.WEWallet.getTxId('transferV3', transfer.tx)
+    const dockerCall = {
+      type: 'dockerCallV4',
+      tx: {
+        senderPublicKey: publicKey,
+        authorPublicKey: publicKey,
+        contractId: eastContractId,
+        contractVersion: 1,
+        timestamp: Date.now(),
+        params: [{
+          type: 'string',
+          key: 'supply',
+          value: JSON.stringify({
+            transferId: transferId
+          })
+        }],
+        fee: configStore.getDockerCallFee(),
+        atomicBadge: {
+          trustedSender: address
+        }
+      }
+    }
+    const transactions = [transfer, dockerCall]
+    const result = await window.WEWallet.broadcastAtomic(transactions, configStore.getAtomicFee())
+    console.log('Broadcast supply vault result:', result)
+  }
 
   const addWest = async () => {
     try {
       setInProgress(true)
-      await new Promise(resolve => {
-        setTimeout(resolve, 100)
-      })
+      await sendSupply()
+      setIsMining(true)
+      await new Promise(resolve => setTimeout(resolve, 10000))
       props.onSuccess()
     } catch (e) {
-      console.error('Add WEST error:', e.message)
+      console.error('Supply collateral error:', e.message)
     } finally {
       setInProgress(false)
+      setIsMining(false)
     }
   }
+
+  const buttonText = isMining ? 'Waiting for confirmation...' : `Add ${props.westAmount} WEST and continue`
 
   return <Container>
     <Block marginTop={40}>
       <Collaterals>
-        <CollateralCircle percent={170} />
+        <CollateralCircle percent={Math.floor(props.vaultCollateral * 100)} />
         <Arrow />
         <CollateralCircle percent={250} />
       </Collaterals>
@@ -85,7 +140,7 @@ export const SupplyCollateral = (props: IProps) => {
         <Button type={'primary'} disabled={inProgress} onClick={addWest}>
           <RelativeContainer>
             {inProgress && <ButtonSpinner />}
-            Add {props.westAmount} WEST and continue
+            {buttonText}
           </RelativeContainer>
         </Button>
       </ButtonContainer>

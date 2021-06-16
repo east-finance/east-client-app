@@ -1,9 +1,11 @@
-import React from 'react'
+import React, { useState } from 'react'
 import styled from 'styled-components'
 import { Block } from '../../../../components/Block'
 import { Button, NavigationLeftGradientButton } from '../../../../components/Button'
+import { ButtonSpinner, RelativeContainer } from '../../../../components/Spinner'
 import { TextTable, TextTableKey, TextTablePrimaryValue, TextTableRow, TextTableSecondaryValue } from '../../../../components/TextTable'
 import useStores from '../../../../hooks/useStores'
+import { EastOpType } from '../../../../interfaces'
 
 interface IProps {
   eastAmount: string;
@@ -31,7 +33,92 @@ const SendButtonsContainer = styled.div`
 
 export const ConfirmIssueTransaction = (props: IProps) => {
   const { configStore } = useStores()
-  const fee = +(configStore.getDockerCallFee() + configStore.getTransferFee() + configStore.getAtomicFee())
+  const [inProgress, setInProgress] = useState(false)
+  const totalFee = +configStore.getFeeByOpType(EastOpType.supply)
+
+  const sendSupply = async () => {
+    const state = await window.WEWallet.publicState()
+    const { account: { address, publicKey } } = state
+    const ownerAddress = configStore.getEastOwnerAddress()
+    const eastContractId = configStore.getEastContractId()
+    if (state.locked) {
+      await window.WEWallet.auth({ data: 'EAST Client auth' })
+    }
+    const transfer = {
+      type: 'transferV3',
+      tx: {
+        recipient: ownerAddress,
+        assetId: 'WAVES',
+        amount: +props.westAmount * Math.pow(10, 8),
+        fee: configStore.getTransferFee(),
+        attachment: '',
+        timestamp: Date.now(),
+        atomicBadge: {
+          trustedSender: address
+        }
+      }
+    }
+    const transferId = await window.WEWallet.getTxId('transferV3', transfer.tx)
+    console.log('transferId', transferId)
+    const dockerCall = {
+      type: 'dockerCallV4',
+      tx: {
+        senderPublicKey: publicKey,
+        authorPublicKey: publicKey,
+        contractId: eastContractId,
+        contractVersion: 1,
+        timestamp: Date.now(),
+        params: [{
+          type: 'string',
+          key: 'supply',
+          value: JSON.stringify({
+            transferId: transferId
+          })
+        }],
+        fee: configStore.getDockerCallFee(),
+        atomicBadge: {
+          trustedSender: address
+        }
+      }
+    }
+    const dockerCallReissue = {
+      type: 'dockerCallV4',
+      tx: {
+        senderPublicKey: publicKey,
+        authorPublicKey: publicKey,
+        contractId: eastContractId,
+        contractVersion: 1,
+        timestamp: Date.now(),
+        params: [{
+          type: 'string',
+          key: 'reissue',
+          value: JSON.stringify({
+            maxWestToExchange: +props.westAmount
+          })
+        }],
+        fee: configStore.getDockerCallFee(),
+        atomicBadge: {
+          trustedSender: address
+        }
+      }
+    }
+    const transactions = [transfer, dockerCall, dockerCallReissue]
+    const result = await window.WEWallet.broadcastAtomic(transactions, configStore.getAtomicFee())
+    console.log('Broadcast supply+reissue vault result:', result)
+  }
+
+  const onIssueClicked = async () => {
+    try {
+      setInProgress(true)
+      await sendSupply()
+      props.onNextClicked()
+    } catch(e) {
+      console.error('Send supply + reissue error:', e.message)
+    } finally {
+      setInProgress(false)
+    }
+  }
+
   return <Container>
     <Block marginTop={58}>
       <TextTable>
@@ -46,7 +133,7 @@ export const ConfirmIssueTransaction = (props: IProps) => {
         <TextTableRow>
           <TextTableKey>Fee</TextTableKey>
           <TextTableSecondaryValue>
-            <div>{fee} WEST</div>
+            <div>{totalFee} WEST</div>
           </TextTableSecondaryValue>
         </TextTableRow>
       </TextTable>
@@ -54,7 +141,16 @@ export const ConfirmIssueTransaction = (props: IProps) => {
     <Block marginTop={40}>
       <SendButtonsContainer>
         <NavigationLeftGradientButton onClick={props.onPrevClicked} />
-        <Button type={'primary'} style={{ width: '300px' }} onClick={props.onNextClicked}>Issue EAST</Button>
+        <Button
+          type={'primary'}
+          style={{ width: '300px' }}
+          onClick={onIssueClicked}
+        >
+          <RelativeContainer>
+            {inProgress && <ButtonSpinner />}
+            Issue EAST
+          </RelativeContainer>
+        </Button>
       </SendButtonsContainer>
     </Block>
   </Container>

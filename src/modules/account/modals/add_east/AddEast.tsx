@@ -12,6 +12,7 @@ import { EastOpType } from '../../../../interfaces'
 import { AddWestToAddress } from '../../common/AddWestToAddress'
 import { ConfirmIssueTransaction } from './ConfirmIssueTransaction'
 import { TxSendSuccess } from '../../common/TxSendSuccess'
+import { DefaultCollateral } from '../../../../constants'
 
 interface IProps {
   onClose: () => void
@@ -31,10 +32,12 @@ const Centered = styled.div`
 
 export const AddEast = observer((props: IProps) => {
   const { dataStore, configStore } = useStores()
+  const { vaultCollateral, supplyVaultWestAmount } = dataStore
+  const initialStep = vaultCollateral < DefaultCollateral ? IssueSteps.SupplyCollateral : IssueSteps.FillForm
   const [refillWestAmount, setRefillWestAmount] = useState('')
-  const [stepIndex, setStepIndex] = useState(IssueSteps.SupplyCollateral)
+  const [stepIndex, setStepIndex] = useState(initialStep)
   const [formData, setFormData] = useState({ eastAmount: '', westAmount: '' })
-  const fee = +configStore.getFeeByOpType(EastOpType.supply)
+  const totalFee = +configStore.getFeeByOpType(EastOpType.supply)
 
   let content = <div />
   let modalStatus = ModalStatus.success
@@ -45,19 +48,27 @@ export const AddEast = observer((props: IProps) => {
       setStepIndex(IssueSteps.FillForm)
     }
     content = <Block marginTop={64}>
-      <AddWestToAddress westAmount={Math.ceil(+refillWestAmount).toString()} eastAmount={formData.eastAmount} onPrevClicked={onPrevClicked} />
+      <AddWestToAddress
+        westAmount={Math.ceil(+refillWestAmount).toString()}
+        eastAmount={formData.eastAmount}
+        onPrevClicked={onPrevClicked}
+      />
     </Block>
   } else if (stepIndex === IssueSteps.SupplyCollateral) {
     modalStatus = ModalStatus.warning
     const onSuccess = () => {
       setStepIndex(IssueSteps.FillForm)
     }
-    content = <SupplyCollateral westAmount={'400'} onSuccess={onSuccess} />
+    content = <SupplyCollateral
+      vaultCollateral={vaultCollateral}
+      westAmount={Math.ceil(supplyVaultWestAmount)}
+      onSuccess={onSuccess}
+    />
   } else if (stepIndex === IssueSteps.FillForm) {
     const onNextClicked = (formData: FillFormData) => {
       setFormData(formData)
       setStepIndex(IssueSteps.ConfirmTransaction)
-      const westDelta = (+formData.westAmount + fee) - +dataStore.westBalance
+      const westDelta = (+formData.westAmount + totalFee) - +dataStore.westBalance
       if (westDelta > 0) {
         setRefillWestAmount(westDelta.toString())
       }

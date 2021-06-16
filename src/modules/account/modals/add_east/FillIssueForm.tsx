@@ -8,6 +8,7 @@ import { roundNumber } from '../../../../utils'
 import { observer } from 'mobx-react'
 import { BeforeText, RelativeContainer, Spinner } from '../../../../components/Spinner'
 import { ITag, Tags } from '../../../../components/Tags'
+import { EastOpType } from '../../../../interfaces'
 
 export interface FillFormData {
   eastAmount: string;
@@ -41,6 +42,8 @@ export const FillIssueForm = observer((props: IProps) => {
   const [eastAmount, setEastAmount] = useState(props.eastAmount || '')
   const [westAmount, setWestAmount] = useState(props.westAmount || '')
   const [errors, setErrors] = useState({ east: '', west: '' })
+
+  const totalFee = +configStore.getFeeByOpType(EastOpType.supply)
 
   useEffect(() => {
     // setErrors(validateForm())
@@ -113,12 +116,10 @@ export const FillIssueForm = observer((props: IProps) => {
       })
     }
   }
-  const usdpPartPercent = configStore.getUsdpPart() * 100
-  const westPartPercent = configStore.getWestCollateral() * 100
-  const westAvailable = roundNumber(dataStore.westBalance)
+  const westAvailable = +dataStore.westBalance - +totalFee
   const buyOptions = [{text: '25%', value: '0.25' }, { text: '50%', value: '0.5' }, { text: '75%', value: '0.75' }, { text: '100%', value: '1' }]
   const onSelectOption = (tag: ITag) => {
-    const amount = roundNumber(+tag.value * dataStore.westBalance, 8).toString()
+    const amount = roundNumber(+tag.value * westAvailable, 8).toString()
     setWestAmount(amount)
     setEastByWestAmount(amount)
   }
