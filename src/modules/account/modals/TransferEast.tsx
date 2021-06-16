@@ -9,6 +9,9 @@ import { dockerCallTransfer } from '../../../utils/txFactory'
 import useStores from '../../../hooks/useStores'
 import { ITag, Tags } from '../../../components/Tags'
 import { roundNumber } from '../../../utils'
+import { TxSendSuccess } from '../common/TxSendSuccess'
+import { ButtonSpinner, RelativeContainer } from '../../../components/Spinner'
+import { observer } from 'mobx-react'
 
 interface IProps {
   onClose: () => void
@@ -51,10 +54,11 @@ const Fee = styled.div`
 
 enum Steps {
   fill = 'fill',
-  confirm = 'confirm'
+  confirm = 'confirm',
+  success = 'success'
 }
 
-export const TransferEast = (props: IProps) => {
+export const TransferEast = observer((props: IProps) => {
   const { configStore, dataStore } = useStores()
 
   const eastAvailable = dataStore.eastBalance
@@ -63,9 +67,10 @@ export const TransferEast = (props: IProps) => {
   const [userAddress, setUserAddress] = useState('')
   const [formErrors, setFormErrors] = useState({ east: '', address: '' })
   const [currentStep, setCurrentStep] = useState(Steps.fill)
+  const [inProgress, setInProgress] = useState(false)
 
   let content = null
-  let title = ''
+  let title = 'transfer east'
 
   const validateForm = () => {
     let east = ''
@@ -98,21 +103,28 @@ export const TransferEast = (props: IProps) => {
   }
 
   const onConfirmTransfer = async () => {
-    const state = await window.WEWallet.publicState()
-    console.log('WALLET state', state)
-    const { account: { publicKey } } = state
-    const tx = dockerCallTransfer({
-      publicKey,
-      contractId: configStore.getEastContractId(),
-      recipient: userAddress,
-      eastAmount: +eastAmount
-    })
-    const result = await window.WEWallet.broadcast('dockerCallV3', tx)
-    console.log('result', result)
+    try {
+      setInProgress(true)
+      const state = await window.WEWallet.publicState()
+      console.log('WALLET state', state)
+      const { account: { publicKey } } = state
+      const tx = dockerCallTransfer({
+        publicKey,
+        contractId: configStore.getEastContractId(),
+        recipient: userAddress,
+        eastAmount: +eastAmount
+      })
+      const result = await window.WEWallet.broadcast('dockerCallV3', tx)
+      console.log('Broadcast transdfer EAST result:', result)
+      setCurrentStep(Steps.success)
+    } catch(e) {
+      console.error('Broadcast transfer EAST error: ', e.message)
+    } finally {
+      setInProgress(false)
+    }
   }
 
   if (currentStep === Steps.fill) {
-    title = 'transfer east'
     content = <Container>
       <Block marginTop={96}>
         <SimpleInput
@@ -136,7 +148,7 @@ export const TransferEast = (props: IProps) => {
         <Button style={{ width: '304px', margin: '0 auto' }} type={'primary'} onClick={onClickContinue}>Continue</Button>
       </Block>
     </Container>
-  } else {
+  } else if(currentStep === Steps.confirm) {
     title = 'send east'
     content = <Container>
       <Block16>
@@ -162,14 +174,24 @@ export const TransferEast = (props: IProps) => {
       <Block marginTop={64}>
         <ButtonsContainer style={{ width: '80%', margin: '0 auto' }}>
           <NavigationLeftGradientButton onClick={() => setCurrentStep(Steps.fill)} />
-          <Button type={'primary'} onClick={onConfirmTransfer}>Confirm and continue</Button>
+          <Button type={'primary'} disabled={inProgress} onClick={onConfirmTransfer}>
+            <RelativeContainer>
+              {inProgress && <ButtonSpinner />}
+              Confirm and continue
+            </RelativeContainer>
+          </Button>
         </ButtonsContainer>
       </Block>
     </Container>
+  } else {
+    content = <TxSendSuccess
+      text={'EAST will be transfered after the transaction is completed. It may take a few minutes.'}
+      onClose={props.onClose}
+    />
   }
 
   return <PrimaryModal {...props}>
     <PrimaryTitle>{title}</PrimaryTitle>
     {content}
   </PrimaryModal>
-}
+})

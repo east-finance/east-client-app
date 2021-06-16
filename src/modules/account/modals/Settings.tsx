@@ -180,27 +180,35 @@ const PasswordChange = (props: IPassChangeProps) => {
 }
 
 export const Settings = (props: IProps) => {
-  const { authStore } = useStores()
+  const { authStore, dataStore } = useStores()
 
   const [passChangeVisible, setPassChangeVisible] = useState(false)
 
   const onPassChangeClicked = () => setPassChangeVisible(!passChangeVisible)
+
+  const onLogoutClicked = () => {
+    dataStore.stopPolling()
+    authStore.logout()
+  }
 
   return <PrimaryModal {...props}>
     <PrimaryTitle>Settings</PrimaryTitle>
     <div>
       <PasswordChange visible={passChangeVisible} onClose={() => setPassChangeVisible(false)} />
       <Container>
-        <Block marginTop={55} />
-        <SimpleInput disabled label={'Email'} value={authStore.email} />
-        <Block16 />
-        <SimpleInput disabled label={'Blockchain address'} value={authStore.address} />
-        <Block16 />
-        <OptionsContainer>
-          <Option onClick={onPassChangeClicked}>Change password</Option>
-          {/* <Option>View SEED phrase</Option> */}
-          <Option onClick={() => authStore.logout()}>Logout</Option>
-        </OptionsContainer>
+        <Block marginTop={55}>
+          <SimpleInput disabled label={'Email'} value={authStore.email} />
+        </Block>
+        <Block16>
+          <SimpleInput disabled label={'Blockchain address'} value={authStore.address} />
+        </Block16>
+        <Block marginTop={52}>
+          <OptionsContainer>
+            <Option onClick={onPassChangeClicked}>Change password</Option>
+            {/* <Option>View SEED phrase</Option> */}
+            <Option onClick={onLogoutClicked}>Logout</Option>
+          </OptionsContainer>
+        </Block>
       </Container>
     </div>
   </PrimaryModal>

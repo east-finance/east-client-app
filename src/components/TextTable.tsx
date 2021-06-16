@@ -17,6 +17,8 @@ export const TextTableRow = styled.div`
 
 export const TextTableKey = styled.div`
   width: 40%;
+  max-width: 40%;
+  min-width: 40%;
   margin-left: 10%;
   color: #000000;
   opacity: 0.6;
@@ -31,8 +33,8 @@ export const TextTablePrimaryValue = styled.div`
 `
 
 export const TextTableSecondaryValue = styled.div`
-  font-weight: 600;
-  font-size: 18px;
-  line-height: 22px;
-  color: #525252;
+  font-weight: bold;
+  font-size: 16px;
+  line-height: 16px;
+  color: #043569;
 `

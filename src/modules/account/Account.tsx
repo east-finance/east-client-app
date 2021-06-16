@@ -20,6 +20,7 @@ import { TakeWest } from './modals/take_west/TakeWest'
 import { CloseVault } from './modals/close-vault/CloseVault'
 import { DetailedCard } from './DetailedCard'
 import useStores from '../../hooks/useStores'
+import { SupplyVault } from './modals/supply/SupplyVault'
 
 const Container = styled.div``
 
@@ -88,6 +89,8 @@ const getPrimaryModalByRoute = () => {
     return <AddEast onClose={onCloseModal} />
   } else if (name.startsWith(RouteName.TakeWest)) {
     return <TakeWest onClose={onCloseModal} />
+  } else if (name.startsWith(RouteName.SupplyVault)) {
+    return <SupplyVault onClose={onCloseModal} />
   } else if (name.startsWith(RouteName.TransactionsHistory)) {
     return <TransactionsHistory onClose={onCloseModal} />
   } else if (name.startsWith(RouteName.TransferEast)) {

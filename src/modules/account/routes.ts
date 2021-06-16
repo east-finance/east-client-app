@@ -10,6 +10,9 @@ export default {
     name: RouteSegment.addEast,
     path: '/addEast'
   }, {
+    name: RouteSegment.supply,
+    path: '/supply'
+  }, {
     name: RouteSegment.takeWest,
     path: '/takeWest'
   }, {

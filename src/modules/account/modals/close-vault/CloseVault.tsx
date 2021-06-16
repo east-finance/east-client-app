@@ -3,7 +3,6 @@ import { ModalStatus, PrimaryModal } from '../../Modal'
 import { PrimaryTitle } from '../../../../components/PrimaryTitle'
 import { CloseVaultInfo } from './Info'
 import { CloseVaultConfirmation } from './Confirmation'
-import useStores from '../../../../hooks/useStores'
 import { TxSendSuccess } from '../../common/TxSendSuccess'
 
 interface IProps {
@@ -27,7 +26,10 @@ export const CloseVault = (props: IProps) => {
     title = 'are you sure?'
     content =  <CloseVaultConfirmation onPrevClicked={() => setCurrentStep(Steps.info)} onSuccess={() => setCurrentStep(Steps.success)} />
   } else if (currentStep === Steps.success) {
-    content = <TxSendSuccess text={'Vault will be closed after the transaction is completed. It may take a few minutes.'} />
+    content = <TxSendSuccess
+      text={'Vault will be closed after the transaction is completed. It may take a few minutes.'}
+      onClose={props.onClose}
+    />
   }
 
   return <PrimaryModal {...props} status={modalStatus}>

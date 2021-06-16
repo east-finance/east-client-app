@@ -14,7 +14,7 @@ import {
   TextTableSecondaryValue
 } from '../../../../components/TextTable'
 import { roundNumber } from '../../../../utils'
-import { BeforeText, ButtonSpinner, RelativeContainer, Spinner } from '../../../../components/Spinner'
+import { ButtonSpinner, RelativeContainer } from '../../../../components/Spinner'
 import { IVault } from '../../../../interfaces'
 import { closeVault } from '../../../../utils/txFactory'
 

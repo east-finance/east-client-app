@@ -11,7 +11,8 @@ export enum EastOpType {
   supply = 'supply',
   close_init = 'close_init',
   close = 'close',
-  claim_overpay_init = 'claim_overpay_init'
+  claim_overpay_init = 'claim_overpay_init',
+  claim_overpay = 'claim_overpay'
 }
 
 export interface IBatch {
@@ -42,11 +43,12 @@ export interface IVault {
 }
 
 export interface ITransaction {
+  status: string;
+  transactionType: EastOpType;
   address: string;
   callHeight: number;
   callTimestamp: string;
   callTxId: string;
-  eastAmountDiff: string;
   executedHeight: number;
   initHeight: null | number;
   params: {
@@ -55,8 +57,7 @@ export interface ITransaction {
     to?: string;
   };
   requestTxId: null | string;
-  status: string;
-  transactionType: EastOpType;
-  usdpAmountDiff: null | string;
-  westAmountDiff: null | string;
+  eastAmountDiff: string;
+  usdpAmountDiff: string;
+  westAmountDiff: string;
 }

@@ -124,6 +124,7 @@ export const BuyEast = (props: IProps) => {
     // const onNextClicked = () => setCurrentStep(Steps.selectExchange)
     const onNextClicked = async () => {
       try {
+        setInProgress(true)
         const westBalance = await dataStore.getWestBalance(authStore.address)
         setWestBalance(westBalance)
         if (+westAmount > +westBalance) {
@@ -138,6 +139,8 @@ export const BuyEast = (props: IProps) => {
         }
       } catch (e) {
         console.error('sendAtomic Error:', e)
+      } finally {
+        setInProgress(false)
       }
     }
     const onPrevClicked = () => setCurrentStep(Steps.fill)

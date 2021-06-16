@@ -6,7 +6,7 @@ import iconSuccess from '../../../resources/images/success.png'
 
 interface IProps {
   text: string;
-  onClose?: () => void;
+  onClose: () => void;
 }
 
 const IconCommon = styled.div`
@@ -34,11 +34,6 @@ const Container = styled.div`
 `
 
 export const TxSendSuccess = (props: IProps) => {
-  const onClose = () => {
-    if(props.onClose) {
-      props.onClose()
-    }
-  }
   return <Container>
     <Block marginTop={72}>
       <IconSuccess />
@@ -49,7 +44,7 @@ export const TxSendSuccess = (props: IProps) => {
     </Block>
     <Block marginTop={80}>
       <ButtonsContainer>
-        <Button type={'primary'} onClick={onClose}>Close this window</Button>
+        <Button type={'primary'} onClick={props.onClose}>Close this window</Button>
       </ButtonsContainer>
     </Block>
   </Container>

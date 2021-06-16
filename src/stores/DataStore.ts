@@ -1,4 +1,4 @@
-import { makeAutoObservable } from 'mobx'
+import { makeAutoObservable, runInAction } from 'mobx'
 import { Api } from '../api'
 import { BigNumber } from 'bignumber.js'
 import { OracleStreamId, WestDecimals } from '../constants'
@@ -61,20 +61,26 @@ export default class DataStore {
   async startPolling (address: string) {
     const updateTokenRates = async () => {
       const { westRate, usdapRate } = await this.getTokenRates()
-      this.westRate = westRate
-      this.usdapRate = usdapRate
+      runInAction(() => {
+        this.westRate = westRate
+        this.usdapRate = usdapRate
+      })
     }
 
     const updateUserVault = async () => {
       const vault = await this.api.getVault(address)
       console.log('Vault:', vault)
-      this.vault = vault
-      this.eastBalance = vault.eastAmount
+      runInAction(() => {
+        this.vault = vault
+        this.eastBalance = vault.eastAmount
+      })
     }
 
     const updateWestBalance = async () => {
       const westBalance = await this.getWestBalance(address)
-      this.westBalance = westBalance
+      runInAction(() => {
+        this.westBalance = westBalance
+      })
     }
 
     const updateData = async () => {
@@ -88,7 +94,13 @@ export default class DataStore {
     }
     clearInterval(this.pollingId)
     await updateData()
+    console.log('Start polling user data')
     this.pollingId = setInterval(updateData, 10 * 1000)
+  }
+
+  stopPolling () {
+    console.log('Stop polling user data')
+    clearInterval(this.pollingId)
   }
 
   async getEastBalance(address: string): Promise<string> {

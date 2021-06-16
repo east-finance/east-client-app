@@ -10,6 +10,8 @@ import { observer } from 'mobx-react'
 import useStores from '../../../../hooks/useStores'
 import { EastOpType } from '../../../../interfaces'
 import { AddWestToAddress } from '../../common/AddWestToAddress'
+import { ConfirmIssueTransaction } from './ConfirmIssueTransaction'
+import { TxSendSuccess } from '../../common/TxSendSuccess'
 
 interface IProps {
   onClose: () => void
@@ -35,8 +37,9 @@ export const AddEast = observer((props: IProps) => {
   const fee = +configStore.getFeeByOpType(EastOpType.supply)
 
   let content = <div />
-  let modalStatus = ModalStatus.warning
+  let modalStatus = ModalStatus.success
   if (refillWestAmount) {
+    modalStatus = ModalStatus.warning
     const onPrevClicked = () => {
       setRefillWestAmount('')
       setStepIndex(IssueSteps.FillForm)
@@ -45,12 +48,12 @@ export const AddEast = observer((props: IProps) => {
       <AddWestToAddress westAmount={Math.ceil(+refillWestAmount).toString()} eastAmount={formData.eastAmount} onPrevClicked={onPrevClicked} />
     </Block>
   } else if (stepIndex === IssueSteps.SupplyCollateral) {
+    modalStatus = ModalStatus.warning
     const onSuccess = () => {
       setStepIndex(IssueSteps.FillForm)
     }
     content = <SupplyCollateral westAmount={'400'} onSuccess={onSuccess} />
   } else if (stepIndex === IssueSteps.FillForm) {
-    modalStatus = ModalStatus.success
     const onNextClicked = (formData: FillFormData) => {
       setFormData(formData)
       setStepIndex(IssueSteps.ConfirmTransaction)
@@ -64,12 +67,24 @@ export const AddEast = observer((props: IProps) => {
       westAmount={formData.westAmount}
       onNextClicked={onNextClicked}
     />
+  } else if(stepIndex === IssueSteps.ConfirmTransaction) {
+    content = <ConfirmIssueTransaction
+      eastAmount={formData.eastAmount}
+      westAmount={formData.westAmount}
+      onNextClicked={() => setStepIndex(IssueSteps.Success)}
+      onPrevClicked={() => setStepIndex(IssueSteps.FillForm)}
+    />
+  } else if(stepIndex === IssueSteps.Success) {
+    content = <TxSendSuccess
+      text={'You will receive your EAST after the transaction is completed. It may take a few minutes.'}
+      onClose={props.onClose}
+    />
   }
 
   return <PrimaryModal {...props} status={modalStatus}>
     <PrimaryTitle>issue east stablecoin</PrimaryTitle>
     <div>
-      {!refillWestAmount &&
+      {(!refillWestAmount && stepIndex !== IssueSteps.Success) &&
         <Block marginTop={40}>
           <Centered>
             <Steps steps={[{

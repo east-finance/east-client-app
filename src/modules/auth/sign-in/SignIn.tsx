@@ -12,7 +12,7 @@ import { validateEmail } from '../utils'
 import { ErrorNotification } from '../../../components/Notification'
 import { FormErrors } from '../../../components/PasswordRules'
 import { AuthError } from '../../../api/apiErrors'
-import { BeforeText, RelativeContainer, Spinner } from '../../../components/Spinner'
+import { ButtonSpinner, RelativeContainer } from '../../../components/Spinner'
 
 const Container = styled.div`
   width: 376px;
@@ -171,11 +171,7 @@ const SignIn = () => {
     <Block marginTop={65} />
     <Button type={'primary'} disabled={inProgress} onClick={onLoginClick}>
       <RelativeContainer>
-        {inProgress &&
-        <BeforeText>
-          <Spinner />
-        </BeforeText>
-        }
+        {inProgress && <ButtonSpinner />}
         Login
       </RelativeContainer>
     </Button>

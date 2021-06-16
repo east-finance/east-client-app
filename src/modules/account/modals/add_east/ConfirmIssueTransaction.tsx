@@ -6,7 +6,6 @@ import { TextTable, TextTableKey, TextTablePrimaryValue, TextTableRow, TextTable
 import useStores from '../../../../hooks/useStores'
 
 interface IProps {
-  westRate: string;
   eastAmount: string;
   westAmount: string;
   onNextClicked: () => void
@@ -52,13 +51,10 @@ export const ConfirmIssueTransaction = (props: IProps) => {
         </TextTableRow>
       </TextTable>
     </Block>
-    <Block marginTop={42}>
-      <Description>We convert  some of your WEST into USDp to maintain EAST stability. Learn more</Description>
-    </Block>
     <Block marginTop={40}>
       <SendButtonsContainer>
         <NavigationLeftGradientButton onClick={props.onPrevClicked} />
-        <Button type={'primary'} style={{ width: '300px' }} onClick={props.onNextClicked}>Continue</Button>
+        <Button type={'primary'} style={{ width: '300px' }} onClick={props.onNextClicked}>Issue EAST</Button>
       </SendButtonsContainer>
     </Block>
   </Container>

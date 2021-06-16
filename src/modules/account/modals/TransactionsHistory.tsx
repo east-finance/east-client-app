@@ -64,6 +64,7 @@ const PrimaryText = styled.div`
   font-weight: bold;
   font-size: 16px;
   line-height: 16px;
+  line-break: anywhere;
 `
 
 const SecondaryText = styled.div`
@@ -83,39 +84,51 @@ const TxItem = (props: { tx: ITransaction}) => {
   const { configStore } = useStores()
   const { router } = useRoute()
   const { tx } = props
-  const { transactionType, eastAmountDiff, callTimestamp } = tx
+  const { transactionType, eastAmountDiff, westAmountDiff, callTimestamp, params } = tx
   const date = moment(callTimestamp).format('MMM Do')
   const time = moment(callTimestamp).format('hh:mm a')
   const isReceived = +eastAmountDiff > 0
-  let eastDiff = roundNumber(eastAmountDiff, 8).toString()
+  const isReceivedWest = +westAmountDiff > 0
+
+  let eastDiff = roundNumber(eastAmountDiff, 2).toString()
   if (isReceived) {
     eastDiff = '+' + eastDiff
   }
-  console.log('tx', tx)
+  let westDiff = roundNumber(westAmountDiff, 2).toString()
+  if (isReceivedWest) {
+    westDiff = '+' + westDiff
+  }
+
   let primaryText = ''
   let description = ''
   if (transactionType === EastOpType.transfer) {
     primaryText = `${eastDiff} EAST`
-    description = isReceived ? 'Transfer from another address' : 'Transfer to the address'
+    description = isReceived ? `Transfer from ${tx.address}` : `Transfer to ${params.to}`
   } else if (transactionType === EastOpType.mint) {
     primaryText = `${eastDiff} EAST`
     description = 'Added to the vault'
   } else if (transactionType === EastOpType.close) {
     primaryText = `${eastDiff} EAST`
-    description = 'Vault closed'
+    description = 'Vault is closed'
+  } else if (transactionType === EastOpType.supply) {
+    primaryText = `${westDiff} WEST`
+    description = 'Supply vault'
+  } else if (transactionType === EastOpType.claim_overpay) {
+    primaryText = `${westDiff} WEST`
+    description = 'Claim overpay'
   }
   const onExplorerLinkClicked = (txId: string) => {
     const clientAddress = configStore.getClientAddress()
     window.open(`${clientAddress}/explorer/transactions/id/${txId}`, '_blank')
   }
   return <ItemContainer>
-    <ItemColumn>
+    <ItemColumn style={{ width: '25%' }}>
       <PrimaryText>{primaryText}</PrimaryText>
       <Block marginTop={8}>
         <ExplorerLink onClick={() => onExplorerLinkClicked(tx.callTxId)}>Explorer</ExplorerLink>
       </Block>
     </ItemColumn>
-    <ItemColumn style={{ width: '308px' }}>
+    <ItemColumn style={{ width: '55%' }}>
       <SecondaryText>{description}</SecondaryText>
     </ItemColumn>
     <ItemColumn>
