@@ -191,9 +191,19 @@ export const SimpleInput = (props: SimpleInputProps) => {
     }
   }
   const onChange = (e: any) => {
-    setValue(e.target.value)
+    const value = e.target.value
+    setValue(value)
     if (props.onChange) {
       props.onChange(e)
+    }
+  }
+  const onNumberOnlyChange = (event: any) => {
+    const keyCode = event.keyCode || event.which
+    const keyValue = String.fromCharCode(keyCode)
+    const isValid = new RegExp('[0-9]').test(keyValue)
+    if (!isValid) {
+      event.preventDefault()
+      return
     }
   }
   const status = isFocused ? InputStatus.default : props.status
@@ -210,6 +220,7 @@ export const SimpleInput = (props: SimpleInputProps) => {
       {...props}
       ref={inputRef}
       value={value}
+      onKeyPress={props.type === 'number' ? onNumberOnlyChange : undefined}
       onFocus={onFocus}
       onBlur={onBlur}
       onChange={onChange}

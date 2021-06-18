@@ -98,10 +98,9 @@ export const AddWestToAddress = (props: IProps) => {
       closeButton: <ToastCloseButton type={NotificationType.default} closeToast={() => toast.dismiss()} />
     })
   }
-  const westAmount = roundNumber(props.westAmount, 8)
   return <Container>
     <Description>
-      Add <Amount>{westAmount} WEST</Amount> to your address to get {props.eastAmount} EAST.
+      Add <Amount>{Math.ceil(+props.westAmount)} WEST</Amount> to your address to get {props.eastAmount} EAST.
     </Description>
     <Block marginTop={40}>
       <Description>

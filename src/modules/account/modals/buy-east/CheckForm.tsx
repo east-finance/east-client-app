@@ -32,7 +32,7 @@ export const CheckForm = (props: IProps) => {
   const { configStore } = useStores()
   const totalFee = +configStore.getFeeByOpType(EastOpType.mint)
   return <Container>
-    <Block marginTop={58}>
+    <Block marginTop={70}>
       <TextTable>
         <TextTableRow>
           <TextTableKey>You will get</TextTableKey>
@@ -57,10 +57,7 @@ export const CheckForm = (props: IProps) => {
         </TextTableRow>
       </TextTable>
     </Block>
-    <Block marginTop={42}>
-      <Description>We convert  some of your WEST into USDp to maintain EAST stability. Learn more</Description>
-    </Block>
-    <Block marginTop={40}>
+    <Block marginTop={60}>
       <ButtonsContainer>
         <Button type={'primary'} disabled={props.inProgress} style={{ width: '304px' }} onClick={props.onNextClicked}>
           <RelativeContainer>

@@ -143,6 +143,7 @@ export const ConfirmIssueTransaction = (props: IProps) => {
         <NavigationLeftGradientButton onClick={props.onPrevClicked} />
         <Button
           type={'primary'}
+          disabled={inProgress}
           style={{ width: '300px' }}
           onClick={onIssueClicked}
         >

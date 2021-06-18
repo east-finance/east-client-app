@@ -100,7 +100,7 @@ export const CloseVaultConfirmation = observer((props: IProps) => {
       <TextTable style={{ width: '320px' }}>
         <TextTableRow>
           <TextTableKey>You will pay</TextTableKey>
-          <TextTablePrimaryValue>{roundNumber(dataStore.eastBalance)} EAST</TextTablePrimaryValue>
+          <TextTablePrimaryValue>{roundNumber(dataStore.vaultEastAmount)} EAST</TextTablePrimaryValue>
         </TextTableRow>
         <TextTableRow>
           <TextTableKey>You will unlock</TextTableKey>

@@ -46,7 +46,9 @@ export const FillIssueForm = observer((props: IProps) => {
   const totalFee = +configStore.getFeeByOpType(EastOpType.supply)
 
   useEffect(() => {
-    // setErrors(validateForm())
+    if (errors.east || errors.west) {
+      setErrors(validateForm())
+    }
   }, [eastAmount, westAmount])
 
   const validateForm = () => {

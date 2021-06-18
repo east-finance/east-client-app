@@ -13,6 +13,7 @@ import { TxSendSuccess } from '../common/TxSendSuccess'
 import { ButtonSpinner, RelativeContainer } from '../../../components/Spinner'
 import { observer } from 'mobx-react'
 import { EastOpType } from '../../../interfaces'
+import { useEffect } from 'react'
 
 interface IProps {
   onClose: () => void
@@ -74,6 +75,12 @@ export const TransferEast = observer((props: IProps) => {
   let content = null
   let title = 'transfer east'
 
+  useEffect(() => {
+    if (formErrors.east || formErrors.address) {
+      setFormErrors(validateForm())
+    }
+  }, [eastAmount, userAddress])
+
   const validateForm = () => {
     let east = ''
     let address = ''
@@ -81,6 +88,8 @@ export const TransferEast = observer((props: IProps) => {
       east = 'Enter EAST amount'
     } else if (+eastAmount > eastAvailable) {
       east = 'Not enought EAST on balance'
+    } else if (+eastAmount < 0) {
+      east = 'Negative east amount'
     }
     if (!userAddress) {
       address = 'Enter address'
@@ -100,7 +109,7 @@ export const TransferEast = observer((props: IProps) => {
 
   const options = [{text: '25%', value: '0.25' }, { text: '50%', value: '0.5' }, { text: '75%', value: '0.75' }, { text: '100%', value: '1' }]
   const onSelectOption = (tag: ITag) => {
-    const amount = roundNumber((+tag.value * dataStore.eastBalance).toString(), 8)
+    const amount = roundNumber((+tag.value * eastAvailable).toString(), 8)
     setEastAmount(amount.toString())
   }
 
@@ -109,6 +118,9 @@ export const TransferEast = observer((props: IProps) => {
       setInProgress(true)
       const state = await window.WEWallet.publicState()
       console.log('WALLET state', state)
+      if (state.locked) {
+        await window.WEWallet.auth({ data: 'EAST Client auth' })
+      }
       const { account: { publicKey } } = state
       const tx = dockerCallTransfer({
         publicKey,

@@ -109,34 +109,39 @@ export const AccountMenu = observer(() => {
   const { dataStore } = useStores()
   const { router } = useRoute()
   const isUserHaveEast = +dataStore.eastBalance > 0
+  const isUserHaveVault = +dataStore.vault.eastAmount > 0
   const vaultProfit = dataStore.calculateVaultWestProfit()
-  const transferAvailable = isUserHaveEast
+  const isTransferAvailable = isUserHaveEast
   return <Container>
     <MenuItemContainer>
-      <Tooltip>Buy EAST</Tooltip>
-      <MenuItem onClick={() => router.navigate(isUserHaveEast ? RouteName.AddEast : RouteName.BuyEast)}>
+      <Tooltip>Issue EAST</Tooltip>
+      <MenuItem onClick={() => router.navigate(isUserHaveVault ? RouteName.AddEast : RouteName.BuyEast)}>
         <IconPlus />
       </MenuItem>
     </MenuItemContainer>
-    <MenuItemContainer>
-      {vaultProfit > 0 &&
+    {vaultProfit > 0 &&
+      <MenuItemContainer>
         <Tooltip>Take WEST</Tooltip>
-      }
-      <MenuItem disabled={vaultProfit <= 0} onClick={() => router.navigate(RouteName.TakeWest)}><IconLock /></MenuItem>
-    </MenuItemContainer>
-    <MenuItemContainer>
-      {transferAvailable &&
+        <MenuItem onClick={() => router.navigate(RouteName.TakeWest)}><IconLock /></MenuItem>
+      </MenuItemContainer>
+    }
+    {isTransferAvailable &&
+      <MenuItemContainer>
         <Tooltip>Transfer</Tooltip>
-      }
-      <MenuItem disabled={!transferAvailable} onClick={() => transferAvailable && router.navigate(RouteName.TransferEast)}>
-        <IconExport />
-      </MenuItem>
-    </MenuItemContainer>
-    <Delimiter />
-    <MenuItemContainer>
-      <Tooltip>Transactions</Tooltip>
-      <MenuItem onClick={() => router.navigate(RouteName.TransactionsHistory)}><IconTime /></MenuItem>
-    </MenuItemContainer>
+        <MenuItem onClick={() => router.navigate(RouteName.TransferEast)}>
+          <IconExport />
+        </MenuItem>
+      </MenuItemContainer>
+    }
+    {isUserHaveVault &&
+      <Delimiter />
+    }
+    {(isUserHaveVault || isUserHaveEast) &&
+      <MenuItemContainer>
+        <Tooltip>History</Tooltip>
+        <MenuItem onClick={() => router.navigate(RouteName.TransactionsHistory)}><IconTime /></MenuItem>
+      </MenuItemContainer>
+    }
     <MenuItemContainer>
       <Tooltip>Settings</Tooltip>
       <MenuItem onClick={() => router.navigate(RouteName.AccountSettings)}><IconSettings /></MenuItem>
@@ -147,14 +152,16 @@ export const AccountMenu = observer(() => {
         <IconQuestion />
       </MenuItem>
     </MenuItemContainer>
-    <Delimiter />
-    <MenuItemContainer>
-      {isUserHaveEast &&
+    {isUserHaveVault &&
+      <Delimiter />
+    }
+    {isUserHaveVault &&
+      <MenuItemContainer>
         <Tooltip>Close</Tooltip>
-      }
-      <MenuItem disabled={!isUserHaveEast} onClick={() => router.navigate(RouteName.CloseVault)}>
-        <IconClose />
-      </MenuItem>
-    </MenuItemContainer>
+        <MenuItem onClick={() => router.navigate(RouteName.CloseVault)}>
+          <IconClose />
+        </MenuItem>
+      </MenuItemContainer>
+    }
   </Container>
 })

@@ -4,7 +4,7 @@ import { BigNumber } from 'bignumber.js'
 import { DefaultCollateral, OracleStreamId, WestDecimals } from '../constants'
 import { IVault } from '../interfaces'
 import ConfigStore from './ConfigStore'
-import { roundNumber } from '../utils'
+import { roundNumber, cutNumber } from '../utils'
 
 enum StreamId {
   WEST_USD = '000003'
@@ -47,7 +47,7 @@ export default class DataStore {
 
   get vaultCollateral () {
     const westPart = 1 - this.configStore.getUsdpPart()
-    const currentWestCollateral = Math.ceil(+this.vault.westAmount * +this.westRate) / (westPart * +this.vault.eastAmount)
+    const currentWestCollateral = Math.ceil(+this.vault.westAmount * +this.westRate) / (westPart * Math.floor(+this.vault.eastAmount))
     return currentWestCollateral
   }
 
@@ -55,6 +55,10 @@ export default class DataStore {
     const westPart = 1 - this.configStore.getUsdpPart()
     const westAmount = DefaultCollateral * (westPart * +this.vault.eastAmount) / +this.westRate
     return westAmount
+  }
+
+  get vaultEastAmount () {
+    return this.vault.eastAmount || '0'
   }
 
   sleep(timeout: number) {
@@ -81,10 +85,18 @@ export default class DataStore {
 
     const updateUserVault = async () => {
       const vault = await this.api.getVault(address)
-      console.log('Vault:', vault)
+      console.log('User Vault:', vault)
+      if (vault) {
+        runInAction(() => {
+          this.vault = vault
+        })
+      }
+    }
+
+    const updateEastTotalBalance = async () => {
+      const balance = await this.getEastBalance(address)
       runInAction(() => {
-        this.vault = vault
-        this.eastBalance = vault.eastAmount
+        this.eastBalance = balance
       })
     }
 
@@ -98,10 +110,11 @@ export default class DataStore {
     const updateData = async () => {
       try {
         await updateUserVault()
+        await updateEastTotalBalance()
         await updateWestBalance()
         await updateTokenRates()
       } catch(e) {
-        console.error(`Cannot get user (addr: "${address}") data`, e.message)
+        console.error(`Cannot get data for "${address}":`, e.message)
       }
     }
     clearInterval(this.pollingId)
@@ -117,7 +130,7 @@ export default class DataStore {
 
   async getEastBalance(address: string): Promise<string> {
     const { eastAmount } = await this.api.getUserEastBalance(address)
-    return eastAmount || '0'
+    return cutNumber(eastAmount, 8) || '0'
   }
 
   async getWestBalance(address: string): Promise<string> {

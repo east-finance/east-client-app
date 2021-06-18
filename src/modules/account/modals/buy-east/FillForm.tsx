@@ -38,6 +38,12 @@ const Description = styled(Centered)`
   color: #525252;
 `
 
+const Link = styled.a`
+  font-weight: 500;
+  font-size: 15px;
+  line-height: 22px;
+`
+
 export const FillForm = observer((props: IProps) => {
   const { westRate, usdapRate } = props
   const { dataStore, configStore } = useStores()
@@ -46,7 +52,9 @@ export const FillForm = observer((props: IProps) => {
   const [errors, setErrors] = useState({ east: '', west: '' })
 
   useEffect(() => {
-    // setErrors(validateForm())
+    if(errors.east || errors.west) {
+      setErrors(validateForm())
+    }
   }, [eastAmount, westAmount])
 
   const validateForm = () => {
@@ -155,6 +163,7 @@ export const FillForm = observer((props: IProps) => {
     </Block>
     <Block marginTop={56}>
       <Description>EAST is collateralized by {usdpPartPercent}% USDP and {westPartPercent}% WEST.</Description>
+      <Centered><Link href={'https://wavesenterprise.com/'} target={'_blank'}>Learn more</Link></Centered>
     </Block>
     <Block24>
       <Button type={'primary'} disabled={props.inProgress} onClick={onNextClicked}>

@@ -110,7 +110,7 @@ const AccountCards = observer(() => {
   const { dataStore } = useStores()
 
   const [isFrontShown, setFrontShown] = useState<null | boolean>(null)
-  const isPositiveBalance = parseInt(dataStore.eastBalance) > 0
+  const isPositiveBalance = parseInt(dataStore.vaultEastAmount) > 0
   const onClick = () => {
     setFrontShown(isFrontShown === null ? false : !isFrontShown)
   }
