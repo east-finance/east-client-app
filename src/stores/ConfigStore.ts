@@ -98,36 +98,32 @@ export default class ConfigStore {
     return this.eastContractConfig['westCollateral'] || 2.5
   }
 
+  // Fee for transactions
   getDockerCallFee () {
-    const fee = this.nodeConfig.minimumFee['104']
-    return fee
-    // return new BigNumber(fee).dividedBy(Math.pow(10, WestDecimals)).toString()
+    return this.nodeConfig.minimumFee['104']
   }
 
   getTransferFee () {
-    const fee = this.nodeConfig.minimumFee['4']
-    return fee
-    // return new BigNumber(fee).dividedBy(Math.pow(10, WestDecimals)).toString()
+    return this.nodeConfig.minimumFee['4']
   }
 
   getAtomicFee () {
-    const fee = this.nodeConfig.minimumFee['120']
-    return fee
-    // return new BigNumber(fee).dividedBy(Math.pow(10, WestDecimals)).toString()
+    return this.nodeConfig.minimumFee['120']
   }
 
+  // Fee for UI interfaces
   getFeeByOpType (opType: EastOpType): string {
     const callFee = +this.getDockerCallFee()
     const transferFee = +this.getTransferFee()
     const atomicFee = +this.getAtomicFee()
     const allTxsFee = (transferFee + callFee + atomicFee)
+    let resultFee = '0'
     switch(opType) {
-    case EastOpType.mint: return allTxsFee.toString()
-    case EastOpType.supply: return (allTxsFee + callFee).toString()
-    case EastOpType.transfer: return callFee.toString()
-    case EastOpType.close_init: return callFee.toString()
-    default:
-      return '0'
+    case EastOpType.mint: resultFee = allTxsFee.toString(); break
+    case EastOpType.supply: resultFee = (allTxsFee + callFee).toString(); break
+    case EastOpType.transfer: resultFee = callFee.toString(); break
+    case EastOpType.close_init: resultFee = callFee.toString(); break
     }
+    return new BigNumber(resultFee).dividedBy(Math.pow(10, WestDecimals)).toString()
   }
 }

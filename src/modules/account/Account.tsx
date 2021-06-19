@@ -109,10 +109,10 @@ const getPrimaryModalByRoute = () => {
 const AccountCards = observer(() => {
   const { dataStore } = useStores()
 
-  const [isFrontShown, setFrontShown] = useState<null | boolean>(null)
+  const [isFrontShown, setFrontShown] = useState<null | boolean>(false)
   const isPositiveBalance = parseInt(dataStore.vaultEastAmount) > 0
   const onClick = () => {
-    setFrontShown(isFrontShown === null ? false : !isFrontShown)
+    // setFrontShown(isFrontShown === null ? false : !isFrontShown)
   }
   return <CardsContainer>
     <AccountCard isShown={isFrontShown} onClick={onClick} />

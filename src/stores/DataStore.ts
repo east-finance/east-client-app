@@ -61,6 +61,10 @@ export default class DataStore {
     return this.vault.eastAmount || '0'
   }
 
+  get transferedEastAmount () {
+    return (+this.eastBalance - +this.vaultEastAmount).toString() || '0'
+  }
+
   sleep(timeout: number) {
     return new Promise(resolve => setTimeout(resolve, timeout))
   }

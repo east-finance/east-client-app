@@ -50,13 +50,8 @@ const animationCondition = (isShown: null | boolean) => {
 
 const Container = styled.div<{ isShown: null | boolean }>`
   width: 444px;
-  height: 260px;
+  height: 270px;
   box-sizing: border-box;
-  background: rgba(255, 255, 255, 1);
-  background-image: url(${NoiseImg});
-  background-repeat: no-repeat;
-  background-size: cover;
-  border-radius: 6px;
   
   position: absolute;
   z-index: -10;
@@ -64,6 +59,49 @@ const Container = styled.div<{ isShown: null | boolean }>`
   margin-top: -64px;
 
   animation: ${props => animationCondition(props.isShown)}
+`
+
+const DetailsBody = styled.div`
+  height: 220px;
+  padding: 24px 16px;
+  box-sizing: border-box;
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0) 100%), rgba(255, 255, 255, 1);
+  box-shadow: 0px 24px 40px rgba(0, 0, 0, 0.4);
+`
+
+const DetailsFooter = styled.div`
+  position: absolute;
+  box-sizing: border-box;
+  width: 100%;
+  bottom: 0;
+  left: 0;
+  height: 48px;
+  border-bottom-left-radius: 6px;
+  border-bottom-right-radius: 6px;
+  background: rgb(222,144,0);
+  background: linear-gradient(90deg, #de9000 0%, #c0c0ba 50%);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-left: 24px;
+  padding-right: 16px;
+`
+
+const CollateralValue = styled.div`
+  font-weight: bold;
+  font-size: 18px;
+  line-height: 34px;
+  color: #FFFFFF;
+`
+
+const FlexContainer = styled.div`
+  display: flex;
+`
+
+const FlexColumn = styled.div`
+  width: 50%;
 `
 
 const Content = styled.div`
@@ -75,106 +113,94 @@ const Content = styled.div`
   padding: 24px 24px 16px 24px;
 `
 
-const IntegerPart = styled.span`
-  color: #3D3D3D;
-`
-const FracPart = styled.span`
-  color: #000000;
-  opacity: 0.4;
-`
+enum EastBalanceType {
+  default = 'default',
+  small = 'small'
+}
+
+interface IEastBalanceProps {
+  value: string;
+  postfix?: string;
+  type: EastBalanceType;
+  style?: any;
+}
 
 const EastBalanceContainer = styled.div`
-  font-family: Staatliches;
-  letter-spacing: 3px;
-  font-weight: 300;
-  font-size: 32px;
-  line-height: 28px;
+  font-family: Cairo;
+  line-height: 100%;
 `
 
-const EastBalance = (props: { value: string, style?: any }) => {
-  const { value } = props
-  const [integerPart, fractionalPart] = roundNumber(value).toString().split('.')
+const IntegerPart = styled.span<{ type: EastBalanceType }>`
+  font-weight: 600;
+  font-size: ${props => props.type === EastBalanceType.default ? '40px' : '20px'};
+  color: ${props => props.theme.darkBlue};
+`
+const FracPart = styled.span<{ type: EastBalanceType }>`
+  font-size: ${props => props.type === EastBalanceType.default ? '24px' : '20px'};
+  font-weight: ${props => props.type === EastBalanceType.default ? '400' : '300'};
+  color: ${props => props.theme.darkBlue50};
+`
+
+const EastBalance = (props: IEastBalanceProps) => {
+  const { type, value, postfix } = props
+  const [integerPart, fractionalPart] = value.toString().split('.')
   return <EastBalanceContainer style={props.style}>
-    <IntegerPart>{integerPart}</IntegerPart>
+    <IntegerPart type={type}>{integerPart}</IntegerPart>
     {fractionalPart &&
-      <FracPart>,{fractionalPart.slice(0, 2)}</FracPart>
+      <FracPart type={type}>
+        .{fractionalPart}
+        {postfix && ` ${postfix}`}
+      </FracPart>
     }
   </EastBalanceContainer>
 }
 
 const Description = styled.div`
-  color: #8D8D8D;
-  font-size: 15px;
-  line-height: 15px;
+  color: ${props => props.theme.darkBlue50};
+  font-size: 11px;
   font-weight: 300;
-`
-
-const FlexColumn = styled.div`
-  display: flex;
-  box-sizing: border-box;
-  flex-direction: column;
-  height: 100%;
-`
-
-const FlexRow = styled.div`
-  display: flex;
-  justify-content: space-between;
-  height: 100%;
-`
-
-const StickToBottom = styled.div`
-  margin-top: auto;
-`
-
-const SmallBalance = styled.div`
-  > div {
-    font-family: Cairo;
-    font-size :20px;
-    line-height: 16px;
-    font-weight: bold;
-    letter-spacing: 0px;
-  }
 `
 
 export const DetailedCard = observer((props: { isShown: null | boolean, onClick: () => void }) => {
   const { authStore, dataStore } = useStores()
-  const { westBalance, eastBalance } = dataStore
+  const { eastBalance, vaultEastAmount, vault, transferedEastAmount, vaultCollateral } = dataStore
   return <Container {...props}>
-    <Content>
-      <FlexRow>
+    <DetailsBody>
+      <Block marginTop={16}>
+        <EastBalance type={EastBalanceType.default} value={eastBalance} postfix={'EAST'} />
+      </Block>
+      <FlexContainer>
         <FlexColumn>
-          <EastBalance value={eastBalance} />
-          <Block marginTop={4}>
-            <Description>EAST collateralized by vault</Description>
+          <Block marginTop={24}>
+            <EastBalance type={EastBalanceType.small} value={vaultEastAmount} />
+            <Description>Collateralized</Description>
           </Block>
-          <Block16>
-            <EastBalance value={'100.21'} />
+          <Block marginTop={20}>
             <Block marginTop={4}>
-              <Description>EAST yet not collateralized (transfered)</Description>
+              <EastBalance type={EastBalanceType.small} value={vault.westAmount} />
+              <Description>WEST</Description>
             </Block>
-          </Block16>
-          <StickToBottom>
-            <Description>Locked in vault</Description>
-            <Block marginTop={8} style={{ display: 'flex' }}>
-              <SmallBalance><EastBalance value={eastBalance} /></SmallBalance>
-              <Description>&nbsp;WEST</Description>
-            </Block>
-            <Block marginTop={8} style={{ display: 'flex' }}>
-              <SmallBalance><EastBalance value={westBalance} /></SmallBalance>
-              <Description>&nbsp;USDap</Description>
-            </Block>
-          </StickToBottom>
-        </FlexColumn>
-        <div>
-          <CollateralCircle percent={250} text={'Collateral'} />
-          <Block16>
-            <Button type={'primary'} size={'small'}>Issue EAST</Button>
-          </Block16>
-          <Block marginTop={12}>
-            <Button size={'small'} style={{ color: '#043569', background: '#b9cdd7' }}>Add WEST</Button>
           </Block>
-        </div>
-      </FlexRow>
-    </Content>
+        </FlexColumn>
+        <FlexColumn>
+          <Block marginTop={24}>
+            <EastBalance type={EastBalanceType.small} value={transferedEastAmount} />
+            <Description>Transfered (not collatiralized)</Description>
+          </Block>
+          <Block marginTop={20}>
+            <Block marginTop={4}>
+              <EastBalance type={EastBalanceType.small} value={vault.usdpAmount} />
+              <Description>USDap</Description>
+            </Block>
+          </Block>
+        </FlexColumn>
+      </FlexContainer>
+    </DetailsBody>
+    <DetailsFooter>
+      <CollateralValue>{Math.round(vaultCollateral * 100)}% collateral</CollateralValue>
+      <div style={{ width: '120px' }}>
+        <Button size={'small'} style={{ color: '#FFFFFF', background: 'rgba(4, 53, 105, 0.15)' }}>Add WEST</Button>
+      </div>
+    </DetailsFooter>
   </Container>
 })
