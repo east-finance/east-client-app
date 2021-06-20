@@ -12,7 +12,6 @@ import { EastOpType } from '../../../../interfaces'
 import { AddWestToAddress } from '../../common/AddWestToAddress'
 import { ConfirmIssueTransaction } from './ConfirmIssueTransaction'
 import { TxSendSuccess } from '../../common/TxSendSuccess'
-import { DefaultCollateral } from '../../../../constants'
 
 interface IProps {
   onClose: () => void
@@ -33,7 +32,9 @@ const Centered = styled.div`
 export const AddEast = observer((props: IProps) => {
   const { dataStore, configStore } = useStores()
   const { vaultCollateral, supplyVaultWestAmount } = dataStore
-  const initialStep = vaultCollateral < DefaultCollateral ? IssueSteps.SupplyCollateral : IssueSteps.FillForm
+  const initialStep = vaultCollateral < configStore.getWestCollateral()
+    ? IssueSteps.SupplyCollateral
+    : IssueSteps.FillForm
   const [refillWestAmount, setRefillWestAmount] = useState('')
   const [stepIndex, setStepIndex] = useState(initialStep)
   const [formData, setFormData] = useState({ eastAmount: '', westAmount: '' })

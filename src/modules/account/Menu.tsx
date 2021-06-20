@@ -119,7 +119,7 @@ export const AccountMenu = observer(() => {
         <IconPlus />
       </MenuItem>
     </MenuItemContainer>
-    {vaultProfit > 0 &&
+    {vaultProfit > 0.5 &&
       <MenuItemContainer>
         <Tooltip>Take WEST</Tooltip>
         <MenuItem onClick={() => router.navigate(RouteName.TakeWest)}><IconLock /></MenuItem>

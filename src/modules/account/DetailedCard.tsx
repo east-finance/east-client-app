@@ -7,6 +7,8 @@ import { observer } from 'mobx-react'
 import { Block, Block16 } from '../../components/Block'
 import { CollateralCircle } from '../../components/CollateralCircle'
 import { Button } from '../../components/Button'
+import { useRoute } from 'react-router5'
+import { RouteName } from '../../router/segments'
 
 const aniTime = '1000ms'
 const bezier = 'ease'
@@ -71,36 +73,13 @@ const DetailsBody = styled.div`
   box-shadow: 0px 24px 40px rgba(0, 0, 0, 0.4);
 `
 
-const DetailsFooter = styled.div`
-  position: absolute;
-  box-sizing: border-box;
-  width: 100%;
-  bottom: 0;
-  left: 0;
-  height: 48px;
-  border-bottom-left-radius: 6px;
-  border-bottom-right-radius: 6px;
-  background: rgb(222,144,0);
-  background: linear-gradient(90deg, #de9000 0%, #c0c0ba 50%);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding-left: 24px;
-  padding-right: 16px;
-`
-
-const CollateralValue = styled.div`
-  font-weight: bold;
-  font-size: 18px;
-  line-height: 34px;
-  color: #FFFFFF;
-`
-
 const FlexContainer = styled.div`
   display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
 `
 
-const FlexColumn = styled.div`
+const FlexItem = styled.div`
   width: 50%;
 `
 
@@ -161,46 +140,106 @@ const Description = styled.div`
   font-weight: 300;
 `
 
+const DetailsFooter = styled.div<{ gradientSteps: string[]; percent: number; }>`
+  position: absolute;
+  box-sizing: border-box;
+  width: 100%;
+  bottom: 0;
+  left: 0;
+  height: 48px;
+  border-bottom-left-radius: 6px;
+  border-bottom-right-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-left: 24px;
+  padding-right: 16px;
+  background: rgb(222,144,0);
+  background: linear-gradient(90deg, ${props => props.gradientSteps[0]} 0%, ${props => props.gradientSteps[1]} ${props => props.percent / 2}%, #c0c0ba ${props => props.percent}%);
+`
+
+const CollateralValue = styled.div`
+  font-weight: bold;
+  font-size: 18px;
+  line-height: 34px;
+  color: #FFFFFF;
+`
+
+const CardFooter = (props: { vaultCollateral: number }) => {
+  const { configStore } = useStores()
+  const { router } = useRoute()
+  const defaultCollateral = configStore.getWestCollateral()
+  const  liquidationCollateral = configStore.getLiquidationCollateral()
+  const { vaultCollateral } = props
+
+  let gradientSteps = ['#429b81', '#00805d']
+  const gradientPercent = Math.round(((vaultCollateral - liquidationCollateral) / (defaultCollateral - liquidationCollateral)) * 100)
+  if (vaultCollateral >= 2.55) {
+    gradientSteps = ['#676797', '#4a4b9e']
+  } else if (vaultCollateral <= 2.45 && vaultCollateral > 1.7) {
+    gradientSteps = ['#d78b01', '#d78b01']
+  } else if (vaultCollateral <= 1.7) {
+    gradientSteps = ['#f1212b', '#f1212b']
+  }
+
+  return <DetailsFooter gradientSteps={gradientSteps} percent={gradientPercent}>
+    <CollateralValue>{Math.round(vaultCollateral * 100)}% collateral</CollateralValue>
+    <div style={{ width: '120px' }}>
+      <Button
+        size={'small'}
+        style={{ color: '#FFFFFF', background: 'rgba(4, 53, 105, 0.15)' }}
+        onClick={() => router.navigate(RouteName.SupplyVault)}
+      >
+      Add WEST
+      </Button>
+    </div>
+  </DetailsFooter>
+}
+
 export const DetailedCard = observer((props: { isShown: null | boolean, onClick: () => void }) => {
-  const { authStore, dataStore } = useStores()
+  const { dataStore } = useStores()
   const { eastBalance, vaultEastAmount, vault, transferedEastAmount, vaultCollateral } = dataStore
   return <Container {...props}>
     <DetailsBody>
-      <Block marginTop={16}>
+      <Block marginTop={12}>
         <EastBalance type={EastBalanceType.default} value={eastBalance} postfix={'EAST'} />
       </Block>
-      <FlexContainer>
-        <FlexColumn>
-          <Block marginTop={24}>
+      <Block marginTop={24}>
+        <FlexContainer>
+          <FlexItem>
             <EastBalance type={EastBalanceType.small} value={vaultEastAmount} />
-            <Description>Collateralized</Description>
-          </Block>
-          <Block marginTop={20}>
             <Block marginTop={4}>
-              <EastBalance type={EastBalanceType.small} value={vault.westAmount} />
-              <Description>WEST</Description>
+              <Description>Collateralized</Description>
             </Block>
-          </Block>
-        </FlexColumn>
-        <FlexColumn>
-          <Block marginTop={24}>
+          </FlexItem>
+          <FlexItem>
             <EastBalance type={EastBalanceType.small} value={transferedEastAmount} />
-            <Description>Transfered (not collatiralized)</Description>
-          </Block>
-          <Block marginTop={20}>
             <Block marginTop={4}>
-              <EastBalance type={EastBalanceType.small} value={vault.usdpAmount} />
-              <Description>USDap</Description>
+              <Description>Transfered (not collatiralized)</Description>
             </Block>
-          </Block>
-        </FlexColumn>
-      </FlexContainer>
+          </FlexItem>
+        </FlexContainer>
+      </Block>
+      <Block marginTop={16}>
+        <Description>In Vault</Description>
+        <Block marginTop={8}>
+          <FlexContainer>
+            <FlexItem>
+              <EastBalance type={EastBalanceType.small} value={vault.westAmount} />
+              <Block marginTop={4}>
+                <Description>WEST</Description>
+              </Block>
+            </FlexItem>
+            <FlexItem>
+              <EastBalance type={EastBalanceType.small} value={vault.usdpAmount} />
+              <Block marginTop={4}>
+                <Description>USDap</Description>
+              </Block>
+            </FlexItem>
+          </FlexContainer>
+        </Block>
+      </Block>
     </DetailsBody>
-    <DetailsFooter>
-      <CollateralValue>{Math.round(vaultCollateral * 100)}% collateral</CollateralValue>
-      <div style={{ width: '120px' }}>
-        <Button size={'small'} style={{ color: '#FFFFFF', background: 'rgba(4, 53, 105, 0.15)' }}>Add WEST</Button>
-      </div>
-    </DetailsFooter>
+    <CardFooter vaultCollateral={vaultCollateral} />
   </Container>
 })

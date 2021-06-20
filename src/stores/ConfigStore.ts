@@ -98,6 +98,10 @@ export default class ConfigStore {
     return this.eastContractConfig['westCollateral'] || 2.5
   }
 
+  getLiquidationCollateral () {
+    return +this.eastContractConfig['liquidationCollateral'] || 1.3
+  }
+
   // Fee for transactions
   getDockerCallFee () {
     return this.nodeConfig.minimumFee['104']
