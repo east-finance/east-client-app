@@ -127,7 +127,7 @@ export default class DataStore {
     clearInterval(this.pollingId)
     await updateData()
     console.log('Start polling user data')
-    this.pollingId = setInterval(updateData, 10 * 1000)
+    this.pollingId = setInterval(updateData, 5 * 1000)
   }
 
   stopPolling () {
