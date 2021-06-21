@@ -154,7 +154,7 @@ const DetailsFooter = styled.div<{ gradientSteps: string[]; percent: number; }>`
   padding-left: 24px;
   padding-right: 16px;
   background: rgb(222,144,0);
-  background: linear-gradient(90deg, ${props => props.gradientSteps[0]} 0%, ${props => props.gradientSteps[1]} ${props => props.percent / 2}%, #c0c0ba ${props => props.percent}%);
+  background: linear-gradient(90deg, ${props => props.gradientSteps[0]} 0%, ${props => props.gradientSteps[1]} ${props => props.percent / 2}%, ${props => props.gradientSteps[2]} ${props => props.percent}%);
 `
 
 const CollateralValue = styled.div`
@@ -171,14 +171,14 @@ const CardFooter = (props: { vaultCollateral: number }) => {
   const  liquidationCollateral = configStore.getLiquidationCollateral()
   const { vaultCollateral } = props
 
-  let gradientSteps = ['#429b81', '#00805d']
+  let gradientSteps = ['#429b81', '#00805d', '#00805d'] // 250% collateral
   const gradientPercent = Math.round(((vaultCollateral - liquidationCollateral) / (defaultCollateral - liquidationCollateral)) * 100)
   if (vaultCollateral >= 2.55) {
-    gradientSteps = ['#676797', '#4a4b9e']
+    gradientSteps = ['#676797', '#4a4b9e', '#c0c0ba']
   } else if (vaultCollateral <= 2.45 && vaultCollateral > 1.7) {
-    gradientSteps = ['#d78b01', '#d78b01']
+    gradientSteps = ['#d78b01', '#d78b01', '#c0c0ba']
   } else if (vaultCollateral <= 1.7) {
-    gradientSteps = ['#f1212b', '#f1212b']
+    gradientSteps = ['#f1212b', '#f1212b', '#c0c0ba']
   }
 
   return <DetailsFooter gradientSteps={gradientSteps} percent={gradientPercent}>
