@@ -10,6 +10,8 @@ import { roundNumber } from '../../../../utils'
 import { useRoute } from 'react-router5'
 import { RouteName } from '../../../../router/segments'
 import { IVault } from '../../../../interfaces'
+import { toast } from 'react-toastify'
+import { ErrorNotification } from '../../../../components/Notification'
 
 export interface IProps {
   westAmount: number;
@@ -114,18 +116,23 @@ export const SupplyCollateral = (props: IProps) => {
       props.onSuccess()
     } catch (e) {
       console.error('Supply collateral error:', e.message)
+      toast(<ErrorNotification text={'Error on send supply transaction'} />, {
+        hideProgressBar: true
+      })
     } finally {
       setInProgress(false)
       setIsMining(false)
     }
   }
 
-  const buttonText = isMining ? 'Waiting for confirmation...' : `Add ${props.westAmount} WEST and continue`
+  const buttonText = isMining
+    ? 'Waiting for confirmation...'
+    : `Add ${props.westAmount} WEST and continue`
 
   return <Container>
     <Block marginTop={40}>
       <Collaterals>
-        <CollateralCircle percent={Math.floor(props.vaultCollateral * 100)} />
+        <CollateralCircle percent={Math.round(props.vaultCollateral * 100)} />
         <Arrow />
         <CollateralCircle percent={250} />
       </Collaterals>

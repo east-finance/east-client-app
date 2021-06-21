@@ -1,7 +1,9 @@
 import React, { useState } from 'react'
+import { toast } from 'react-toastify'
 import styled from 'styled-components'
 import { Block } from '../../../../components/Block'
 import { Button, NavigationLeftGradientButton } from '../../../../components/Button'
+import { ErrorNotification } from '../../../../components/Notification'
 import { ButtonSpinner, RelativeContainer } from '../../../../components/Spinner'
 import { TextTable, TextTableKey, TextTablePrimaryValue, TextTableRow, TextTableSecondaryValue } from '../../../../components/TextTable'
 import useStores from '../../../../hooks/useStores'
@@ -114,6 +116,9 @@ export const ConfirmIssueTransaction = (props: IProps) => {
       props.onNextClicked()
     } catch(e) {
       console.error('Send supply + reissue error:', e.message)
+      toast(<ErrorNotification text={'Error on issue EAST'} />, {
+        hideProgressBar: true
+      })
     } finally {
       setInProgress(false)
     }

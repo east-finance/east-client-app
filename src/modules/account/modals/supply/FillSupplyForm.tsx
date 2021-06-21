@@ -40,7 +40,9 @@ export const FillSupplyForm = observer((props: IProps) => {
   const [errors, setErrors] = useState({ west: '' })
 
   useEffect(() => {
-    // setErrors(validateForm())
+    if (errors.west) {
+      setErrors(validateForm())
+    }
   }, [westAmount])
 
   const validateForm = () => {

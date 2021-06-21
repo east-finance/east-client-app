@@ -187,7 +187,7 @@ export const Settings = (props: IProps) => {
   const onPassChangeClicked = () => setPassChangeVisible(!passChangeVisible)
 
   const onLogoutClicked = () => {
-    dataStore.stopPolling()
+    dataStore.logout()
     authStore.logout()
   }
 

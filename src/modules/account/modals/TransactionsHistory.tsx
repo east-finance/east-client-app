@@ -43,7 +43,7 @@ const ItemContainer = styled.div`
 `
 
 const TxItemSkeleton = styled(ItemContainer)`
-  background-image: linear-gradient(90deg, #ddd 0px,  #e8e8e8 40px, #ddd 80px);
+  background-image: linear-gradient(90deg, #EDEDED 0px, #e8e8e8 40px, #EDEDED 80px);
   background-size: 576px;
   animation: ${shineBatch} 1.6s infinite linear;
 `

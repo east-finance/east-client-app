@@ -4,8 +4,7 @@ import NoiseImg from '../../resources/images/noise.png'
 import { roundNumber } from '../../utils'
 import useStores from '../../hooks/useStores'
 import { observer } from 'mobx-react'
-import { Block, Block16 } from '../../components/Block'
-import { CollateralCircle } from '../../components/CollateralCircle'
+import { Block } from '../../components/Block'
 import { Button } from '../../components/Button'
 import { useRoute } from 'react-router5'
 import { RouteName } from '../../router/segments'
@@ -215,7 +214,7 @@ export const DetailedCard = observer((props: { isShown: null | boolean, onClick:
           <FlexItem>
             <EastBalance type={EastBalanceType.small} value={transferedEastAmount} />
             <Block marginTop={4}>
-              <Description>Transfered (not collatiralized)</Description>
+              <Description>Transfered (not collateralized)</Description>
             </Block>
           </FlexItem>
         </FlexContainer>

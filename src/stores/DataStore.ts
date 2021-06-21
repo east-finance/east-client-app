@@ -16,23 +16,25 @@ export interface IDataPoint {
   height: number;
 }
 
+const emptyUserVault = {
+  id: 0,
+  address: '',
+  createdAt: '',
+  eastAmount: '',
+  usdpAmount: '',
+  usdpRate: '',
+  usdpRateTimestamp: '',
+  vaultId: '',
+  westAmount: '',
+  westRate: '',
+  westRateTimestamp: ''
+}
+
 export default class DataStore {
   api
   configStore
   pollingId: any = null
-  vault: IVault = {
-    id: 0,
-    address: '',
-    createdAt: '',
-    eastAmount: '',
-    usdpAmount: '',
-    usdpRate: '',
-    usdpRateTimestamp: '',
-    vaultId: '',
-    westAmount: '',
-    westRate: '',
-    westRateTimestamp: ''
-  }
+  vault: IVault = {...emptyUserVault}
   westBalance = '0.0'
   eastBalance = '0.0'
   westRate = '0'
@@ -133,6 +135,13 @@ export default class DataStore {
     clearInterval(this.pollingId)
   }
 
+  logout () {
+    this.stopPolling()
+    runInAction(() => {
+      this.vault = {...emptyUserVault}
+    })
+  }
+
   async getEastBalance(address: string): Promise<string> {
     const { eastAmount } = await this.api.getUserEastBalance(address)
     return cutNumber(eastAmount, 8) || '0'
@@ -177,6 +186,6 @@ export default class DataStore {
 
   calculateVaultWestProfit () {
     const diff = roundNumber(this.calculateCurrentVaultWestAmount() - +this.vault.westAmount, 8)
-    return diff
+    return -diff
   }
 }

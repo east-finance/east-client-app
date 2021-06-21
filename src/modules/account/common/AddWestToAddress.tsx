@@ -11,7 +11,7 @@ import { ButtonsContainer, NavigationLeftGradientButton } from '../../../compone
 
 interface IProps {
   westAmount: string;
-  eastAmount: string;
+  eastAmount?: string;
   onPrevClicked: () => void;
 }
 
@@ -100,7 +100,7 @@ export const AddWestToAddress = (props: IProps) => {
   }
   return <Container>
     <Description>
-      Add <Amount>{Math.ceil(+props.westAmount)} WEST</Amount> to your address to get {props.eastAmount} EAST.
+      Add <Amount>{Math.ceil(+props.westAmount)} WEST</Amount> to your address{props.eastAmount && ` to get ${props.eastAmount} EAST`}.
     </Description>
     <Block marginTop={40}>
       <Description>

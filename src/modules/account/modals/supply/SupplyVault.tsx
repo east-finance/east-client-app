@@ -4,6 +4,9 @@ import { PrimaryTitle } from '../../../../components/PrimaryTitle'
 import { TxSendSuccess } from '../../common/TxSendSuccess'
 import { FillFormData, FillSupplyForm } from './FillSupplyForm'
 import { SupplyConfirmation } from './SupplyConfirmation'
+import { AddWestToAddress } from '../../common/AddWestToAddress'
+import useStores from '../../../../hooks/useStores'
+import { Block } from '../../../../components/Block'
 
 interface IProps {
   onClose: () => void
@@ -11,11 +14,13 @@ interface IProps {
 
 enum SupplyVaultSteps {
   fill = 0,
-  confirmation = 1,
-  success = 2
+  addWest = 1,
+  confirmation = 3,
+  success = 4
 }
 
 export const SupplyVault = (props: IProps) => {
+  const { dataStore } = useStores()
   const [currentStep, setCurrentStep] = useState(SupplyVaultSteps.fill)
   const [formData, setFormData] = useState({ westAmount: '' })
 
@@ -23,15 +28,25 @@ export const SupplyVault = (props: IProps) => {
   if(currentStep === SupplyVaultSteps.fill) {
     const onNextClicked = (formData: FillFormData) => {
       setFormData(formData)
-      setCurrentStep(SupplyVaultSteps.confirmation)
+      const rechargeWestAmount = Math.ceil(+formData.westAmount - dataStore.westBalance)
+      if (rechargeWestAmount > 0) {
+        setCurrentStep(SupplyVaultSteps.addWest)
+      } else {
+        setCurrentStep(SupplyVaultSteps.confirmation)
+      }
     }
     content = <FillSupplyForm westAmount={formData.westAmount} onNextClicked={onNextClicked} />
+  } else if(currentStep === SupplyVaultSteps.addWest) {
+    const rechargeWestAmount = Math.ceil(+formData.westAmount - dataStore.westBalance).toString()
+    content = <AddWestToAddress westAmount={rechargeWestAmount} onPrevClicked={() => setCurrentStep(SupplyVaultSteps.fill)} />
   } else if (currentStep === SupplyVaultSteps.confirmation) {
-    content =  <SupplyConfirmation
-      westAmount={formData.westAmount}
-      onPrevClicked={() => setCurrentStep(SupplyVaultSteps.fill)}
-      onSuccess={() => setCurrentStep(SupplyVaultSteps.success)}
-    />
+    content =  <Block marginTop={32}>
+      <SupplyConfirmation
+        westAmount={formData.westAmount}
+        onPrevClicked={() => setCurrentStep(SupplyVaultSteps.fill)}
+        onSuccess={() => setCurrentStep(SupplyVaultSteps.success)}
+      />
+    </Block>
   } else {
     content = <TxSendSuccess
       text={'Vault will be supplied by WEST after the transaction is completed. It may take a few minutes.'}
