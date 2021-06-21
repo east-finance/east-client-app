@@ -179,7 +179,7 @@ export default class DataStore {
   calculateCurrentVaultWestAmount () {
     const westPart = 1 - this.configStore.getUsdpPart()
     const westCollateral = this.configStore.getWestCollateral()
-    const westExpectedUsdValue = +this.eastBalance * westPart * +this.usdapRate * westCollateral
+    const westExpectedUsdValue = +this.vault.eastAmount * westPart * +this.usdapRate * westCollateral
     const expectedWestAmount = westExpectedUsdValue / +this.westRate
     return expectedWestAmount
   }
