@@ -124,9 +124,9 @@ const EastBalance = (props: IEastBalanceProps) => {
   const [integerPart, fractionalPart] = value.toString().split('.')
   return <EastBalanceContainer style={props.style}>
     <IntegerPart type={type}>{integerPart}</IntegerPart>
-    {fractionalPart &&
+    {(fractionalPart || postfix) &&
       <FracPart type={type}>
-        .{fractionalPart}
+        {fractionalPart && `.${fractionalPart}`}
         {postfix && ` ${postfix}`}
       </FracPart>
     }
