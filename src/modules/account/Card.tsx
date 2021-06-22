@@ -147,11 +147,11 @@ const FracPart = styled.span`
 
 const EastBalance = (props: IEastBalanceProps) => {
   const { value } = props
-  const [integerPart, fractionalPart] = roundNumber(value).toString().split('.')
+  const [integerPart, fractionalPart] = roundNumber(value, 8).toString().split('.')
   return <div>
     <IntegerPart>{integerPart}</IntegerPart>
     {fractionalPart &&
-      <FracPart>,{fractionalPart.slice(0, 2)}</FracPart>
+      <FracPart>,{fractionalPart.slice(0, 8)}</FracPart>
     }
   </div>
 }
@@ -162,7 +162,7 @@ export const AccountCard = observer((props: { isShown: null | boolean, onClick: 
   const { address } = authStore
 
   const { westBalance, eastBalance } = dataStore
-  const isPositiveBalance = parseInt(eastBalance) > 0
+  const isPositiveBalance = +eastBalance > 0
 
   return <Container {...props} isOutlined={!isPositiveBalance}>
     {!isPositiveBalance &&

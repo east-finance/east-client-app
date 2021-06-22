@@ -10,7 +10,7 @@ enum CollateralStatus {
 }
 
 const CollateralColor = {
-  [CollateralStatus.overPerformed]: 'rgba(224, 224, 224, 0.5)',
+  [CollateralStatus.overPerformed]: 'rgb(151 82 112)',
   [CollateralStatus.default]: '#00A87A',
   [CollateralStatus.underPerformed]: '#F8B700',
   [CollateralStatus.liquidationSoon]: '#F0222B'
@@ -50,122 +50,78 @@ const SecondaryText = styled.div`
   opacity: 0.6;
 `
 
-const SVGPrimary = styled.svg<{ status?: CollateralStatus }>`
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 120px;
-  height: 120px;
-  transform: rotateY(-180deg) rotateZ(-90deg);
-
-  circle {
-    stroke-dasharray: 365;
-    stroke-dashoffset: 0;
-    stroke-linecap: round;
-    stroke-width: 3px;
-    //stroke: #00A87A;
-    stroke: ${props => props.status ? CollateralColor[props.status] : props.theme.black};
-    fill: none;
-  }
-`
-
-const SVGSecondary = styled.svg`
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 120px;
-  height: 120px;
-  transform: rotateY(-180deg) rotateZ(-90deg);
-
-  circle {
-    //stroke-dasharray: 364;
-    //stroke-dashoffset: -280;
-    stroke-dasharray: 365;
-    stroke-dashoffset: -300;
-    stroke-linecap: round;
-    stroke-width: 3px;
-    //stroke: #00A87A;
-    fill: none;
-  }
-`
-
-interface IProps {
-  percent: number;
-  text?: string;
-}
-
-/*
-* angle = 360 / 6 = 60
-
-Math.sin(Math.PI*60/180)*120 == 103.9230
-
-Math.cos(Math.PI*60/180)*120 == 60.0000
-* */
-
-/* #844d72 #af6179 #96a0bf*/
-
-const getCollateralStatus = (percent: number) => {
-  if (percent > 250) {
+const getCollateralStatus = (value: number) => {
+  if (value > 255) {
     return CollateralStatus.overPerformed
-  } else if (percent === 250) {
+  } else if (value <= 255 && value >= 245) {
     return CollateralStatus.default
-  } else if (percent < 250 && percent > 140) {
+  } else if (value < 245 && value >= 170) {
     return CollateralStatus.underPerformed
   } else return CollateralStatus.liquidationSoon
 }
 
-export const CollateralCircle = (props: IProps) => {
-  const { percent } = props
-  const absolutePercent = (percent - Percentage.min) / (Percentage.max - Percentage.min)
-  const status = getCollateralStatus(percent)
-  const fullCircleLength = Math.ceil(2 * Math.PI * 58)
-  const primaryDashOffset = - (fullCircleLength - (fullCircleLength * absolutePercent))
+const SVGWrapper = styled.svg`
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: inherit;
+  height: inherit;
+  transform: rotate(-90deg);
+`
+
+const SVGCircle = styled.circle`
+  fill: rgba(0,0,0,0);
+  stroke: #fff;
+  stroke-dashoffset: 239.91148575129;
+  stroke-width: 2;
+`
+
+const CircleIncomplete = styled(SVGCircle)`
+  stroke: white;
+`
+
+const CircleComplete = styled(SVGCircle)`
+  stroke-dasharray: 239.91148575129;
+  // stroke: #00A87A;
+`
+
+export interface ICircleProps {
+  value: number;
+  text?: string;
+}
+
+export const CollateralCircle = (props: ICircleProps) => {
+  const { value } = props
+  const status = getCollateralStatus(value)
+  const primaryColor = CollateralColor[status]
+  const secondaryColor = status === CollateralStatus.overPerformed ? 'rgb(209 209 209)' : 'white'
+
+  let valueModule = value
+  if (status === CollateralStatus.default) {
+    valueModule = Percentage.max
+  } else if (status === CollateralStatus.overPerformed) {
+    valueModule = Percentage.min + (value % Percentage.max)
+    if (value >= 370) {
+      valueModule = 250
+    }
+  }
+  const radius = 38
+  const fullCircleLength = Math.ceil(2 * Math.PI * radius)
+  const absolutePercent = (valueModule - Percentage.min) / (Percentage.max - Percentage.min)
+  const primaryDashOffset = (fullCircleLength - (fullCircleLength * absolutePercent))
+
   return <Container>
-    <TextContainer color={CollateralColor[status]}>
-      <PrimaryText>{props.percent}%</PrimaryText>
+    <TextContainer color={primaryColor}>
+      <PrimaryText>{props.value}%</PrimaryText>
       {props.text &&
         <Block marginTop={4}>
           <SecondaryText>{props.text}</SecondaryText>
         </Block>
       }
     </TextContainer>
-    {/*<SVGSecondary>*/}
-    {/*  <defs>*/}
-    {/*    <linearGradient id="gradient" x1="0%" y1="0%" x2="0%" y2="100%">*/}
-    {/*      <stop offset="0%" stopColor="#844d72" />*/}
-    {/*      <stop offset="50%" stopColor="#af6179" />*/}
-    {/*      <stop offset="100%" stopColor="#96a0bf" />*/}
-    {/*    </linearGradient>*/}
-    {/*  </defs>*/}
-    {/*  <circle r="58" cx="60" cy="60" stroke="url(#gradient)" />*/}
-    {/*</SVGSecondary>*/}
-    <SVGPrimary status={status}>
-      <circle r="58" cx="60" cy="60" style={{
-        strokeDashoffset: primaryDashOffset
-      }} />
-    </SVGPrimary>
+    <SVGWrapper viewBox="0 0 80 80">
+      <CircleIncomplete cx="40" cy="40" r="38" style={{ stroke: secondaryColor }} />
+      <CircleComplete cx="40" cy="40" r="38" style={{ strokeDashoffset: primaryDashOffset, stroke: primaryColor }} />
+    </SVGWrapper>
   </Container>
-}
-
-const Test = styled.div`
-  margin: 25px 0;
-  width: 200px;
-  height: 200px;
-  border-radius: 50%;
-  border: 12px solid transparent;
-  background-size: 100% 100%, 50% 50%, 50% 50%, 50% 50%, 50% 50%;
-  background-repeat: no-repeat;
-  background-image: linear-gradient(white, white), 
-                    linear-gradient(30deg, red 36%, lightgrey 30%),
-                    linear-gradient(120deg, yellow 36%, lightgrey 30%),
-                    linear-gradient(300deg, blue 36%, lightgrey 30%),
-                    linear-gradient(210deg, green 36%, lightgrey 30%);
-  background-position: center center, left top, right top, left bottom, right bottom;
-  background-origin: content-box, border-box, border-box, border-box, border-box;
-  background-clip: content-box, border-box, border-box, border-box, border-box;
-  transform: rotate(30deg);
-`
-
-export const CollateralCircle2 = () => {
-  return <Test />
 }

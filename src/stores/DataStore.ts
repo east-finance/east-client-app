@@ -49,7 +49,8 @@ export default class DataStore {
 
   get vaultCollateral () {
     const westPart = 1 - this.configStore.getUsdpPart()
-    const currentWestCollateral = Math.ceil(+this.vault.westAmount * +this.westRate) / (westPart * Math.floor(+this.vault.eastAmount))
+    // const currentWestCollateral = Math.ceil(+this.vault.westAmount * +this.westRate) / (westPart * Math.floor(+this.vault.eastAmount))
+    const currentWestCollateral = (+this.vault.westAmount * +this.westRate) / (westPart * +this.vault.eastAmount)
     return currentWestCollateral
   }
 
@@ -92,7 +93,7 @@ export default class DataStore {
 
     const updateUserVault = async () => {
       const vault = await this.api.getVault(address)
-      console.log('User Vault:', vault)
+      // console.log('User Vault:', vault)
       if (vault) {
         runInAction(() => {
           this.vault = vault

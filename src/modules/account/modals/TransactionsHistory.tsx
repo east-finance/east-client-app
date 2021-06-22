@@ -76,7 +76,7 @@ const SecondaryText = styled.div`
 
 const Time = styled.div`
   font-size: 15px;
-  line-height: 18px;
+  line-height: 24px;
   color: ${props => props.theme.darkBlue50};
 `
 
@@ -84,11 +84,13 @@ const TxItem = (props: { tx: ITransaction}) => {
   const { configStore } = useStores()
   const { router } = useRoute()
   const { tx } = props
-  const { transactionType, eastAmountDiff, westAmountDiff, callTimestamp, params } = tx
+  const { transactionType, eastAmountDiff, westAmountDiff, callTimestamp, params, callTxId, requestTxId } = tx
   const date = moment(callTimestamp).format('MMM Do')
   const time = moment(callTimestamp).format('hh:mm a')
   const isReceived = +eastAmountDiff > 0
   const isReceivedWest = +westAmountDiff > 0
+
+  let explorerTxId = callTxId
 
   let eastDiff = roundNumber(eastAmountDiff, 2).toString()
   if (isReceived) {
@@ -107,6 +109,12 @@ const TxItem = (props: { tx: ITransaction}) => {
   } else if (transactionType === EastOpType.mint) {
     primaryText = `${eastDiff} EAST`
     description = 'Added to the vault'
+  } else if (transactionType === EastOpType.close_init) {
+    primaryText = `${eastDiff} EAST`
+    description = 'Initialize vault close'
+    if (requestTxId) {
+      explorerTxId = requestTxId
+    }
   } else if (transactionType === EastOpType.close) {
     primaryText = `${eastDiff} EAST`
     description = 'Vault is closed'
@@ -119,16 +127,19 @@ const TxItem = (props: { tx: ITransaction}) => {
   } else if (transactionType === EastOpType.claim_overpay) {
     primaryText = `${westDiff} WEST`
     description = 'Claim overpay'
+  } else {
+    primaryText = `${eastDiff} EAST`
+    description = transactionType
   }
   const onExplorerLinkClicked = (txId: string) => {
     const clientAddress = configStore.getClientAddress()
     window.open(`${clientAddress}/explorer/transactions/id/${txId}`, '_blank')
   }
   return <ItemContainer>
-    <ItemColumn style={{ width: '25%' }}>
+    <ItemColumn style={{ width: '25%', lineHeight: '16px' }}>
       <PrimaryText>{primaryText}</PrimaryText>
       <Block marginTop={8}>
-        <ExplorerLink onClick={() => onExplorerLinkClicked(tx.callTxId)}>Explorer</ExplorerLink>
+        <ExplorerLink onClick={() => onExplorerLinkClicked(explorerTxId)}>Explorer</ExplorerLink>
       </Block>
     </ItemColumn>
     <ItemColumn style={{ width: '55%' }}>
@@ -161,13 +172,11 @@ export const TransactionsHistory = (props: IProps) => {
     loadTxs()
   }, [])
 
-  const skeletons = Array(5).fill(null)
-
   return <PrimaryModal {...props} style={{ padding: '24px 24px 0', overflow: 'hidden' }}>
     <PrimaryTitle>Transaction history</PrimaryTitle>
     <ItemsContainer>
       {inProgress
-        ? skeletons.map((_, index) => <TxItemSkeleton key={index} />)
+        ? Array(1).fill(null).map((_, index) => <TxItemSkeleton key={index} />)
         : transactions.map((tx, index) => <TxItem key={index} tx={tx} />)
       }
     </ItemsContainer>

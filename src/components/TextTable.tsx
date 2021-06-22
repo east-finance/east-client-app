@@ -20,8 +20,7 @@ export const TextTableKey = styled.div`
   max-width: 40%;
   min-width: 40%;
   margin-left: 10%;
-  color: #000000;
-  opacity: 0.6;
+  color: ${props => props.theme.darkBlue50};
   font-size: 15px;
 `
 
@@ -29,12 +28,12 @@ export const TextTablePrimaryValue = styled.div`
   font-weight: bold;
   font-size: 24px;
   line-height: 24px;
-  color: #000000;
+  color: #081D52;
 `
 
 export const TextTableSecondaryValue = styled.div`
-  font-weight: bold;
-  font-size: 16px;
-  line-height: 16px;
+  font-weight: 500;
+  font-size: 18px;
+  line-height: 18px;
   color: #043569;
 `

@@ -31,8 +31,9 @@ const Centered = styled.div`
 
 export const AddEast = observer((props: IProps) => {
   const { dataStore, configStore } = useStores()
-  const { vaultCollateral, supplyVaultWestAmount } = dataStore
-  const initialStep = vaultCollateral < configStore.getWestCollateral()
+  const { vault, vaultCollateral, supplyVaultWestAmount } = dataStore
+  const westCollateralDiff = supplyVaultWestAmount - +vault.westAmount
+  const initialStep = westCollateralDiff > 1
     ? IssueSteps.SupplyCollateral
     : IssueSteps.FillForm
   const [refillWestAmount, setRefillWestAmount] = useState('')
@@ -62,7 +63,7 @@ export const AddEast = observer((props: IProps) => {
     }
     content = <SupplyCollateral
       vaultCollateral={vaultCollateral}
-      westAmount={Math.ceil(supplyVaultWestAmount)}
+      westAmount={Math.ceil(westCollateralDiff)}
       onSuccess={onSuccess}
     />
   } else if (stepIndex === IssueSteps.FillForm) {

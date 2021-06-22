@@ -10,7 +10,6 @@ import {
   TextTableRow,
   TextTableSecondaryValue
 } from '../../../../components/TextTable'
-import { roundNumber } from '../../../../utils'
 import { observer } from 'mobx-react'
 import { EastOpType, IVault } from '../../../../interfaces'
 
@@ -42,9 +41,12 @@ const Fee = styled.div`
 
 export const CloseVaultInfo = observer((props: IProps) => {
   const { configStore, dataStore } = useStores()
+  const { eastBalance } = dataStore
   const vault: IVault = dataStore.vault
 
   const totalFee = +configStore.getFeeByOpType(EastOpType.close_init)
+  const isDisabled = +eastBalance < +vault.eastAmount
+  const buttonText = isDisabled ? 'Lack of EAST in vault' : 'Continue to confirmation'
 
   return <Container>
     <Block marginTop={40}>
@@ -56,7 +58,7 @@ export const CloseVaultInfo = observer((props: IProps) => {
       <TextTable>
         <TextTableRow>
           <TextTableKey>You have</TextTableKey>
-          <TextTablePrimaryValue>{vault.eastAmount} EAST</TextTablePrimaryValue>
+          <TextTablePrimaryValue>{eastBalance} EAST</TextTablePrimaryValue>
         </TextTableRow>
         <TextTableRow>
           <TextTableKey>You will pay</TextTableKey>
@@ -71,15 +73,15 @@ export const CloseVaultInfo = observer((props: IProps) => {
           <TextTableKey>You will unlock</TextTableKey>
           <TextTableSecondaryValue>
             <div>{vault.westAmount} WEST</div>
-            <div>{vault.usdpAmount} USDap</div>
+            <div style={{marginTop: '8px'}}>{vault.usdpAmount} USDap</div>
           </TextTableSecondaryValue>
         </TextTableRow>
       </TextTable>
     </Block>
     <Block marginTop={60}>
       <ButtonsContainer>
-        <Button type={'primary'} onClick={props.onNextClicked}>
-          Continue to confirmation
+        <Button type={'primary'} disabled={isDisabled} onClick={props.onNextClicked}>
+          {buttonText}
         </Button>
       </ButtonsContainer>
     </Block>

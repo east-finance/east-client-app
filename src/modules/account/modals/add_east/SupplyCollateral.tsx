@@ -4,12 +4,9 @@ import { Block, Block32 } from '../../../../components/Block'
 import { Button } from '../../../../components/Button'
 import ArrowLeft from '../../../../resources/images/arrow-left.svg'
 import { ButtonSpinner, RelativeContainer } from '../../../../components/Spinner'
-import { CollateralCircle, CollateralCircle2 } from '../../../../components/CollateralCircle'
+import { CollateralCircle } from '../../../../components/CollateralCircle'
 import useStores from '../../../../hooks/useStores'
 import { roundNumber } from '../../../../utils'
-import { useRoute } from 'react-router5'
-import { RouteName } from '../../../../router/segments'
-import { IVault } from '../../../../interfaces'
 import { toast } from 'react-toastify'
 import { ErrorNotification } from '../../../../components/Notification'
 
@@ -112,7 +109,7 @@ export const SupplyCollateral = (props: IProps) => {
       setInProgress(true)
       await sendSupply()
       setIsMining(true)
-      await new Promise(resolve => setTimeout(resolve, 10000))
+      await new Promise(resolve => setTimeout(resolve, 5000))
       props.onSuccess()
     } catch (e) {
       console.error('Supply collateral error:', e.message)
@@ -132,9 +129,9 @@ export const SupplyCollateral = (props: IProps) => {
   return <Container>
     <Block marginTop={40}>
       <Collaterals>
-        <CollateralCircle percent={Math.round(props.vaultCollateral * 100)} />
+        <CollateralCircle value={Math.round(props.vaultCollateral * 100)} />
         <Arrow />
-        <CollateralCircle percent={250} />
+        <CollateralCircle value={250} />
       </Collaterals>
     </Block>
     <Block32>

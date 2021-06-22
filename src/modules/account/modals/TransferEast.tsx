@@ -129,7 +129,7 @@ export const TransferEast = observer((props: IProps) => {
         eastAmount: +eastAmount
       })
       const result = await window.WEWallet.broadcast('dockerCallV3', tx)
-      console.log('Broadcast transdfer EAST result:', result)
+      console.log('Broadcast transfer EAST result:', result)
       setCurrentStep(Steps.success)
     } catch(e) {
       console.error('Broadcast transfer EAST error: ', e.message)
