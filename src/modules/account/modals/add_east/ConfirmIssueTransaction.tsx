@@ -51,7 +51,7 @@ export const ConfirmIssueTransaction = (props: IProps) => {
       tx: {
         recipient: ownerAddress,
         assetId: 'WAVES',
-        amount: +props.westAmount * Math.pow(10, 8),
+        amount: Math.round(+props.westAmount * Math.pow(10, 8)),
         fee: configStore.getTransferFee(),
         attachment: '',
         timestamp: Date.now(),

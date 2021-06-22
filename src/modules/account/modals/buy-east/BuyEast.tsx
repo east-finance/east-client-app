@@ -48,7 +48,7 @@ export const BuyEast = (props: IProps) => {
       tx: {
         recipient: ownerAddress,
         assetId: 'WAVES',
-        amount: +westAmount * Math.pow(10, 8),
+        amount: Math.round(+westAmount * Math.pow(10, 8)),
         fee: configStore.getTransferFee(),
         attachment: '',
         timestamp: Date.now(),
