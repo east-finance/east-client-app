@@ -104,7 +104,7 @@ export const TakeWest = observer((props: IProps) => {
     />
   } else {
     content = <div>
-      <Block marginTop={162}>
+      <Block marginTop={120}>
         <Container>
           <SimpleInput
             type={'number'}
@@ -118,7 +118,7 @@ export const TakeWest = observer((props: IProps) => {
           </Block>
         </Container>
       </Block>
-      <Block marginTop={130}>
+      <Block marginTop={120}>
         <Centered>
           <Button type={'primary'} disabled={inProgress || !westAmount || !!validationError} onClick={onWithdrawClicked}>
             <RelativeContainer>

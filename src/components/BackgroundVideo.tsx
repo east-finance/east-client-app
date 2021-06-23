@@ -1,6 +1,7 @@
 import styled from 'styled-components'
 import BgWater from '../resources/images/bg-water.mp4'
-import React from 'react'
+import React, { useRef } from 'react'
+import { useEffect } from 'react'
 
 // https://redstapler.co/responsive-css-video-background/
 
@@ -28,6 +29,12 @@ interface IProps {
 }
 
 export const BackgroundVideo = (props: IProps) => {
+  // const videoRef: any = useRef(null)
+  // useEffect(() => {
+  //   if (videoRef && videoRef.current) {
+  //     videoRef.current.playbackRate = 0.5
+  //   }
+  // }, [])
   return <VideoContainer id={'videoBG'} autoPlay muted loop {...props}>
     <source src={BgWater} type="video/mp4" />
   </VideoContainer>
