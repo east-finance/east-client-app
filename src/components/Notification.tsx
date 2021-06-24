@@ -59,18 +59,37 @@ const Container = styled.div<{ type: NotificationType }>`
   ${({ type }) => (type === NotificationType.error) && `
     border: 1px solid rgba(240, 33, 43, 0.4);
     color: #F0222B;
-    font-weight: bold;
   `}
 `
 
+const MessageTitle = styled.div`
+  font-weight: 600;
+`
+const MessageSubTitle = styled.div`
+  font-weight: 300;
+  opacity: 0.8;
+`
+
 export interface IProps {
-  text: string;
+  title?: string;
+  message?: string;
+  children?: JSX.Element | JSX.Element[] | string;
 }
 
 export const ErrorNotification = (props: IProps) => <Container type={NotificationType.error}>
-  {props.text}
+  {props.children &&
+    <div>{props.children}</div>
+  }
+  {props.title &&
+    <div>
+      <MessageTitle>{props.title}</MessageTitle>
+      {props.message &&
+        <MessageSubTitle>{props.message}</MessageSubTitle>
+      }
+    </div>
+  }
 </Container>
 
 export const InfoNotification = (props: IProps) => <Container type={NotificationType.default}>
-  {props.text}
+  <div>{props.children || props.title}</div>
 </Container>

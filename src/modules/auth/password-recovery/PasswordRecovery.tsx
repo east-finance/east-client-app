@@ -10,6 +10,8 @@ import { validateEmail } from '../utils'
 import { toast } from 'react-toastify'
 import { ErrorNotification } from '../../../components/Notification'
 import { FormErrors } from '../../../components/PasswordRules'
+import { ButtonSpinner, RelativeContainer } from '../../../components/Spinner'
+import { AuthError } from '../../../api/apiErrors'
 
 const Container = styled.div`
   width: 376px;
@@ -31,6 +33,7 @@ const PasswordRecovery = () => {
   const [username, setUsername] = useState('')
   const [usernameError, setUsernameError] = useState('')
   const [emailSent, setEmailSent] = useState(false)
+  const [inProgress, setInProgress] = useState(false)
 
   const onChangeEmail = (e: ChangeEvent<HTMLInputElement>) => {
     setUsername(e.target.value.trim())
@@ -47,32 +50,39 @@ const PasswordRecovery = () => {
   }
 
   const onSendRecoverClick = async () => {
-    try {
-      const err = validateForm()
-      if (err) {
-        setUsernameError(err)
-        // toast.dismiss()
-        toast(<ErrorNotification text={err} />, {
-          hideProgressBar: true
-        })
-      } else {
-        setUsernameError('')
-        await api.sendPasswordRecover(username)
-        setEmailSent(true)
-      }
-    } catch (e) {
-      console.error('Recover error:', e.message)
-      let toastMessage = 'Unknown error. Try again later.'
-      if (e.response) {
-        const { data: { errors } } = e.response
-        if (errors.includes('email must be an email')) {
-          toastMessage = FormErrors.EmailIsIncorrect
-          setUsernameError(FormErrors.EmailIsIncorrect)
-        }
-      }
-      toast(<ErrorNotification text={toastMessage} />, {
+    const err = validateForm()
+    if (err) {
+      setUsernameError(err)
+      // toast.dismiss()
+      toast(<ErrorNotification title={err} />, {
         hideProgressBar: true
       })
+    } else {
+      try {
+        setUsernameError('')
+        setInProgress(true)
+        await api.sendPasswordRecover(username)
+        setEmailSent(true)
+      } catch (e) {
+        console.error('Recover error:', e.message)
+        let toastMessage = 'Unknown error. Try again later.'
+        let toastTitle = ''
+        if (e.response) {
+          const { data: { errors } } = e.response
+          if (errors.includes('email must be an email')) {
+            toastMessage = FormErrors.EmailIsIncorrect
+            setUsernameError(FormErrors.EmailIsIncorrect)
+          } else if (errors.includes(AuthError.TooManyRequests)) {
+            toastMessage = 'Too many requests'
+            toastTitle = 'Try to send mail later or check mailbox'
+          }
+        }
+        toast(<ErrorNotification title={toastTitle} message={toastMessage} />, {
+          hideProgressBar: true
+        })
+      } finally {
+        setInProgress(false)
+      }
     }
   }
 
@@ -107,8 +117,11 @@ const PasswordRecovery = () => {
         </Button>
       }
       {!emailSent &&
-        <Button type={'primary'} onClick={onSendRecoverClick}>
-          Reset password
+        <Button type={'primary'} disabled={inProgress} onClick={onSendRecoverClick}>
+          <RelativeContainer>
+            {inProgress && <ButtonSpinner />}
+            Reset password
+          </RelativeContainer>
         </Button>
       }
     </Block>

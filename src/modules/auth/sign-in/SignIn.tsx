@@ -1,4 +1,4 @@
-import React, { ChangeEvent, KeyboardEventHandler, useState } from 'react'
+import React, { ChangeEvent, useState } from 'react'
 import { useRoute } from 'react-router5'
 import { Block, Block16, Block24 } from '../../../components/Block'
 import styled from 'styled-components'
@@ -13,6 +13,7 @@ import { ErrorNotification } from '../../../components/Notification'
 import { FormErrors } from '../../../components/PasswordRules'
 import { AuthError } from '../../../api/apiErrors'
 import { ButtonSpinner, RelativeContainer } from '../../../components/Spinner'
+import { observer } from 'mobx-react'
 
 const Container = styled.div`
   width: 376px;
@@ -45,8 +46,8 @@ const AdditionalText = styled.span`
   cursor: pointer;
 `
 
-const SignIn = () => {
-  const { api, authStore } = useStores()
+const SignIn = observer(() => {
+  const { authStore } = useStores()
   const { router, route } = useRoute()
 
   const [username, setUsername] = useState(localStorage.getItem('test_login') || route.params.email || '')
@@ -90,14 +91,22 @@ const SignIn = () => {
       const msg = userMessage || passMessage
       if (msg) {
         toast.dismiss()
-        toast(<ErrorNotification text={msg} />, {
+        toast(<ErrorNotification title={msg} />, {
           hideProgressBar: true
         })
       } else {
         let tokenPair = null
+        const onRefreshFailed = () => {
+          if (authStore.isLoggedIn) {
+            toast(<ErrorNotification title={'Logged out'} message={'Auth token is expired, sign in again'} />, {
+              hideProgressBar: true
+            })
+            authStore.logout()
+          }
+        }
         try {
           setInProgress(true)
-          tokenPair = await api.signIn(username, password)
+          tokenPair = await authStore.signIn(username, password, onRefreshFailed)
         } catch (e) {
           let toastText = 'Unknown error. Try again later.'
           if (e.response) {
@@ -113,7 +122,7 @@ const SignIn = () => {
             }
           }
           toast.dismiss()
-          toast(<ErrorNotification text={toastText} />, {
+          toast(<ErrorNotification title={toastText} />, {
             hideProgressBar: true
           })
         } finally {
@@ -176,6 +185,6 @@ const SignIn = () => {
       </RelativeContainer>
     </Button>
   </Container>
-}
+})
 
 export default SignIn

@@ -116,7 +116,7 @@ export const ConfirmIssueTransaction = (props: IProps) => {
       props.onNextClicked()
     } catch(e) {
       console.error('Send supply + reissue error:', e.message)
-      toast(<ErrorNotification text={'Error on issue EAST'} />, {
+      toast(<ErrorNotification title={'Error on issue EAST'} />, {
         hideProgressBar: true
       })
     } finally {

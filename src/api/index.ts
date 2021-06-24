@@ -20,15 +20,15 @@ export class Api {
   })
   private _apiClient!: AxiosInstance
 
-  public setupApi = async (tokenPair: ITokenPair) => {
+  public setupApi = async (tokenPair: ITokenPair, onRefreshFailed: () => void) => {
     const refreshCallback = async (token: string) => {
       try {
         const { data } = await axios.post(`${AUTH_SERVICE_ADDRESS}/v1/auth/refresh`, { token })
-        console.log('token refreshed')
+        console.log('JWT token refreshed')
         return data
       } catch (e) {
-        console.log('refresh failed relogin')
-        // return getTokens()
+        console.log('JWT token refresh failed:', e.message)
+        onRefreshFailed()
       }
     }
 
@@ -45,10 +45,8 @@ export class Api {
   }
 
   // Auth requests
-
   public signIn  = async (username: string, password: string): Promise<ITokenPair> => {
     const { data: tokenPair } = await this._unauthorizedClient.post('/auth/login', { username, password })
-    await this.setupApi(tokenPair)
     return tokenPair
   }
 
@@ -81,7 +79,6 @@ export class Api {
   }
 
   // Node requests
-
   public getNodeConfig = async () => {
     const { data } = await this._apiClient.get(`${NODE_ADDRESS}/node/config`)
     return data
@@ -98,7 +95,6 @@ export class Api {
   }
 
   // API requests
-
   public getOracleValues = async (streamId: OracleStreamId, limit?: number): Promise<IOracleValue[]> => {
     let url = `${API_ADDRESS}/v1/user/oracles?streamId=${streamId}`
     if (limit) {

@@ -3,8 +3,7 @@ import decodeJWT, { JwtPayload } from 'jwt-decode'
 import { ITokenPair } from '../interfaces'
 import { Api } from '../api'
 import { Router } from 'router5'
-import { RouteName, RouteSegment } from '../router/segments'
-import { Route } from 'react-router5'
+import { RouteName } from '../router/segments'
 
 const tokensLocalStorageKey = 'tokenPair'
 
@@ -14,6 +13,7 @@ interface WEJWTPayload extends JwtPayload {
 }
 
 export default class AuthStore {
+  api: Api
   router: Router
   isLoggedIn = false
   isWalletAvailable = false
@@ -27,6 +27,7 @@ export default class AuthStore {
 
   constructor(router: Router, api: Api) {
     this.router = router
+    this.api = api
     makeAutoObservable(this)
     this.initStore(router, api)
     this.startWalletObserver()
@@ -37,7 +38,7 @@ export default class AuthStore {
   }
 
   async initStore (router: Router, api: Api): Promise<void> {
-    const { name, params } = router.getState()
+    const { name } = router.getState()
     if (![RouteName.SignIn, RouteName.SignUp, RouteName.PasswordRecovery, RouteName.PasswordReset, RouteName.ConfirmUser].includes(name)) { //!name.startsWith(RouteSegment.auth)
       router.navigate(RouteName.SignIn)
       // const tokenPair = this.readTokenPair()
@@ -91,6 +92,12 @@ export default class AuthStore {
         console.log('Cannot get WEWallet state:', e)
       }
     }
+  }
+
+  async signIn (username: string, password: string, onRefreshFailed: () => void): Promise<ITokenPair> {
+    const tokenPair = await this.api.signIn(username, password)
+    await this.api.setupApi(tokenPair, onRefreshFailed)
+    return tokenPair
   }
 
   logout (): void {

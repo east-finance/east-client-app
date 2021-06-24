@@ -113,7 +113,7 @@ export const SupplyCollateral = (props: IProps) => {
       props.onSuccess()
     } catch (e) {
       console.error('Supply collateral error:', e.message)
-      toast(<ErrorNotification text={'Error on send supply transaction'} />, {
+      toast(<ErrorNotification title={'Error on send supply transaction'} />, {
         hideProgressBar: true
       })
     } finally {

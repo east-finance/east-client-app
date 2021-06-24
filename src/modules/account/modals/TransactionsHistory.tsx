@@ -9,7 +9,6 @@ import { EastOpType, ITransaction } from '../../../interfaces'
 import useStores from '../../../hooks/useStores'
 import { shineBatch } from '../../../components/Animations'
 import { roundNumber } from '../../../utils'
-import { useRoute } from 'react-router5'
 
 interface IProps {
   onClose: () => void
@@ -82,7 +81,6 @@ const Time = styled.div`
 
 const TxItem = (props: { tx: ITransaction}) => {
   const { configStore } = useStores()
-  const { router } = useRoute()
   const { tx } = props
   const { transactionType, eastAmountDiff, westAmountDiff, callTimestamp, params, callTxId, requestTxId } = tx
   const date = moment(callTimestamp).format('MMM Do')

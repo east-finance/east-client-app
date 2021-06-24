@@ -93,7 +93,7 @@ export const AddWestToAddress = (props: IProps) => {
   const { authStore } = useStores()
   const onCopyClicked = () => {
     copy(authStore.address)
-    toast(<InfoNotification text={'Copied!'} />, {
+    toast(<InfoNotification title={'Copied!'} />, {
       hideProgressBar: true,
       closeButton: <ToastCloseButton type={NotificationType.default} closeToast={() => toast.dismiss()} />
     })

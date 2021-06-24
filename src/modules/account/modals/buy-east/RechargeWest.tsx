@@ -16,7 +16,7 @@ const Container = styled.div`
   color: ${props => props.theme.darkBlue};
 `
 
-export const RechargeWest = (props: IProps) => {
+export const RechargeWest: React.FC<IProps> = (props: IProps) => {
   return <Container>
     <Block marginTop={64}>
       <AddWestToAddress westAmount={props.rechargeWestAmount} eastAmount={props.eastAmount} onPrevClicked={props.onPrevClicked} />

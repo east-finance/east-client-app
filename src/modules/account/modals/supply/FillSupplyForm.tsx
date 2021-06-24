@@ -71,8 +71,6 @@ export const FillSupplyForm = observer((props: IProps) => {
       })
     }
   }
-  const usdpPartPercent = configStore.getUsdpPart() * 100
-  const westPartPercent = configStore.getWestCollateral() * 100
   const westAvailable = roundNumber(dataStore.westBalance, 8)
   const buyOptions = [{text: '25%', value: '0.25' }, { text: '50%', value: '0.5' }, { text: '75%', value: '0.75' }, { text: '100%', value: '1' }]
   const onSelectOption = (tag: ITag) => {

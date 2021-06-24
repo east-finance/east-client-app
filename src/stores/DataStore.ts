@@ -6,10 +6,6 @@ import { IVault } from '../interfaces'
 import ConfigStore from './ConfigStore'
 import { roundNumber, cutNumber } from '../utils'
 
-enum StreamId {
-  WEST_USD = '000003'
-}
-
 export interface IDataPoint {
   value: number;
   timestamp: number;

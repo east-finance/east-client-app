@@ -89,7 +89,7 @@ const PasswordRecovery = () => {
 
     if (msg) {
       if (msg !== FormErrors.PasswordRules) {
-        toast(<ErrorNotification text={msg} />, {
+        toast(<ErrorNotification title={msg} />, {
           hideProgressBar: true
         })
       }
@@ -112,7 +112,7 @@ const PasswordRecovery = () => {
             setApiError(AuthError.TokenExpired)
           }
         }
-        toast(<ErrorNotification text={msg} />, {
+        toast(<ErrorNotification title={msg} />, {
           hideProgressBar: true
         })
       } finally {
@@ -127,7 +127,7 @@ const PasswordRecovery = () => {
       setRestoreEmailSent(true)
     } catch (e) {
       console.error('Error on send restore email:', e.message)
-      toast(<ErrorNotification text={'Error on send restore email'} />, {
+      toast(<ErrorNotification title={'Error on send restore email'} />, {
         hideProgressBar: true
       })
     }

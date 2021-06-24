@@ -9,6 +9,18 @@ import { RouteName } from '../../../router/segments'
 import { BigNumber } from 'bignumber.js'
 import { WestDecimals } from '../../../constants'
 import { ButtonSpinner, RelativeContainer } from '../../../components/Spinner'
+import weLogoSmall from '../../../resources/images/we-logo-small.svg'
+
+const WELogo = styled.div`
+  display: inline-block;
+  background-image: url(${weLogoSmall});
+  width: 32px;
+  height: 32px;
+  background-size: 32px;
+  vertical-align: middle;
+  background-repeat: no-repeat;
+  padding-bottom: 4px;
+`
 
 const Container = styled.div`
   width: 640px;
@@ -92,8 +104,8 @@ const SignInWallet = observer(() => {
   }
 
   const checkWallet = async () => {
+    let walletCode = null
     try {
-      setWalletErrorCode(null)
       const state = await window.WEWallet.publicState()
       console.log('Wallet state:', state)
       if (state.account) {
@@ -105,11 +117,10 @@ const SignInWallet = observer(() => {
     } catch (e) {
       console.log('Wallet auth error:', e)
       if (e && e.code) {
-        setWalletErrorCode(e.code)
+        walletCode = e.code
       }
-      // if (e && e.code === '14') {
-      //   setNoAccounts(true)
-      // }
+    } finally {
+      setWalletErrorCode(walletCode)
     }
   }
 
@@ -119,9 +130,7 @@ const SignInWallet = observer(() => {
       checkWallet()
       intervalId = setInterval(() => {
         console.log('walletErrorCode:', walletErrorCode)
-        if (!walletErrorCode) {
-          checkWallet()
-        }
+        checkWallet()
       }, 5000)
     }
 
@@ -157,12 +166,17 @@ const SignInWallet = observer(() => {
           </ButtonContainer>
         </Block>
         <Block24>
-          <SelectedAddressInfo>To change the address, choose another one in WE Wallet</SelectedAddressInfo>
+          <SelectedAddressInfo>To change the address, choose another one in WE Wallet extension</SelectedAddressInfo>
         </Block24>
       </WalletInfoContainer>
     } else if (walletErrorCode === '14') {
       content = <CenteredContent>
         <Description>We can’t detect any addresses in your WE Wallet extension</Description>
+        <Description style={{ marginTop: '16px', fontWeight: 400 }}>Click on extension icon <WELogo /> and Import Account</Description>
+      </CenteredContent>
+    } else if(walletErrorCode === '13') {
+      content = <CenteredContent>
+        <Description>Please, initialize your WE Wallet extension</Description>
       </CenteredContent>
     } else if(walletErrorCode === '12' || walletErrorCode === '10') {
       content = <CenteredContent>

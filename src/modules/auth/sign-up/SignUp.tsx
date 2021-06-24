@@ -66,7 +66,7 @@ const SignUp = () => {
       const error = errors[prop]
       toast.dismiss()
       if (error) {
-        toast(<ErrorNotification text={error} />, {
+        toast(<ErrorNotification title={error} />, {
           hideProgressBar: true,
           autoClose: 600000
         })
@@ -165,7 +165,7 @@ const SignUp = () => {
     toast.dismiss()
 
     if (errorMessage) {
-      toast(<ErrorNotification text={errorMessage} />, {
+      toast(<ErrorNotification title={errorMessage} />, {
         hideProgressBar: true,
         autoClose: 600000
       })
@@ -187,7 +187,7 @@ const SignUp = () => {
         } else {
           emailError = 'Unknown error. Try again later.'
         }
-        toast(<ErrorNotification text={emailError || passwordError} />, {
+        toast(<ErrorNotification title={emailError || passwordError} />, {
           hideProgressBar: true,
           autoClose: 600000
         })

@@ -1,22 +1,18 @@
 import React, { useState } from 'react'
-import { Block, Block24 } from '../../../../components/Block'
+import { Block } from '../../../../components/Block'
 import styled from 'styled-components'
-import { Button, NavigationLeftGradientButton } from '../../../../components/Button'
+import { Button } from '../../../../components/Button'
 import useStores from '../../../../hooks/useStores'
-import iconWarning from '../../../../resources/images/warning.svg'
 import { observer } from 'mobx-react'
-import { Icon } from '../../../../components/Icons'
 import {
   TextTable,
   TextTableKey,
-  TextTablePrimaryValue,
   TextTableRow,
   TextTableSecondaryValue
 } from '../../../../components/TextTable'
 import { roundNumber } from '../../../../utils'
 import { ButtonSpinner, RelativeContainer } from '../../../../components/Spinner'
 import { EastOpType, IVault } from '../../../../interfaces'
-import { closeVault } from '../../../../utils/txFactory'
 
 interface IProps {
   westAmount: string;
@@ -26,17 +22,6 @@ interface IProps {
 
 const Container = styled.div`
   margin: 0 auto;
-`
-
-const Description = styled.div`
-  font-size: 15px;
-  line-height: 20px;
-`
-
-const Centered = styled.div`
-  display: flex;
-  align-items: center;
-  flex-direction: column;
 `
 
 const ButtonsContainer = styled.div`

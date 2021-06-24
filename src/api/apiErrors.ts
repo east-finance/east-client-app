@@ -3,5 +3,6 @@ export enum AuthError {
   TokenAlreadyUsed = 'token.already.used',
   UserShouldBeConfirmed = 'user.should.be.confirmed',
   UserNotFound = 'user.not.found',
-  WrongPassword = 'wrong.password'
+  WrongPassword = 'wrong.password',
+  TooManyRequests = 'too.many.requests'
 }

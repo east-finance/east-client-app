@@ -60,6 +60,7 @@ const Container = styled.div<{ isShown: null | boolean }>`
   background-repeat: no-repeat;
   background-size: cover;
   border-radius: 6px;
+  box-shadow: 0 32px 32px rgba(0, 0, 0, 0.15);
   
   position: absolute;
   z-index: -10;

@@ -55,7 +55,7 @@ const ConfirmationInProgress = (props: { token: string }) => {
 }
 
 const ConfirmationError = (props: { token: string; errorCode: string; errorMessage: string; confirmUser: () => void }) => {
-  const { token, errorMessage, errorCode, confirmUser } = props
+  const { token, errorMessage } = props
   const { router } = useRoute()
   return <div>
     <PrimaryText>Confirmation error</PrimaryText>
@@ -81,7 +81,7 @@ const ConfirmationSuccess = (props: { confirmedEmail: string }) => {
 
 const ConfirmUser = () => {
   const { api } = useStores()
-  const { router, route: { params: { token } } } = useRoute()
+  const { route: { params: { token } } } = useRoute()
 
   const [inProgress, setInProgress] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
