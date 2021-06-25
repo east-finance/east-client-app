@@ -55,7 +55,7 @@ export interface IDockerCallTransfer {
   publicKey: string;
   contractId: string;
   recipient: string;
-  eastAmount: number;
+  amount: number;
 }
 
 export const dockerCallTransfer = (props: IDockerCallTransfer) => {
@@ -70,7 +70,7 @@ export const dockerCallTransfer = (props: IDockerCallTransfer) => {
       key: 'transfer',
       value: JSON.stringify({
         to: props.recipient,
-        eastAmount: props.eastAmount
+        amount: props.amount
       })
 
     }],

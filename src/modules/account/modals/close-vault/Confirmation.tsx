@@ -106,7 +106,7 @@ export const CloseVaultConfirmation = observer((props: IProps) => {
           <TextTableKey>You will unlock</TextTableKey>
           <TextTableSecondaryValue>
             <div>{vault.westAmount} WEST</div>
-            <div>{vault.usdpAmount} USDap</div>
+            <div>{vault.rwaAmount} USDap</div>
           </TextTableSecondaryValue>
         </TextTableRow>
       </TextTable>

@@ -126,7 +126,7 @@ export const TransferEast = observer((props: IProps) => {
         publicKey,
         contractId: configStore.getEastContractId(),
         recipient: userAddress,
-        eastAmount: +eastAmount
+        amount: +eastAmount
       })
       const result = await window.WEWallet.broadcast('dockerCallV3', tx)
       console.log('Broadcast transfer EAST result:', result)

@@ -200,7 +200,7 @@ export const SimpleInput = (props: SimpleInputProps) => {
   const onNumberOnlyChange = (event: any) => {
     const keyCode = event.keyCode || event.which
     const keyValue = String.fromCharCode(keyCode)
-    const isValid = new RegExp('[0-9]').test(keyValue)
+    const isValid = new RegExp('[0-9,.]').test(keyValue)
     if (!isValid) {
       event.preventDefault()
       return

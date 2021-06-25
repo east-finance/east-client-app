@@ -1,7 +1,6 @@
 import axios, { AxiosInstance } from 'axios'
 import { ApiTokenRefresher } from '@wavesenterprise/api-token-refresher'
 import {
-  IBatch,
   ITokenPair,
   IVault,
 } from '../interfaces'
@@ -24,10 +23,10 @@ export class Api {
     const refreshCallback = async (token: string) => {
       try {
         const { data } = await axios.post(`${AUTH_SERVICE_ADDRESS}/v1/auth/refresh`, { token })
-        console.log('JWT token refreshed')
+        // console.log('JWT token refreshed')
         return data
       } catch (e) {
-        console.log('JWT token refresh failed:', e.message)
+        console.error('JWT token refresh failed:', e.message)
         onRefreshFailed()
       }
     }
@@ -106,11 +105,6 @@ export class Api {
 
   public getUserEastBalance = async (address: string): Promise<IEastBalanceResponse> => {
     const { data } = await this._apiClient.get(`${API_ADDRESS}/v1/user/balance?address=${address}`)
-    return data
-  }
-
-  public getBatches = async (address: string): Promise<IBatch[]> => {
-    const { data } = await this._apiClient.get(`${API_ADDRESS}/v1/user/vaults?address=${address}`)
     return data
   }
 

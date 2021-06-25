@@ -12,14 +12,14 @@ export interface IDataPoint {
   height: number;
 }
 
-const emptyUserVault = {
+const emptyUserVault: IVault = {
   id: 0,
   address: '',
   createdAt: '',
   eastAmount: '',
-  usdpAmount: '',
-  usdpRate: '',
-  usdpRateTimestamp: '',
+  rwaAmount: '',
+  rwaRate: '',
+  rwaRateTimestamp: '',
   vaultId: '',
   westAmount: '',
   westRate: '',

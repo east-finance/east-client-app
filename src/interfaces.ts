@@ -15,27 +15,14 @@ export enum EastOpType {
   claim_overpay = 'claim_overpay'
 }
 
-export interface IBatch {
-  id: number;
-  vaultId: string;
-  address: string;
-  createdAt: string;
-  eastAmount: string;
-  usdpAmount: string;
-  usdapRateTimestamp: string;
-  westAmount: string;
-  westRateTimestamp: string;
-  westRate: string;
-}
-
 export interface IVault {
   id: number;
   address: string;
   createdAt: string;
   eastAmount: string;
-  usdpAmount: string;
-  usdpRate: string;
-  usdpRateTimestamp: string;
+  rwaAmount: string;
+  rwaRate: string;
+  rwaRateTimestamp: string;
   vaultId: string;
   westAmount: string;
   westRate: string;
@@ -58,6 +45,6 @@ export interface ITransaction {
   };
   requestTxId: null | string;
   eastAmountDiff: string;
-  usdpAmountDiff: string;
+  rwaAmountDiff: string;
   westAmountDiff: string;
 }

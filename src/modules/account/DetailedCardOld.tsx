@@ -8,6 +8,7 @@ import { CollateralCircle } from '../../components/CollateralCircle'
 import { Button } from '../../components/Button'
 import { useRoute } from 'react-router5'
 import { RouteName } from '../../router/segments'
+import { IVault } from '../../interfaces'
 
 const aniTime = '1000ms'
 const bezier = 'ease'
@@ -148,7 +149,8 @@ const SmallBalance = styled.div`
 export const DetailedCard = observer((props: { isShown: null | boolean, onClick: () => void }) => {
   const { router } = useRoute()
   const { dataStore } = useStores()
-  const { vault, vaultCollateral, transferedEastAmount } = dataStore
+  const { vaultCollateral, transferedEastAmount } = dataStore
+  const vault: IVault = dataStore.vault
   const onIssueClicked = (e: any) => {
     e.stopPropagation()
     router.navigate(RouteName.AddEast)
@@ -178,7 +180,7 @@ export const DetailedCard = observer((props: { isShown: null | boolean, onClick:
               <Description>&nbsp;WEST</Description>
             </Block>
             <Block marginTop={8} style={{ display: 'flex' }}>
-              <SmallBalance><EastBalance value={vault.usdpAmount} /></SmallBalance>
+              <SmallBalance><EastBalance value={vault.rwaAmount} /></SmallBalance>
               <Description>&nbsp;USDap</Description>
             </Block>
           </StickToBottom>
