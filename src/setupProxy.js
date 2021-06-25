@@ -14,13 +14,24 @@ module.exports = function(app) {
     );
 
     app.use(
-        '/backendAddress',
+        '/apiAddress',
         createProxyMiddleware({
             target: process.env.REACT_APP_API_ADDRESS,
             changeOrigin: true,
             pathRewrite: {
-                '/backendAddress': '/'
+                '/apiAddress': '/'
             }
         })
     );
+
+  app.use(
+    '/nodeAddress',
+    createProxyMiddleware({
+      target: process.env.REACT_APP_NODE_ADDRESS,
+      changeOrigin: true,
+      pathRewrite: {
+        '/nodeAddress': '/'
+      }
+    })
+  );
 };

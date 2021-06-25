@@ -1,31 +1,34 @@
 import React, { FunctionComponent } from 'react'
-import { Layout } from '@wavesenterprise/uikit'
-import { useRoute } from 'react-router5'
 import { observer, Provider } from 'mobx-react'
-import { RouteSegment } from './router/segments'
 import useStores from './hooks/useStores'
 import Auth from './modules/auth/Auth'
+import Account from './modules/account/Account'
+import { ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
+import styled from 'styled-components'
+import { ToastCloseButton } from './components/Notification'
+
+const ToastWrapper = styled.div`
+  position: absolute;
+  right: 200px;
+  top: 0;
+`
 
 const Content: FunctionComponent = observer( () => {
-  const { route: { name } } = useRoute()
-  const { authStore, configStore: { configLoaded } } = useStores()
-
+  const { authStore } = useStores()
   let content = null
-
   if (authStore.isLoggedIn) {
-    content = <div>Inner content</div>
+    content = <Account />
   } else {
     content = <Auth />
   }
 
-  return <Layout>
-    <Layout.Content>
-      <Provider>
-        {content}
-      </Provider>
-    </Layout.Content>
-  </Layout>
-}
-)
+  return <Provider>
+    <ToastWrapper id={'toast-container'}>
+      <ToastContainer closeButton={ToastCloseButton} />
+    </ToastWrapper>
+    {content}
+  </Provider>
+})
 
 export default Content

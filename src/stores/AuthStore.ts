@@ -3,56 +3,118 @@ import decodeJWT, { JwtPayload } from 'jwt-decode'
 import { ITokenPair } from '../interfaces'
 import { Api } from '../api'
 import { Router } from 'router5'
-import { RouteName, RouteSegment } from '../router/segments'
+import { RouteName } from '../router/segments'
 
 const tokensLocalStorageKey = 'tokenPair'
 
+interface WEJWTPayload extends JwtPayload {
+  id: string;
+  name: string;
+}
+
 export default class AuthStore {
+  api: Api
+  router: Router
   isLoggedIn = false
+  isWalletAvailable = false
+  walletState = {}
+
   id = ''
   email = ''
+  password = ''
+  address = ''
+  westBalance = ''
 
   constructor(router: Router, api: Api) {
+    this.router = router
+    this.api = api
     makeAutoObservable(this)
     this.initStore(router, api)
+    this.startWalletObserver()
+  }
+
+  setSelectedAddress (address: string) {
+    this.address = address
   }
 
   async initStore (router: Router, api: Api): Promise<void> {
-    const { name, params } = router.getState()
-    if (!name.startsWith(RouteSegment.auth)) {
-      const tokenPair = this.readTokenPair()
-      if (tokenPair) {
-        try {
-          const { exp }: JwtPayload = decodeJWT(tokenPair.access_token)
-          if (exp && (exp * 1000 - Date.now() > 0)) {
-            this.setLoggedIn(true)
-          } else {
-            console.log('JWT tokens expired')
-            this.deleteTokenPair()
-            router.navigate(RouteName.SignIn)
+    const { name } = router.getState()
+    if (![RouteName.SignIn, RouteName.SignUp, RouteName.PasswordRecovery, RouteName.PasswordReset, RouteName.ConfirmUser].includes(name)) { //!name.startsWith(RouteSegment.auth)
+      router.navigate(RouteName.SignIn)
+      // const tokenPair = this.readTokenPair()
+      // if (tokenPair) {
+      //   try {
+      //     const { exp }: JwtPayload = decodeJWT(tokenPair.access_token)
+      //     if (exp && (exp * 1000 - Date.now() > 0)) {
+      //       const address = '3Nr3w79QHmBQkFJ4cBmvaD7L1bErUMtLuSL'
+      //       if (address) {
+      //         await api.setupApi(tokenPair)
+      //         this.setSelectedAddress(address)
+      //         this.loginWithTokenPair(tokenPair)
+      //         this.setLoggedIn(true)
+      //         router.navigate(RouteName.Account)
+      //       } else {
+      //         throw new Error('no address')
+      //       }
+      //     } else {
+      //       this.deleteTokenPair()
+      //       throw new Error('JWT expired')
+      //     }
+      //   } catch (e) {
+      //     console.error('Login with tokens error:', e.message)
+      //     router.navigate(RouteName.SignIn)
+      //   }
+      // } else {
+      //   router.navigate(RouteName.SignIn)
+      // }
+    }
+  }
+
+  startWalletObserver () {
+    // setInterval(() => this.pollWalletState(), 60 * 1000)
+  }
+
+  async pollWalletState () {
+    this.isWalletAvailable = !!window.WEWallet
+    if (this.isWalletAvailable && this.isLoggedIn) {
+      try {
+        const state = await window.WEWallet.publicState()
+        this.walletState = state
+        if (state && state.initialized) {
+          if (state.account) {
+            this.address = state.account.address
           }
-        } catch (e) {
-          console.log('Login with tokens error:', e.message)
-          router.navigate(RouteName.SignIn)
         }
-      } else {
-        router.navigate(RouteName.SignIn)
+      } catch (e) {
+        this.isWalletAvailable = false
+        this.walletState = {}
+        this.address = ''
+        console.log('Cannot get WEWallet state:', e)
       }
     }
+  }
+
+  async signIn (username: string, password: string, onRefreshFailed: () => void): Promise<ITokenPair> {
+    const tokenPair = await this.api.signIn(username, password)
+    await this.api.setupApi(tokenPair, onRefreshFailed)
+    return tokenPair
   }
 
   logout (): void {
     this.deleteTokenPair()
     this.setLoggedIn(false)
+    this.router.navigate(RouteName.SignIn)
+  }
+
+  loginWithTokenPair (tokenPair: ITokenPair) {
+    const { id, name }: WEJWTPayload = decodeJWT(tokenPair.access_token)
+    this.id = id
+    this.email = name
+    this.writeTokenPair(tokenPair)
   }
 
   setLoggedIn (isLoggedIn: boolean): void {
     this.isLoggedIn = isLoggedIn
-  }
-
-  setUserData (id: string, email: string): void {
-    this.id = id
-    this.email = email
   }
 
   writeTokenPair (tokenPair: ITokenPair): void {

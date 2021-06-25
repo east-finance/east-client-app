@@ -32,3 +32,82 @@ url('../fonts/Montserrat-Medium.woff') format('woff');
 url('../fonts/Montserrat-Bold.woff2') format('woff2'),
 url('../fonts/Montserrat-Bold.woff') format('woff');
 }
+
+/* https://fonts.google.com/specimen/Exo */
+/** Exo Regular **/
+@font-face {
+    font-family: 'Exo';
+    font-weight: 300;
+    font-style: normal;
+    src: url('../fonts/Exo-Light.ttf');
+}
+
+
+/* https://fonts.google.com/specimen/Cairo */
+/* https://github.com/Gue3bara/Cairo/tree/master/fonts/Web */
+@font-face {
+    font-family: 'Cairo';
+    font-weight: 300;
+    font-style: normal;
+    src: url('../fonts/Cairo-Light.woff2');
+}
+
+@font-face {
+    font-family: 'Cairo';
+    font-weight: 400;
+    font-style: normal;
+    src: url('../fonts/Cairo-Regular.woff2');
+}
+
+@font-face {
+    font-family: 'Cairo';
+    font-weight: 600;
+    font-style: normal;
+    src: url('../fonts/Cairo-SemiBold.woff2');
+}
+
+@font-face {
+    font-family: 'Cairo';
+    font-weight: 700;
+    font-style: normal;
+    src: url('../fonts/Cairo-Bold.woff2');
+}
+
+@font-face {
+    font-family: 'Cairo';
+    font-weight: 900;
+    font-style: normal;
+    src: url('../fonts/Cairo-Black.woff2');
+}
+
+/* BrutalType */
+
+@font-face {
+    font-family: 'BrutalType';
+    font-weight: 400;
+    font-style: normal;
+    src: url('../fonts/BrutalTypeRegular.ttf');
+}
+
+@font-face {
+    font-family: 'BrutalType';
+    font-weight: 500;
+    font-style: normal;
+    src: url('../fonts/BrutalType-Medium.woff2');
+}
+
+@font-face {
+    font-family: 'BrutalType';
+    font-weight: 800;
+    font-style: normal;
+    src: url('../fonts/BrutalType-ExtraBold.woff2');
+}
+
+/* Staatliches */
+
+@font-face {
+    font-family: 'Staatliches';
+    font-weight: 400;
+    font-style: normal;
+    src: url('../fonts/Staatliches-Regular.woff2');
+}
