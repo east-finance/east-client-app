@@ -130,7 +130,7 @@ export const FillIssueForm = observer((props: IProps) => {
     setWestByEastAmount(rounded)
   }
   return <Container>
-    <Block marginTop={16}>
+    <Block marginTop={32}>
       <SimpleInput
         type={'number'}
         label={'Enter amount of EAST'}
@@ -169,7 +169,7 @@ export const FillIssueForm = observer((props: IProps) => {
         </Block>
       }
     </Block>
-    <Block marginTop={62}>
+    <Block marginTop={72}>
       <ButtonsContainer>
         <Button type={'primary'} onClick={onNextClicked} style={{ width: '304px' }}>
           Continue to confirmation

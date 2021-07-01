@@ -152,7 +152,6 @@ export const DetailedCard = observer((props: { isShown: null | boolean, onClick:
   const { dataStore } = useStores()
   const { vaultCollateral, vault, supplyVaultWestDiff, vaultEastProfit } = dataStore
   const { eastAmount: freeEastAmount } = vaultEastProfit
-  console.log('freeEastAmount:', freeEastAmount)
   const onIssueClicked = (e: any) => {
     e.stopPropagation()
     router.navigate(RouteName.AddEast)
