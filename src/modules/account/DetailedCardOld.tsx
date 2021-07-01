@@ -8,8 +8,8 @@ import { CollateralCircle } from '../../components/CollateralCircle'
 import { Button } from '../../components/Button'
 import { useRoute } from 'react-router5'
 import { RouteName } from '../../router/segments'
-import { IVault } from '../../interfaces'
-import data from '@wavesenterprise/js-sdk/raw/src/grpc/transactions/Data'
+import { roundNumber } from '../../utils'
+import { IssueSteps } from './modals/add_east/AddEast'
 
 const aniTime = '1000ms'
 const bezier = 'ease'
@@ -150,10 +150,20 @@ const SmallBalance = styled.div`
 export const DetailedCard = observer((props: { isShown: null | boolean, onClick: () => void }) => {
   const { router } = useRoute()
   const { dataStore } = useStores()
-  const { vaultCollateral, vault, supplyVaultWestDiff } = dataStore
+  const { vaultCollateral, vault, supplyVaultWestDiff, vaultEastProfit } = dataStore
+  const { eastAmount: freeEastAmount } = vaultEastProfit
+  console.log('freeEastAmount:', freeEastAmount)
   const onIssueClicked = (e: any) => {
     e.stopPropagation()
     router.navigate(RouteName.AddEast)
+  }
+  const onIssueFreeEastClicked = (e: any) => {
+    e.stopPropagation()
+    router.navigate(RouteName.AddEast, {
+      eastAmount: freeEastAmount,
+      westAmount: -supplyVaultWestDiff,
+      step: IssueSteps.ConfirmTransaction
+    })
   }
   const onSupplyClicked = (e: any) => {
     e.stopPropagation()
@@ -185,8 +195,18 @@ export const DetailedCard = observer((props: { isShown: null | boolean, onClick:
             {(supplyVaultWestDiff >= 0) && // Collateral <= 250%
               <Button type={'primary'} size={'small'} onClick={onIssueClicked}>Add EAST</Button>
             }
-            {(supplyVaultWestDiff < 0) && // Collateral > 250%
+            {(supplyVaultWestDiff < 0 && freeEastAmount < 0.5) && // Collateral > 250%
               <Button type={'primary'} size={'small'} onClick={onIssueClicked}>Issue EAST</Button>
+            }
+            {(supplyVaultWestDiff < 0 && freeEastAmount >= 0.5) && // Collateral > 250%
+              <Button
+                type={'primary'}
+                size={'small'}
+                style={{ background: '#00A87A' }}
+                onClick={onIssueFreeEastClicked}
+              >
+                {roundNumber(freeEastAmount, 1)} FREE EAST
+              </Button>
             }
           </Block16>
           <Block marginTop={12}>

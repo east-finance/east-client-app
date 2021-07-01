@@ -51,14 +51,15 @@ export const ConfirmIssueTransaction = (props: IProps) => {
 
   let transferWestAmount = +props.westAmount
   if (supplyVaultWestDiff < 0) {
-    transferWestAmount -= Math.abs(supplyVaultWestDiff)
+    transferWestAmount = roundNumber(transferWestAmount - Math.abs(supplyVaultWestDiff), 8)
     if (transferWestAmount < 0) { // Value is covered by supplyVaultWestDiff, no need to transfer from address
       transferWestAmount = 0
     }
   } else {
     transferWestAmount += supplyVaultWestDiff
   }
-  console.log('transferWestAmount', transferWestAmount, '. Only Reissue:',  transferWestAmount <= 0)
+  console.log('transferWestAmount', transferWestAmount, 'supplyVaultWestDiff', supplyVaultWestDiff, 'props.westAmount', props.westAmount)
+  console.log('. Only Reissue:',  transferWestAmount <= 0)
   const reissueWestAmount = transferWestAmount
   const expectedVaultWestAmount = roundNumber(+transferWestAmount + +vault.westAmount, 8)
   const { usdpAmount: expectedVaultUSDapAmount } = dataStore.calculateEastAmount({ westAmount: expectedVaultWestAmount })
@@ -195,15 +196,15 @@ export const ConfirmIssueTransaction = (props: IProps) => {
             }
           </div>
         </TextTableRow>
-        <TextTableRow>
-          <TextTableKey>Will be in Vault</TextTableKey>
-          <div>
-            <TextTableSecondaryValue>{expectedVaultWestAmount} WEST</TextTableSecondaryValue>
-            <Block marginTop={8}>
-              <TextTableSecondaryValue>{expectedVaultUSDapAmount} USDap</TextTableSecondaryValue>
-            </Block>
-          </div>
-        </TextTableRow>
+        {/*<TextTableRow>*/}
+        {/*  <TextTableKey>Will be in Vault</TextTableKey>*/}
+        {/*  <div>*/}
+        {/*    <TextTableSecondaryValue>{expectedVaultWestAmount} WEST</TextTableSecondaryValue>*/}
+        {/*    <Block marginTop={8}>*/}
+        {/*      <TextTableSecondaryValue>{expectedVaultUSDapAmount} USDap</TextTableSecondaryValue>*/}
+        {/*    </Block>*/}
+        {/*  </div>*/}
+        {/*</TextTableRow>*/}
         <TextTableRow>
           <TextTableKey>Fee</TextTableKey>
           <TextTableSecondaryValue>

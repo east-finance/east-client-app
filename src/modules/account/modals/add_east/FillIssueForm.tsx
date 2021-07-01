@@ -76,7 +76,7 @@ export const FillIssueForm = observer((props: IProps) => {
       westAmount: west
     })
     if (eastAmount > 0) {
-      setEastAmount(roundNumber(eastAmount).toString())
+      setEastAmount(roundNumber(eastAmount, 8).toString())
     } else {
       setEastAmount('')
     }
@@ -85,7 +85,7 @@ export const FillIssueForm = observer((props: IProps) => {
   const setWestByEastAmount = (east: string) => {
     const westAmount = dataStore.calculateWestAmount(east)
     if (westAmount > 0) {
-      setWestAmount(roundNumber(westAmount).toString())
+      setWestAmount(roundNumber(westAmount, 6).toString())
     } else {
       setWestAmount('')
     }

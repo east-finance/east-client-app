@@ -12,13 +12,13 @@ import { EastOpType } from '../../../../interfaces'
 import { AddWestToAddress } from '../../common/AddWestToAddress'
 import { ConfirmIssueTransaction } from './ConfirmIssueTransaction'
 import { TxSendSuccess } from '../../common/TxSendSuccess'
-import { roundNumber } from '../../../../utils'
+import { useRoute } from 'react-router5'
 
 interface IProps {
   onClose: () => void
 }
 
-enum IssueSteps {
+export enum IssueSteps {
   SupplyCollateral = 0,
   FillForm = 1,
   ConfirmTransaction = 2,
@@ -32,13 +32,17 @@ const Centered = styled.div`
 
 export const AddEast = observer((props: IProps) => {
   const { dataStore, configStore } = useStores()
+  const { route: { params } } = useRoute()
   const { vaultCollateral, supplyVaultWestDiff } = dataStore
-  const initialStep = +supplyVaultWestDiff > 0
+  let initialStep = +supplyVaultWestDiff > 0
     ? IssueSteps.SupplyCollateral
     : IssueSteps.FillForm
+  if (params.step) {
+    initialStep = params.step
+  }
   const [refillWestAmount, setRefillWestAmount] = useState('')
   const [stepIndex, setStepIndex] = useState(initialStep)
-  const [formData, setFormData] = useState({ eastAmount: '', westAmount: '' })
+  const [formData, setFormData] = useState({ eastAmount: params.eastAmount || '', westAmount: params.westAmount || '' })
   const totalFee = +configStore.getFeeByOpType(EastOpType.supply)
 
   let content = <div />

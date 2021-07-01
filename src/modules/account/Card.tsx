@@ -160,7 +160,7 @@ export const AccountCard = observer((props: { isShown: null | boolean, onClick: 
   const { authStore, dataStore } = useStores()
   const { address } = authStore
 
-  const { westBalance, eastBalance, vault } = dataStore
+  const { westBalance, eastBalance } = dataStore
   const isPositiveBalance = +eastBalance > 0
 
   return <Container {...props} isOutlined={!isPositiveBalance}>
