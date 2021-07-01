@@ -125,7 +125,7 @@ const SimpleInputLabel = styled.div<{ isOpened: boolean, status?: InputStatus }>
   font-weight: 500;
   line-height: 16px;
   pointer-events: none;
-  transition: bottom 250ms ease, color 250ms ease, font-size 250ms ease;
+  transition: bottom 350ms ease, color 350ms ease, font-size 350ms ease;
   color: ${props => props.theme.darkBlue50};
   bottom: ${props => props.isOpened ? '34px' : '12px'};
   font-size: ${props => props.isOpened ? '13px' : '15px'};

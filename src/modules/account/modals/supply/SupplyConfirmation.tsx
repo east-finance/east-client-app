@@ -104,7 +104,7 @@ export const SupplyConfirmation = observer((props: IProps) => {
   const fee = configStore.getFeeByOpType(EastOpType.supply)
 
   return <Container>
-    <Block marginTop={124}>
+    <Block marginTop={80}>
       <TextTable style={{ width: '320px' }}>
         <TextTableRow>
           <TextTableKey>You will add</TextTableKey>
@@ -124,7 +124,7 @@ export const SupplyConfirmation = observer((props: IProps) => {
         </TextTableRow>
       </TextTable>
     </Block>
-    <Block marginTop={132}>
+    <Block marginTop={80}>
       <ButtonsContainer>
         <Button type={'primary'} disabled={inProgress} onClick={onAddWestClicked} style={{ width: '304px' }}>
           <RelativeContainer>

@@ -12,12 +12,13 @@ import { EastOpType } from '../../../../interfaces'
 import { AddWestToAddress } from '../../common/AddWestToAddress'
 import { ConfirmIssueTransaction } from './ConfirmIssueTransaction'
 import { TxSendSuccess } from '../../common/TxSendSuccess'
+import { useRoute } from 'react-router5'
 
 interface IProps {
   onClose: () => void
 }
 
-enum IssueSteps {
+export enum IssueSteps {
   SupplyCollateral = 0,
   FillForm = 1,
   ConfirmTransaction = 2,
@@ -31,14 +32,17 @@ const Centered = styled.div`
 
 export const AddEast = observer((props: IProps) => {
   const { dataStore, configStore } = useStores()
-  const { vault, vaultCollateral, supplyVaultWestAmount } = dataStore
-  const westCollateralDiff = supplyVaultWestAmount - +vault.westAmount
-  const initialStep = westCollateralDiff > 1
+  const { route: { params } } = useRoute()
+  const { vaultCollateral, supplyVaultWestDiff } = dataStore
+  let initialStep = +supplyVaultWestDiff > 0
     ? IssueSteps.SupplyCollateral
     : IssueSteps.FillForm
+  if (params.step) {
+    initialStep = params.step
+  }
   const [refillWestAmount, setRefillWestAmount] = useState('')
   const [stepIndex, setStepIndex] = useState(initialStep)
-  const [formData, setFormData] = useState({ eastAmount: '', westAmount: '' })
+  const [formData, setFormData] = useState({ eastAmount: params.eastAmount || '', westAmount: params.westAmount || '' })
   const totalFee = +configStore.getFeeByOpType(EastOpType.supply)
 
   let content = <div />
@@ -63,14 +67,14 @@ export const AddEast = observer((props: IProps) => {
     }
     content = <SupplyCollateral
       vaultCollateral={vaultCollateral}
-      westAmount={Math.ceil(westCollateralDiff)}
+      westAmount={supplyVaultWestDiff}
       onSuccess={onSuccess}
     />
   } else if (stepIndex === IssueSteps.FillForm) {
     const onNextClicked = (formData: FillFormData) => {
       setFormData(formData)
       setStepIndex(IssueSteps.ConfirmTransaction)
-      const westDelta = (+formData.westAmount + totalFee) - +dataStore.westBalance
+      const westDelta = (+formData.westAmount + totalFee + supplyVaultWestDiff) - +dataStore.westBalance
       if (westDelta > 0) {
         setRefillWestAmount(westDelta.toString())
       }
@@ -89,7 +93,7 @@ export const AddEast = observer((props: IProps) => {
     />
   } else if(stepIndex === IssueSteps.Success) {
     content = <TxSendSuccess
-      text={'You will receive your EAST after the transaction is completed. It may take a few minutes.'}
+      text={'You will receive your EAST after the transaction is completed. It may take a few minutes.'}
       onClose={props.onClose}
     />
   }

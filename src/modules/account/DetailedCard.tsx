@@ -230,7 +230,7 @@ export const DetailedCard = observer((props: { isShown: null | boolean, onClick:
               </Block>
             </FlexItem>
             <FlexItem>
-              <EastBalance type={EastBalanceType.small} value={vault.usdpAmount} />
+              <EastBalance type={EastBalanceType.small} value={vault.rwaAmount} />
               <Block marginTop={4}>
                 <Description>USDap</Description>
               </Block>

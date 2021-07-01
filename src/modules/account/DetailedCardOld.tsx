@@ -8,7 +8,8 @@ import { CollateralCircle } from '../../components/CollateralCircle'
 import { Button } from '../../components/Button'
 import { useRoute } from 'react-router5'
 import { RouteName } from '../../router/segments'
-import { IVault } from '../../interfaces'
+import { roundNumber } from '../../utils'
+import { IssueSteps } from './modals/add_east/AddEast'
 
 const aniTime = '1000ms'
 const bezier = 'ease'
@@ -116,7 +117,7 @@ const Description = styled.div`
   color: #8D8D8D;
   font-size: 15px;
   line-height: 15px;
-  font-weight: 300;
+  font-weight: 400;
 `
 
 const FlexColumn = styled.div`
@@ -149,11 +150,19 @@ const SmallBalance = styled.div`
 export const DetailedCard = observer((props: { isShown: null | boolean, onClick: () => void }) => {
   const { router } = useRoute()
   const { dataStore } = useStores()
-  const { vaultCollateral, transferedEastAmount } = dataStore
-  const vault: IVault = dataStore.vault
+  const { vaultCollateral, vault, supplyVaultWestDiff, vaultEastProfit } = dataStore
+  const { eastAmount: freeEastAmount } = vaultEastProfit
   const onIssueClicked = (e: any) => {
     e.stopPropagation()
     router.navigate(RouteName.AddEast)
+  }
+  const onIssueFreeEastClicked = (e: any) => {
+    e.stopPropagation()
+    router.navigate(RouteName.AddEast, {
+      eastAmount: freeEastAmount,
+      westAmount: -supplyVaultWestDiff,
+      step: IssueSteps.ConfirmTransaction
+    })
   }
   const onSupplyClicked = (e: any) => {
     e.stopPropagation()
@@ -165,30 +174,39 @@ export const DetailedCard = observer((props: { isShown: null | boolean, onClick:
         <FlexColumn>
           <EastBalance value={vault.eastAmount} />
           <Block marginTop={4}>
-            <Description>EAST collateralized by vault</Description>
+            <Description>EAST collateralized in Vault</Description>
           </Block>
-          <Block16>
-            <EastBalance value={transferedEastAmount} />
-            <Block marginTop={4}>
-              <Description>EAST yet not collateralized (transfered)</Description>
-            </Block>
-          </Block16>
           <StickToBottom>
             <Description>Locked in vault</Description>
             <Block marginTop={8} style={{ display: 'flex' }}>
               <SmallBalance><EastBalance value={vault.westAmount} /></SmallBalance>
-              <Description>&nbsp;WEST</Description>
+              <Description style={{ marginLeft: '8px' }}>WEST</Description>
             </Block>
             <Block marginTop={8} style={{ display: 'flex' }}>
               <SmallBalance><EastBalance value={vault.rwaAmount} /></SmallBalance>
-              <Description>&nbsp;USDap</Description>
+              <Description style={{ marginLeft: '8px' }}>USDap</Description>
             </Block>
           </StickToBottom>
         </FlexColumn>
         <div>
           <CollateralCircle value={Math.round(vaultCollateral * 100)} text={'Collateral'} />
           <Block16>
-            <Button type={'primary'} size={'small'} onClick={onIssueClicked}>Issue EAST</Button>
+            {(supplyVaultWestDiff >= 0) && // Collateral <= 250%
+              <Button type={'primary'} size={'small'} onClick={onIssueClicked}>Add EAST</Button>
+            }
+            {(supplyVaultWestDiff < 0 && freeEastAmount < 0.5) && // Collateral > 250%
+              <Button type={'primary'} size={'small'} onClick={onIssueClicked}>Issue EAST</Button>
+            }
+            {(supplyVaultWestDiff < 0 && freeEastAmount >= 0.5) && // Collateral > 250%
+              <Button
+                type={'primary'}
+                size={'small'}
+                style={{ background: '#00A87A' }}
+                onClick={onIssueFreeEastClicked}
+              >
+                {roundNumber(freeEastAmount, 1)} FREE EAST
+              </Button>
+            }
           </Block16>
           <Block marginTop={12}>
             <Button

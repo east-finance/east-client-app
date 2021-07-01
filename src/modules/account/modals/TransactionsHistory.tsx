@@ -120,7 +120,7 @@ const TxItem = (props: { tx: ITransaction}) => {
     primaryText = `${westDiff} WEST`
     description = 'Supply vault'
   } else if (transactionType === EastOpType.reissue) {
-    primaryText = `${westDiff} WEST`
+    primaryText = `${eastDiff} EAST`
     description = 'Reissue vault'
   } else if (transactionType === EastOpType.claim_overpay) {
     primaryText = `${westDiff} WEST`

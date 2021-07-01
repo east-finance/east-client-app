@@ -1,7 +1,7 @@
 import axios, { AxiosInstance } from 'axios'
 import { ApiTokenRefresher } from '@wavesenterprise/api-token-refresher'
 import {
-  ITokenPair,
+  ITokenPair, ITransaction,
   IVault,
 } from '../interfaces'
 import { OracleStreamId } from '../constants'
@@ -113,7 +113,7 @@ export class Api {
     return data
   }
 
-  public getTransactionsHistory = async (address: string, limit?: number, offset?: number): Promise<IEastBalanceResponse> => {
+  public getTransactionsHistory = async (address: string): Promise<ITransaction[]> => {
     const { data } = await this._apiClient.get(`${API_ADDRESS}/v1/user/transactions?address=${address}`)
     return data
   }

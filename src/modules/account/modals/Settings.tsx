@@ -86,7 +86,6 @@ interface IPassChangeProps {
 const PasswordChange = (props: IPassChangeProps) => {
   const { api, authStore } = useStores()
 
-
   const [oldPassword, setOldPassword] = useState('')
   const [oldPasswordError, setOldPasswordError] = useState('')
 

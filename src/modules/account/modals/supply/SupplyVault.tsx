@@ -28,7 +28,7 @@ export const SupplyVault = (props: IProps) => {
   if(currentStep === SupplyVaultSteps.fill) {
     const onNextClicked = (formData: FillFormData) => {
       setFormData(formData)
-      const rechargeWestAmount = Math.ceil(+formData.westAmount - dataStore.westBalance)
+      const rechargeWestAmount = Math.ceil(+formData.westAmount - +dataStore.westBalance)
       if (rechargeWestAmount > 0) {
         setCurrentStep(SupplyVaultSteps.addWest)
       } else {
@@ -37,7 +37,7 @@ export const SupplyVault = (props: IProps) => {
     }
     content = <FillSupplyForm westAmount={formData.westAmount} onNextClicked={onNextClicked} />
   } else if(currentStep === SupplyVaultSteps.addWest) {
-    const rechargeWestAmount = Math.ceil(+formData.westAmount - dataStore.westBalance).toString()
+    const rechargeWestAmount = Math.ceil(+formData.westAmount - +dataStore.westBalance).toString()
     content = <AddWestToAddress westAmount={rechargeWestAmount} onPrevClicked={() => setCurrentStep(SupplyVaultSteps.fill)} />
   } else if (currentStep === SupplyVaultSteps.confirmation) {
     content =  <Block marginTop={32}>

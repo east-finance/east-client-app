@@ -9,6 +9,7 @@ import useStores from '../../../../hooks/useStores'
 import { roundNumber } from '../../../../utils'
 import { toast } from 'react-toastify'
 import { ErrorNotification } from '../../../../components/Notification'
+import { GradientText } from '../../../../components/Text'
 
 export interface IProps {
   westAmount: number;
@@ -23,8 +24,9 @@ const Container = styled.div`
 `
 
 const Centered = styled.div`
-  width: 208px;
+  width: 388px;
   margin: 0 auto;
+  line-height: 24px;
   text-align: center;
 `
 
@@ -51,80 +53,7 @@ const ButtonContainer = styled.div`
 `
 
 export const SupplyCollateral = (props: IProps) => {
-  const { dataStore, configStore } = useStores()
-  const [inProgress, setInProgress] = useState(false)
-  const [isMining, setIsMining] = useState(false)
-
-  const sendSupply = async () => {
-    const state = await window.WEWallet.publicState()
-    const { account: { address, publicKey } } = state
-    const ownerAddress = configStore.getEastOwnerAddress()
-    const eastContractId = configStore.getEastContractId()
-    if (state.locked) {
-      await window.WEWallet.auth({ data: 'EAST Client auth' })
-    }
-    const transfer = {
-      type: 'transferV3',
-      tx: {
-        recipient: ownerAddress,
-        assetId: 'WAVES',
-        amount: +props.westAmount * Math.pow(10, 8),
-        fee: configStore.getTransferFee(),
-        attachment: '',
-        timestamp: Date.now(),
-        atomicBadge: {
-          trustedSender: address
-        }
-      }
-    }
-    const transferId = await window.WEWallet.getTxId('transferV3', transfer.tx)
-    const dockerCall = {
-      type: 'dockerCallV4',
-      tx: {
-        senderPublicKey: publicKey,
-        authorPublicKey: publicKey,
-        contractId: eastContractId,
-        contractVersion: 1,
-        timestamp: Date.now(),
-        params: [{
-          type: 'string',
-          key: 'supply',
-          value: JSON.stringify({
-            transferId: transferId
-          })
-        }],
-        fee: configStore.getDockerCallFee(),
-        atomicBadge: {
-          trustedSender: address
-        }
-      }
-    }
-    const transactions = [transfer, dockerCall]
-    const result = await window.WEWallet.broadcastAtomic(transactions, configStore.getAtomicFee())
-    console.log('Broadcast supply vault result:', result)
-  }
-
-  const addWest = async () => {
-    try {
-      setInProgress(true)
-      await sendSupply()
-      setIsMining(true)
-      await new Promise(resolve => setTimeout(resolve, 5000))
-      props.onSuccess()
-    } catch (e) {
-      console.error('Supply collateral error:', e.message)
-      toast(<ErrorNotification title={'Error on send supply transaction'} />, {
-        hideProgressBar: true
-      })
-    } finally {
-      setInProgress(false)
-      setIsMining(false)
-    }
-  }
-
-  const buttonText = isMining
-    ? 'Waiting for confirmation...'
-    : `Add ${props.westAmount} WEST and continue`
+  const { dataStore } = useStores()
 
   return <Container>
     <Block marginTop={40}>
@@ -136,16 +65,13 @@ export const SupplyCollateral = (props: IProps) => {
     </Block>
     <Block32>
       <Centered>Collaterization leveling required.</Centered>
-      <Centered>Add {props.westAmount} WEST into the Vault.</Centered>
-      <Centered>On wallet: {roundNumber(dataStore.westBalance, 8)} WEST.</Centered>
+      <Centered>You will need to add <GradientText style={{ fontWeight: 700 }}>{props.westAmount} WEST</GradientText> into the Vault to continue.</Centered>
+      <Centered>On wallet: {dataStore.westBalance} WEST.</Centered>
     </Block32>
     <Block marginTop={28}>
       <ButtonContainer>
-        <Button type={'primary'} disabled={inProgress} onClick={addWest}>
-          <RelativeContainer>
-            {inProgress && <ButtonSpinner />}
-            {buttonText}
-          </RelativeContainer>
+        <Button type={'primary'} onClick={props.onSuccess}>
+          Continue
         </Button>
       </ButtonContainer>
     </Block>

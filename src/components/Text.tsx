@@ -15,5 +15,4 @@ export const GradientText = styled.span`
   background: linear-gradient(90deg,#514EFF 0%, #1D87D6 35%, #1D87D6 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  line-height: 200px;
 `

@@ -86,7 +86,7 @@ export const TransferEast = observer((props: IProps) => {
     let address = ''
     if (!eastAmount || +eastAmount === 0) {
       east = 'Enter EAST amount'
-    } else if (+eastAmount > eastAvailable) {
+    } else if (+eastAmount > +eastAvailable) {
       east = 'Not enought EAST on balance'
     } else if (+eastAmount < 0) {
       east = 'Negative east amount'
@@ -109,7 +109,7 @@ export const TransferEast = observer((props: IProps) => {
 
   const options = [{text: '25%', value: '0.25' }, { text: '50%', value: '0.5' }, { text: '75%', value: '0.75' }, { text: '100%', value: '1' }]
   const onSelectOption = (tag: ITag) => {
-    const amount = roundNumber((+tag.value * eastAvailable).toString(), 8)
+    const amount = roundNumber((+tag.value * +eastAvailable).toString(), 8)
     setEastAmount(amount.toString())
   }
 

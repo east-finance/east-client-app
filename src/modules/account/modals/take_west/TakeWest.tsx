@@ -33,7 +33,7 @@ export const TakeWest = observer((props: IProps) => {
   const [validationError, setValidationError] = useState('')
   const [inProgress, setInProgress] = useState(false)
 
-  const westProfit = dataStore.calculateVaultWestProfit()
+  const westProfit = -dataStore.supplyVaultWestDiff
 
   const validateForm = (value: string) => {
     let error = ''

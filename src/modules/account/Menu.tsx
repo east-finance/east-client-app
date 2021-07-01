@@ -110,7 +110,7 @@ export const AccountMenu = observer(() => {
   const { router } = useRoute()
   const isUserHaveEast = +dataStore.eastBalance > 0
   const isUserHaveVault = +dataStore.vault.eastAmount > 0
-  const vaultProfit = dataStore.calculateVaultWestProfit()
+  const vaultProfit = -dataStore.supplyVaultWestDiff
   const isTransferAvailable = isUserHaveEast
   return <Container>
     <MenuItemContainer>

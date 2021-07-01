@@ -62,7 +62,7 @@ export const CloseVaultConfirmation = observer((props: IProps) => {
     const tx = closeVault({
       publicKey: publicKey,
       contractId: configStore.getEastContractId(),
-      fee: configStore.getDockerCallFee()
+      fee: configStore.getDockerCallFee().toString()
     })
     console.log('Close vault Docker call tx:', tx)
     const result = await window.WEWallet.broadcast('dockerCallV3', tx)
