@@ -9,6 +9,7 @@ import useStores from '../../hooks/useStores'
 import { roundNumber } from '../../utils'
 import { RouteName } from '../../router/segments'
 import { useRoute } from 'react-router5'
+import { IVault } from '../../interfaces'
 
 const FrontToFrontAgain = keyframes`
   from {transform: translate(0,0);z-index:-1}
@@ -62,9 +63,7 @@ const ContentWrapper = styled.div<{ isActive?: boolean }>`
   opacity: ${props => props.isActive ? 1 : 0.5};
 `
 
-const TopContainer = styled.div`
-
-`
+const TopContainer = styled.div``
 
 const TokenName = styled.div`
   font-size: 16px;
@@ -161,7 +160,7 @@ export const AccountCard = observer((props: { isShown: null | boolean, onClick: 
   const { authStore, dataStore } = useStores()
   const { address } = authStore
 
-  const { westBalance, eastBalance } = dataStore
+  const { westBalance, eastBalance, vault } = dataStore
   const isPositiveBalance = +eastBalance > 0
 
   return <Container {...props} isOutlined={!isPositiveBalance}>

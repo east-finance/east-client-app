@@ -4,10 +4,12 @@ import React from 'react'
 export interface ITag {
   text: string;
   value: string;
+  onClick?: () => void;
 }
 
 export interface IProps {
-  data: ITag[];
+  data?: ITag[];
+  children?: JSX.Element | JSX.Element[];
   onClick?: (data: ITag) => void;
 }
 
@@ -18,7 +20,7 @@ const Container = styled.div`
   line-height: 16px;
 `
 
-const Option = styled.div`
+export const TagOption = styled.div`
   padding: 4px;
   cursor: pointer;
   background: rgba(29, 135, 214, 0.4);
@@ -37,10 +39,13 @@ export const Tags = (props: IProps) => {
     }
   }
   return <Container>
-    {props.data.map((option, index) => {
-      return <Option key={index} onClick={() => onClick(option)}>
+    {props.data && props.data.map((option, index) => {
+      return <TagOption key={index} onClick={() => onClick(option)}>
         {option.text}
-      </Option>
+      </TagOption>
     })}
+    {props.children &&
+      props.children
+    }
   </Container>
 }

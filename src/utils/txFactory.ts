@@ -72,7 +72,6 @@ export const dockerCallTransfer = (props: IDockerCallTransfer) => {
         to: props.recipient,
         amount: props.amount
       })
-
     }],
     fee: '1000000',
   }
@@ -104,7 +103,7 @@ export const liquidateVault = (props: ILiquidateVault) => {
 export interface IClaimOverpay {
   publicKey: string;
   contractId: string;
-  fee: string;
+  fee: string | number;
   amount?: number;
 }
 

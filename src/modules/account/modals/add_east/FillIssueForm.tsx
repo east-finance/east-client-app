@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
-import { Block, Block24 } from '../../../../components/Block'
+import { Block } from '../../../../components/Block'
 import { InputStatus, SimpleInput } from '../../../../components/Input'
-import { Button, ButtonsContainer, NavigationLeftGradientButton } from '../../../../components/Button'
+import { Button, ButtonsContainer } from '../../../../components/Button'
 import useStores from '../../../../hooks/useStores'
 import { roundNumber } from '../../../../utils'
 import { observer } from 'mobx-react'
-import { BeforeText, RelativeContainer, Spinner } from '../../../../components/Spinner'
-import { ITag, Tags } from '../../../../components/Tags'
+import { ITag, TagOption, Tags } from '../../../../components/Tags'
 import { EastOpType } from '../../../../interfaces'
+import { GradientText } from '../../../../components/Text'
 
 export interface FillFormData {
   eastAmount: string;
@@ -27,13 +27,12 @@ const Container = styled.div`
   font-family: Cairo,sans-serif;
 `
 
-const Centered = styled.div`text-align: center;`
-
-const Description = styled(Centered)`
-  font-weight: 500;
-  font-size: 15px;
-  line-height: 22px;
-  color: #525252;
+const WestPostfix = styled.div`
+  position: absolute;
+  right: 20px;
+  bottom: 8px;
+  font-size: 16px;
+  font-weight: 700;
 `
 
 export const FillIssueForm = observer((props: IProps) => {
@@ -42,6 +41,8 @@ export const FillIssueForm = observer((props: IProps) => {
   const [eastAmount, setEastAmount] = useState(props.eastAmount || '')
   const [westAmount, setWestAmount] = useState(props.westAmount || '')
   const [errors, setErrors] = useState({ east: '', west: '' })
+
+  const { supplyVaultWestDiff } = dataStore
 
   const totalFee = +configStore.getFeeByOpType(EastOpType.supply)
 
@@ -72,11 +73,7 @@ export const FillIssueForm = observer((props: IProps) => {
 
   const setEastByWestAmount = (west: string) => {
     const { eastAmount } = dataStore.calculateEastAmount({
-      usdpPart: configStore.getUsdpPart(),
-      westCollateral: configStore.getWestCollateral(),
-      westRate: +westRate,
-      usdapRate: +usdapRate,
-      inputWestAmount: +west
+      westAmount: west
     })
     if (eastAmount > 0) {
       setEastAmount(roundNumber(eastAmount).toString())
@@ -85,21 +82,19 @@ export const FillIssueForm = observer((props: IProps) => {
     }
   }
 
-  const onChangeEast = (e: any) => {
-    const { value } = e.target
-    setEastAmount(value)
-    const westAmount = dataStore.calculateWestAmount({
-      usdpPart: configStore.getUsdpPart(),
-      westCollateral: configStore.getWestCollateral(),
-      westRate: +westRate,
-      usdapRate: +usdapRate,
-      inputEastAmount: +value
-    })
+  const setWestByEastAmount = (east: string) => {
+    const westAmount = dataStore.calculateWestAmount(east)
     if (westAmount > 0) {
       setWestAmount(roundNumber(westAmount).toString())
     } else {
       setWestAmount('')
     }
+  }
+
+  const onChangeEast = (e: any) => {
+    const { value } = e.target
+    setEastAmount(value)
+    setWestByEastAmount(value)
   }
 
   const onChangeWest = (e: any) => {
@@ -128,6 +123,12 @@ export const FillIssueForm = observer((props: IProps) => {
   const onBlur = () => {
     setErrors(validateForm())
   }
+  const { eastAmount: freeEastAmount } = dataStore.vaultEastProfit
+  const onSelectFreeEast = () => {
+    const rounded = freeEastAmount.toString()
+    setEastAmount(rounded)
+    setWestByEastAmount(rounded)
+  }
   return <Container>
     <Block marginTop={16}>
       <SimpleInput
@@ -138,15 +139,30 @@ export const FillIssueForm = observer((props: IProps) => {
         onChange={onChangeEast}
         onBlur={onBlur}
       />
-      <Block marginTop={4} />
-      <SimpleInput
-        type={'number'}
-        label={`Enter amount of WEST (${westAvailable} available)`}
-        value={westAmount}
-        status={errors.west ? InputStatus.error : InputStatus.default}
-        onChange={onChangeWest}
-        onBlur={onBlur}
-      />
+      {+freeEastAmount > 0 &&
+      <Block marginTop={8}>
+        <Tags>
+          <TagOption style={{ background: 'rgba(28, 182, 134, 0.4)' }} onClick={onSelectFreeEast}>
+            {freeEastAmount} FREE EAST
+          </TagOption>
+        </Tags>
+      </Block>
+      }
+      <Block marginTop={4} style={{ position: 'relative' }}>
+        {supplyVaultWestDiff > 0 &&
+          <WestPostfix>
+            <GradientText>+{supplyVaultWestDiff} WEST</GradientText>
+          </WestPostfix>
+        }
+        <SimpleInput
+          type={'number'}
+          label={`Enter amount of WEST (${westAvailable} available)`}
+          value={westAmount}
+          status={errors.west ? InputStatus.error : InputStatus.default}
+          onChange={onChangeWest}
+          onBlur={onBlur}
+        />
+      </Block>
       {+dataStore.westBalance > 0 &&
         <Block marginTop={8}>
           <Tags data={buyOptions} onClick={onSelectOption} />

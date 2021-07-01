@@ -3,6 +3,7 @@ import styled from 'styled-components'
 export const TextTable = styled.div`
   margin: 0 auto;
   text-align: left;
+  font-family: Cairo;
 `
 
 export const TextTableRow = styled.div`
@@ -16,12 +17,12 @@ export const TextTableRow = styled.div`
 `
 
 export const TextTableKey = styled.div`
-  width: 40%;
-  max-width: 40%;
-  min-width: 40%;
-  margin-left: 10%;
+  width: 50%;
+  min-width: 50%;
+  margin-right: 20px;
   color: ${props => props.theme.darkBlue50};
   font-size: 15px;
+  text-align: right;
 `
 
 export const TextTablePrimaryValue = styled.div`
@@ -32,8 +33,14 @@ export const TextTablePrimaryValue = styled.div`
 `
 
 export const TextTableSecondaryValue = styled.div`
-  font-weight: 500;
+  font-weight: 700;
   font-size: 18px;
   line-height: 18px;
   color: #043569;
+`
+
+export const TextTableInfo = styled.div`
+  font-size: 15px;
+  line-height: 20px;
+  color: rgba(4, 53, 105, 0.5);
 `

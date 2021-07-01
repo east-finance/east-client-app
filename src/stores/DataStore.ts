@@ -43,18 +43,34 @@ export default class DataStore {
     this.configStore = configStore
   }
 
-  get vaultCollateral () {
+  // Calculated expected fully supplied (==250%) vault west amount
+  get expectedVaultWestAmount () {
     const westPart = 1 - this.configStore.getUsdpPart()
-    // const currentWestCollateral = Math.ceil(+this.vault.westAmount * +this.westRate) / (westPart * Math.floor(+this.vault.eastAmount))
-    const currentWestCollateral = (+this.vault.westAmount * +this.westRate) / (westPart * +this.vault.eastAmount)
-    return currentWestCollateral
+    const westCollateral = this.configStore.getWestCollateral()
+    const expectedWestAmount = (+this.vault.eastAmount * westPart * +this.usdapRate * westCollateral) / +this.westRate
+    return  roundNumber(expectedWestAmount, 8)
   }
 
-  get supplyVaultWestAmount () {
+  // Vault collateral percentage: converted from "expectedVaultWestAmount"
+  get vaultCollateral () {
     const westPart = 1 - this.configStore.getUsdpPart()
-    const westDefaultCollateral = this.configStore.getWestCollateral()
-    const westAmount = westDefaultCollateral * (westPart * +this.vault.eastAmount) / +this.westRate
-    return westAmount
+    // const currentWestCollateral = (+this.vault.westAmount * +this.westRate) / (westPart * +this.vault.eastAmount)
+    // return Math.ceil(currentWestCollateral * 100) / 100
+    const currentVaultCollateral = (+this.vault.westAmount * +this.westRate) / (+this.vault.eastAmount * westPart * +this.usdapRate)
+    return roundNumber(currentVaultCollateral, 2)
+  }
+
+  // How many west need to supply vault to 250%
+  // If value < 0, vault is over-supplied and contains free west
+  get supplyVaultWestDiff () {
+    // return Math.ceil(this.expectedVaultWestAmount - +this.vault.westAmount)
+    return roundNumber(this.expectedVaultWestAmount - +this.vault.westAmount, 7)
+  }
+
+  get vaultEastProfit () {
+    const westAmount = this.calculateVaultWestProfit()
+    const data = this.calculateEastAmount({ westAmount })
+    return data
   }
 
   get vaultEastAmount () {
@@ -107,7 +123,7 @@ export default class DataStore {
     const updateWestBalance = async () => {
       const westBalance = await this.getWestBalance(address)
       runInAction(() => {
-        this.westBalance = westBalance
+        this.westBalance = roundNumber(westBalance, 8).toString()
       })
     }
 
@@ -149,27 +165,29 @@ export default class DataStore {
     return new BigNumber(balance).dividedBy(Math.pow(10, WestDecimals)).toString()
   }
 
-  calculateWestAmount (data: any) {
-    const { usdpPart, westCollateral, westRate, inputEastAmount } = data
-    return inputEastAmount * ((usdpPart / westRate) + ((1 - usdpPart) / westRate * westCollateral))
+  calculateWestAmount (eastAmount: string | number) {
+    const usdpPart = this.configStore.getUsdpPart()
+    const westCollateral = this.configStore.getWestCollateral()
+    const westRate = +this.westRate
+
+    return +eastAmount * ((usdpPart / westRate) + ((1 - usdpPart) / westRate * westCollateral))
   }
 
-  calculateWestRate (data: any) {
-    const { usdpPart, westCollateral, eastAmount, westAmount } = data
-    const westRate = ((usdpPart + (1 - usdpPart) * westCollateral) * eastAmount) / westAmount
-    return westRate / 1.4 // TEMPORARY FIX
-  }
+  calculateEastAmount (data: { westAmount: string | number }) {
+    const { westAmount } = data
+    const usdpPart = this.configStore.getUsdpPart()
+    const westCollateral = this.configStore.getWestCollateral()
+    const westRate = +this.westRate
+    const usdapRate = +this.usdapRate
 
-  calculateEastAmount (data: any) {
-    const { usdpPart, westCollateral, westRate, usdapRate, inputWestAmount} = data
     const usdpPartInPosition = usdpPart / ((1 - usdpPart) * westCollateral + usdpPart)
-    const transferAmount = parseFloat(inputWestAmount + '')
+    const transferAmount = Number(westAmount)
     const westToUsdpAmount = usdpPartInPosition * transferAmount
     const eastAmount = (westToUsdpAmount * westRate) / usdpPart
     const usdpAmount = westToUsdpAmount * westRate / usdapRate
     return {
-      eastAmount,
-      usdpAmount
+      eastAmount: roundNumber(eastAmount, 8),
+      usdpAmount: roundNumber(usdpAmount, 8)
     }
   }
 

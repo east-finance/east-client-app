@@ -12,6 +12,7 @@ import { EastOpType } from '../../../../interfaces'
 import { AddWestToAddress } from '../../common/AddWestToAddress'
 import { ConfirmIssueTransaction } from './ConfirmIssueTransaction'
 import { TxSendSuccess } from '../../common/TxSendSuccess'
+import { roundNumber } from '../../../../utils'
 
 interface IProps {
   onClose: () => void
@@ -31,9 +32,8 @@ const Centered = styled.div`
 
 export const AddEast = observer((props: IProps) => {
   const { dataStore, configStore } = useStores()
-  const { vault, vaultCollateral, supplyVaultWestAmount } = dataStore
-  const westCollateralDiff = supplyVaultWestAmount - +vault.westAmount
-  const initialStep = westCollateralDiff > 1
+  const { vaultCollateral, supplyVaultWestDiff } = dataStore
+  const initialStep = +supplyVaultWestDiff > 0
     ? IssueSteps.SupplyCollateral
     : IssueSteps.FillForm
   const [refillWestAmount, setRefillWestAmount] = useState('')
@@ -63,14 +63,14 @@ export const AddEast = observer((props: IProps) => {
     }
     content = <SupplyCollateral
       vaultCollateral={vaultCollateral}
-      westAmount={Math.ceil(westCollateralDiff)}
+      westAmount={supplyVaultWestDiff}
       onSuccess={onSuccess}
     />
   } else if (stepIndex === IssueSteps.FillForm) {
     const onNextClicked = (formData: FillFormData) => {
       setFormData(formData)
       setStepIndex(IssueSteps.ConfirmTransaction)
-      const westDelta = (+formData.westAmount + totalFee) - +dataStore.westBalance
+      const westDelta = (+formData.westAmount + totalFee + supplyVaultWestDiff) - +dataStore.westBalance
       if (westDelta > 0) {
         setRefillWestAmount(westDelta.toString())
       }
@@ -89,7 +89,7 @@ export const AddEast = observer((props: IProps) => {
     />
   } else if(stepIndex === IssueSteps.Success) {
     content = <TxSendSuccess
-      text={'You will receive your EAST after the transaction is completed. It may take a few minutes.'}
+      text={'You will receive your EAST after the transaction is completed. It may take a few minutes.'}
       onClose={props.onClose}
     />
   }
