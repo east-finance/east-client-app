@@ -54,8 +54,6 @@ export default class DataStore {
   // Vault collateral percentage: converted from "expectedVaultWestAmount"
   get vaultCollateral () {
     const westPart = 1 - this.configStore.getUsdpPart()
-    // const currentWestCollateral = (+this.vault.westAmount * +this.westRate) / (westPart * +this.vault.eastAmount)
-    // return Math.ceil(currentWestCollateral * 100) / 100
     const currentVaultCollateral = (+this.vault.westAmount * +this.westRate) / (+this.vault.eastAmount * westPart * +this.usdapRate)
     return roundNumber(currentVaultCollateral, 2)
   }
@@ -63,7 +61,7 @@ export default class DataStore {
   // How many west need to supply vault to 250%
   // If value < 0, vault is over-supplied and contains free west
   get supplyVaultWestDiff () {
-    const diff = roundNumber(this.expectedVaultWestAmount - +this.vault.westAmount, 7)
+    const diff = roundNumber(this.expectedVaultWestAmount - +this.vault.westAmount, 6)
     if (Math.abs(diff) > 0.1) {
       return diff
     }
