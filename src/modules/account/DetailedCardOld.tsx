@@ -15,28 +15,27 @@ const aniTime = '1000ms'
 const bezier = 'ease'
 
 const BackToFront = keyframes`
-  from {transform: translate(0,0);}
+  from {transform: translate(0,0);opacity: 0.4;}
   30% {transform: translate(260px,0) rotate(15deg);}
+  60% {opacity: 1}
   to {transform: translate(0,0);z-index:10;}
 `
 
 const BackToBackAgain = keyframes`
-  from {transform: translate(0,0);z-index:10;}
+  from {transform: translate(0,0);z-index:10;opacity: 1;}
   30% {transform: translate(260px,0) rotate(15deg);}
-  32% {z-index:-1;}
-  to {transform: translate(0,0);}
+  60% {opacity: 0.4}
+  to {transform: translate(0,0);z-index:-1;}
 `
 
 const FadeIn = keyframes`
   from {
      margin-right: 0px;
      margin-top: 0px;
-     z-index: -10;
   }
   to {
     margin-right: -64px;
     margin-top: -64px;
-    z-index: -10;
   }
 `
 
@@ -51,6 +50,16 @@ const animationCondition = (isShown: null | boolean) => {
   }
 }
 
+const hoverCondition = (isShown: null | boolean) => {
+  if (!isShown) {
+    return `
+        margin-right: -96px;
+        margin-top: -96px;
+      `
+  }
+  return ''
+}
+
 const Container = styled.div<{ isShown: null | boolean }>`
   width: 444px;
   height: 260px;
@@ -63,13 +72,16 @@ const Container = styled.div<{ isShown: null | boolean }>`
   background-size: cover;
   border-radius: 6px;
   box-shadow: 0 32px 32px rgba(0, 0, 0, 0.15);
+  border: 1px solid transparent;
+  transition: margin-right 150ms, margin-top: 150ms;
   
   position: absolute;
   z-index: -10;
   margin-right: -64px;
   margin-top: -64px;
-
-  animation: ${props => animationCondition(props.isShown)}
+  
+  opacity: ${props => props.isShown ? 1 : 0.4};
+  animation: ${props => animationCondition(props.isShown)};
 `
 
 const Content = styled.div`
