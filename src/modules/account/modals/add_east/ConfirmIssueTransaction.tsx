@@ -14,7 +14,7 @@ import {
   TextTableSecondaryValue
 } from '../../../../components/TextTable'
 import useStores from '../../../../hooks/useStores'
-import { EastOpType, IVault } from '../../../../interfaces'
+import { EastOpType } from '../../../../interfaces'
 import { GradientText } from '../../../../components/Text'
 import { roundNumber } from '../../../../utils'
 
@@ -47,22 +47,17 @@ export const ConfirmIssueTransaction = (props: IProps) => {
   const [inProgress, setInProgress] = useState(false)
   const totalFee = +configStore.getFeeByOpType(EastOpType.supply)
 
-  const { supplyVaultWestDiff, vault } = dataStore
+  const { vaultFreeWest } = dataStore
 
   let transferWestAmount = +props.westAmount
-  if (supplyVaultWestDiff < 0) {
-    transferWestAmount = roundNumber(transferWestAmount - Math.abs(supplyVaultWestDiff), 8)
-    if (transferWestAmount < 0) { // Value is covered by supplyVaultWestDiff, no need to transfer from address
-      transferWestAmount = 0
-    }
-  } else {
-    transferWestAmount += supplyVaultWestDiff
+  if (vaultFreeWest < 0) {
+    transferWestAmount += Math.abs(vaultFreeWest)
   }
-  console.log('transferWestAmount', transferWestAmount, 'supplyVaultWestDiff', supplyVaultWestDiff, 'props.westAmount', props.westAmount)
-  console.log('. Only Reissue:',  transferWestAmount <= 0)
-  const reissueWestAmount = transferWestAmount
-  const expectedVaultWestAmount = roundNumber(+transferWestAmount + +vault.westAmount, 8)
-  const { usdpAmount: expectedVaultUSDapAmount } = dataStore.calculateEastAmount({ westAmount: expectedVaultWestAmount })
+  console.log('Transfer WEST amount: ', transferWestAmount, 'vault Free West:', vaultFreeWest)
+  console.log('Only Reissue:',  transferWestAmount <= 0)
+  if (transferWestAmount <= 0) {
+    console.log(`Reissue  west amount: ${dataStore.exchangeEast(props.eastAmount)}`)
+  }
 
   const sendSupply = async () => {
     const state = await window.WEWallet.publicState()
@@ -75,6 +70,7 @@ export const ConfirmIssueTransaction = (props: IProps) => {
 
     // Vault is over-supplied, and user want to convert FREE WEST to EAST and recalculate vault
     if (transferWestAmount <= 0) {
+      const maxWestToExchange = dataStore.exchangeEast(props.eastAmount)
       const reissueTx = {
         senderPublicKey: publicKey,
         authorPublicKey: publicKey,
@@ -85,7 +81,7 @@ export const ConfirmIssueTransaction = (props: IProps) => {
           type: 'string',
           key: 'reissue',
           value: JSON.stringify({
-            maxWestToExchange: +props.westAmount
+            maxWestToExchange: +maxWestToExchange
           })
         }],
         fee: configStore.getDockerCallFee(),
@@ -146,7 +142,7 @@ export const ConfirmIssueTransaction = (props: IProps) => {
             type: 'string',
             key: 'reissue',
             value: JSON.stringify({
-              maxWestToExchange: reissueWestAmount
+              // maxWestToExchange: reissueWestAmount
             })
           }],
           fee: configStore.getDockerCallFee(),
@@ -181,16 +177,16 @@ export const ConfirmIssueTransaction = (props: IProps) => {
       <TextTable>
         <TextTableRow>
           <TextTableKey>You will get</TextTableKey>
-          <TextTablePrimaryValue>~{props.eastAmount} EAST</TextTablePrimaryValue>
+          <TextTablePrimaryValue>~{roundNumber(props.eastAmount, 2)} EAST</TextTablePrimaryValue>
         </TextTableRow>
         <TextTableRow>
           <TextTableKey>You will pay</TextTableKey>
           <div>
             <TextTableSecondaryValue>{transferWestAmount} WEST</TextTableSecondaryValue>
-            {supplyVaultWestDiff > 0 &&
+            {vaultFreeWest < 0 &&
               <Block marginTop={8}>
                 <TextTableInfo>
-                  Including <GradientText>{supplyVaultWestDiff} WEST</GradientText> to supply the Vault
+                  Including <GradientText>{Math.abs(vaultFreeWest)} WEST</GradientText> to supply the Vault
                 </TextTableInfo>
               </Block>
             }
