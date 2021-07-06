@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import BgWater from '../resources/images/bg-water.mp4'
+import BgWater from '../resources/images/bg-water-test.mp4'
 import React, { useRef } from 'react'
 import { useEffect } from 'react'
 
