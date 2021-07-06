@@ -53,8 +53,8 @@ const animationCondition = (isShown: null | boolean) => {
 const hoverCondition = (isShown: null | boolean) => {
   if (!isShown) {
     return `
-        margin-right: -96px;
-        margin-top: -96px;
+        margin-right: -100px;
+        margin-top: -100px;
       `
   }
   return ''
@@ -82,6 +82,11 @@ const Container = styled.div<{ isShown: null | boolean }>`
   
   opacity: ${props => props.isShown ? 1 : 0.4};
   animation: ${props => animationCondition(props.isShown)};
+  transition:  margin-right 150ms, margin-top 150ms;
+  
+  :hover {
+    ${props => hoverCondition(props.isShown)};
+  }
 `
 
 const Content = styled.div`
@@ -159,7 +164,7 @@ const SmallBalance = styled.div`
   }
 `
 
-export const DetailedCard = observer((props: { isShown: null | boolean, onClick: () => void }) => {
+export const DetailedCard = observer((props: { isShown: null | boolean, onClick: (e: any) => void }) => {
   const { router } = useRoute()
   const { dataStore } = useStores()
   const { vaultCollateral, vault, supplyVaultWestDiff, vaultEastProfit } = dataStore
@@ -172,7 +177,7 @@ export const DetailedCard = observer((props: { isShown: null | boolean, onClick:
     e.stopPropagation()
     router.navigate(RouteName.AddEast, {
       eastAmount: freeEastAmount,
-      westAmount: -supplyVaultWestDiff,
+      westAmount: '0',
       step: IssueSteps.ConfirmTransaction
     })
   }

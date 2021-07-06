@@ -12,13 +12,11 @@ import { useRoute } from 'react-router5'
 import { RouteName } from '../../router/segments'
 import useOutsideAlerter from '../../hooks/useOutsideHandler'
 import { fadeIn, fadeInControls, fadeOut } from '../../components/Animations'
-import { BackgroundVideo } from '../../components/BackgroundVideo'
 import { WestChart } from './WestChart'
 import { TransactionsHistory } from './modals/TransactionsHistory'
 import { AddEast } from './modals/add_east/AddEast'
 import { TakeWest } from './modals/take_west/TakeWest'
 import { CloseVault } from './modals/close-vault/CloseVault'
-// import { DetailedCard } from './DetailedCard'
 import { DetailedCard } from './DetailedCardOld'
 import useStores from '../../hooks/useStores'
 import { SupplyVault } from './modals/supply/SupplyVault'
@@ -113,7 +111,15 @@ const AccountCards = observer(() => {
 
   const [isFrontShown, setFrontShown] = useState<null | boolean>(null)
   const isPositiveBalance = +dataStore.vaultEastAmount > 0
-  const onClick = () => {
+  const onClick = (e: any) => {
+    const { childNodes } = e.target
+    if (childNodes) {
+      if (childNodes.length > 0 && (childNodes[0] && childNodes[0].nodeType === 3)) {
+        e.preventDefault()
+        e.stopPropagation()
+        return false
+      }
+    }
     if (isPositiveBalance) {
       setFrontShown(isFrontShown === null ? false : !isFrontShown)
     }

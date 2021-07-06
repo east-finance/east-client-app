@@ -9,7 +9,6 @@ import useStores from '../../hooks/useStores'
 import { roundNumber } from '../../utils'
 import { RouteName } from '../../router/segments'
 import { useRoute } from 'react-router5'
-import { IVault } from '../../interfaces'
 
 const FrontToFrontAgain = keyframes`
   from {transform: translate(0,0);z-index:-1}
@@ -155,7 +154,7 @@ const EastBalance = (props: IEastBalanceProps) => {
   </div>
 }
 
-export const AccountCard = observer((props: { isShown: null | boolean, onClick: () => void }) => {
+export const AccountCard = observer((props: { isShown: null | boolean, onClick: (e: any) => void }) => {
   const { router } = useRoute()
   const { authStore, dataStore } = useStores()
   const { address } = authStore
