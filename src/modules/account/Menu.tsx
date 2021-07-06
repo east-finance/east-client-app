@@ -67,7 +67,7 @@ const MenuItem = styled.div<{ disabled?: boolean; }>`
   display: flex;
   justify-content: center;
   align-items: center;
-  transition: transform 0.25s;
+  transition: transform 150ms;
 
   ${({ disabled }) => disabled && `
     opacity: 0.2;

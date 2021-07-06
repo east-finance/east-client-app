@@ -68,8 +68,12 @@ export default class DataStore {
     return 0
   }
 
+  get vaultFreeWest () {
+    return -this.supplyVaultWestDiff
+  }
+
   get vaultEastProfit () {
-    const westAmount = -this.supplyVaultWestDiff
+    const westAmount = this.vaultFreeWest
     const data = this.calculateEastAmount({ westAmount })
     return data
   }
@@ -171,7 +175,8 @@ export default class DataStore {
     const westCollateral = this.configStore.getWestCollateral()
     const westRate = +this.westRate
 
-    return +eastAmount * ((usdpPart / westRate) + ((1 - usdpPart) / westRate * westCollateral))
+    const westAmount = +eastAmount * ((usdpPart / westRate) + ((1 - usdpPart) / westRate * westCollateral))
+    return roundNumber(westAmount, 7)
   }
 
   calculateEastAmount (data: { westAmount: string | number }) {
@@ -189,5 +194,21 @@ export default class DataStore {
       eastAmount: roundNumber(eastAmount, 8),
       usdpAmount: roundNumber(usdpAmount, 8)
     }
+  }
+
+  exchangeWest (westAmount: string | number) {
+    const rwaPart = this.configStore.getUsdpPart()
+    const eastAmount = (+westAmount * +this.westRate) / rwaPart
+    const rwaAmount = +westAmount * +this.westRate / +this.usdapRate
+    return {
+      eastAmount,
+      rwaAmount
+    }
+  }
+
+  exchangeEast (eastAmount: string | number) {
+    const rwaPart = this.configStore.getUsdpPart()
+    const westAmount  = (+eastAmount * rwaPart) / +this.westRate
+    return roundNumber(westAmount, 8)
   }
 }

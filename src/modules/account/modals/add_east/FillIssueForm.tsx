@@ -37,12 +37,12 @@ const WestPostfix = styled.div`
 
 export const FillIssueForm = observer((props: IProps) => {
   const { dataStore, configStore } = useStores()
-  const { westRate, usdapRate } = dataStore
   const [eastAmount, setEastAmount] = useState(props.eastAmount || '')
   const [westAmount, setWestAmount] = useState(props.westAmount || '')
   const [errors, setErrors] = useState({ east: '', west: '' })
 
-  const { supplyVaultWestDiff } = dataStore
+  const { vaultFreeWest, vaultEastProfit } = dataStore
+  const { eastAmount: vaultFreeEast } = vaultEastProfit
 
   const totalFee = +configStore.getFeeByOpType(EastOpType.supply)
 
@@ -55,12 +55,18 @@ export const FillIssueForm = observer((props: IProps) => {
   const validateForm = () => {
     let east = ''
     let west = ''
+    if (vaultFreeWest < 0) {
+      return {
+        east,
+        west
+      }
+    }
     if (!eastAmount || +eastAmount === 0) {
       east = 'Empty east amount'
     } else if (+eastAmount < 0) {
       east = 'Negative east amount'
     }
-    if (!westAmount || +westAmount === 0) {
+    if (westAmount === '') {
       west = 'Empty east amount'
     } else if (+westAmount < 0) {
       west = 'Negative west amount'
@@ -72,9 +78,12 @@ export const FillIssueForm = observer((props: IProps) => {
   }
 
   const setEastByWestAmount = (west: string) => {
-    const { eastAmount } = dataStore.calculateEastAmount({
+    let { eastAmount } = dataStore.calculateEastAmount({
       westAmount: west
     })
+    if (vaultFreeEast > 0) {
+      eastAmount += +vaultFreeEast
+    }
     if (eastAmount > 0) {
       setEastAmount(roundNumber(eastAmount, 8).toString())
     } else {
@@ -83,11 +92,14 @@ export const FillIssueForm = observer((props: IProps) => {
   }
 
   const setWestByEastAmount = (east: string) => {
-    const westAmount = dataStore.calculateWestAmount(east)
+    let westAmount = dataStore.calculateWestAmount(east)
+    if (vaultFreeWest > 0) {
+      westAmount -= vaultFreeWest
+    }
     if (westAmount > 0) {
       setWestAmount(roundNumber(westAmount, 6).toString())
     } else {
-      setWestAmount('')
+      setWestAmount('0')
     }
   }
 
@@ -108,8 +120,8 @@ export const FillIssueForm = observer((props: IProps) => {
     setErrors(errors)
     if (!errors.east && !errors.west) {
       props.onNextClicked({
-        eastAmount,
-        westAmount
+        eastAmount: eastAmount || '0',
+        westAmount: westAmount || '0'
       })
     }
   }
@@ -121,11 +133,10 @@ export const FillIssueForm = observer((props: IProps) => {
     setEastByWestAmount(amount)
   }
   const onBlur = () => {
-    setErrors(validateForm())
+    // setErrors(validateForm())
   }
-  const { eastAmount: freeEastAmount } = dataStore.vaultEastProfit
   const onSelectFreeEast = () => {
-    const rounded = freeEastAmount.toString()
+    const rounded = vaultFreeEast.toString()
     setEastAmount(rounded)
     setWestByEastAmount(rounded)
   }
@@ -139,19 +150,19 @@ export const FillIssueForm = observer((props: IProps) => {
         onChange={onChangeEast}
         onBlur={onBlur}
       />
-      {+freeEastAmount > 0 &&
+      {+vaultFreeEast > 0 &&
       <Block marginTop={8}>
         <Tags>
           <TagOption style={{ background: 'rgba(28, 182, 134, 0.4)' }} onClick={onSelectFreeEast}>
-            {freeEastAmount} FREE EAST
+            {vaultFreeEast} FREE EAST
           </TagOption>
         </Tags>
       </Block>
       }
       <Block marginTop={4} style={{ position: 'relative' }}>
-        {supplyVaultWestDiff > 0 &&
+        {vaultFreeWest < 0 &&
           <WestPostfix>
-            <GradientText>+{supplyVaultWestDiff} WEST</GradientText>
+            <GradientText>+{Math.abs(vaultFreeWest)} WEST</GradientText>
           </WestPostfix>
         }
         <SimpleInput

@@ -1,14 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
-import { Block, Block24 } from '../../../../components/Block'
+import { Block } from '../../../../components/Block'
 import { InputStatus, SimpleInput } from '../../../../components/Input'
-import { Button, ButtonsContainer, NavigationLeftGradientButton } from '../../../../components/Button'
+import { Button, ButtonsContainer } from '../../../../components/Button'
 import useStores from '../../../../hooks/useStores'
 import { roundNumber } from '../../../../utils'
 import { observer } from 'mobx-react'
-import { BeforeText, RelativeContainer, Spinner } from '../../../../components/Spinner'
-import { ITag, Tags } from '../../../../components/Tags'
-import data from '@wavesenterprise/js-sdk/raw/src/grpc/transactions/Data'
+import { ITag, TagOption, Tags } from '../../../../components/Tags'
 
 export interface FillFormData {
   westAmount: string;
@@ -24,8 +22,6 @@ const Container = styled.div`
   margin: 0 auto;
   font-family: Cairo,sans-serif;
 `
-
-const Centered = styled.div`text-align: center;`
 
 const Description = styled.div`
   font-weight: 500;
@@ -119,7 +115,19 @@ export const FillSupplyForm = observer((props: IProps) => {
     <Block marginTop={42}>
       <Description>Or choose collateral level</Description>
       <Block marginTop={8}>
-        <Tags data={levelOptions} onClick={onSelectLevelOption} />
+        <Tags>
+          {levelOptions.map(levelOption => {
+            let style = {}
+            if (levelOption.value === '2.5') {
+              style = {
+                background: 'rgba(28, 182, 134, 0.4)'
+              }
+            }
+            return <TagOption key={levelOption.value} style={style} onClick={() => onSelectLevelOption(levelOption)}>
+              {levelOption.text}
+            </TagOption>
+          })}
+        </Tags>
       </Block>
     </Block>
     <Block marginTop={80}>
