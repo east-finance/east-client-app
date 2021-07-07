@@ -20,6 +20,7 @@ import { CloseVault } from './modals/close-vault/CloseVault'
 import { DetailedCard } from './DetailedCardOld'
 import useStores from '../../hooks/useStores'
 import { SupplyVault } from './modals/supply/SupplyVault'
+import { BackgroundVideo } from '../../components/BackgroundVideo'
 
 const Container = styled.div`
 `
@@ -144,7 +145,7 @@ const Account = observer( () => {
   useOutsideAlerter(modalRef, onClickOutside)
 
   return <Container>
-    {/* <BackgroundVideo isBlurred={!!primaryModal} /> */}
+    <BackgroundVideo isBlurred={!!primaryModal} />
     {primaryModal &&
       <PrimaryModalContainer ref={modalRef}>
         {primaryModal}
