@@ -1,7 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
 import { PrimaryTitle } from '../../../components/PrimaryTitle'
-import CardBackground from '../../resources/images/card_bg.png'
 import { PrimaryModal } from '../Modal'
 import { Block } from '../../../components/Block'
 import { GradientText } from '../../../components/Text'

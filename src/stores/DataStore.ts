@@ -192,7 +192,8 @@ export default class DataStore {
     const usdpAmount = westToUsdpAmount * westRate / usdapRate
     return {
       eastAmount: roundNumber(eastAmount, 8),
-      usdpAmount: roundNumber(usdpAmount, 8)
+      usdpAmount: roundNumber(usdpAmount, 8),
+      westAmount: roundNumber(+westAmount - westToUsdpAmount, 8)
     }
   }
 

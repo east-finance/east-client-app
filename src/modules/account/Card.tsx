@@ -1,14 +1,16 @@
 import React from 'react'
 import styled, { keyframes, css } from 'styled-components'
-import CardBackground from '../../resources/images/card_bg.png'
+import CardBackground from '../../resources/images/card-dark-back.jpeg'
 import NoiseImg from '../../resources/images/noise.png'
 import iconPlus from '../../resources/images/plus.png'
+import eastLogoSmall from '../../resources/images/east-logo-small.png'
 import { Block, Block24 } from '../../components/Block'
 import { observer } from 'mobx-react'
 import useStores from '../../hooks/useStores'
 import { roundNumber } from '../../utils'
 import { RouteName } from '../../router/segments'
 import { useRoute } from 'react-router5'
+import { Icon } from '../../components/Icons'
 
 const FrontToFrontAgain = keyframes`
   from {transform: translate(0,0);z-index:-1}
@@ -36,6 +38,7 @@ const animationCondition = (isShown: null | boolean) => {
 }
 
 const Container = styled.div<{ isOutlined?: boolean, isShown: null | boolean }>`
+  position: relative;
   ${({ isOutlined }) => isOutlined && `
     border: 1px solid white;
     border-radius: 6px;
@@ -44,7 +47,7 @@ const Container = styled.div<{ isOutlined?: boolean, isShown: null | boolean }>`
   animation: ${props => animationCondition(props.isShown)}
 `
 
-const ContentWrapper = styled.div<{ isActive?: boolean }>`
+const ContentWrapper = styled.div`
   width: 444px;
   height: 260px;
   box-sizing: border-box;
@@ -59,12 +62,11 @@ const ContentWrapper = styled.div<{ isActive?: boolean }>`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  opacity: ${props => props.isActive ? 1 : 0.5};
 `
 
 const TopContainer = styled.div``
 
-const TokenName = styled.div`
+const Description = styled.div`
   font-size: 16px;
   line-height: 16px;
   letter-spacing: 2px;
@@ -72,15 +74,24 @@ const TokenName = styled.div`
 `
 
 const BottomItem = styled.div`
-  color: #FFFFFF;
-  font-weight: 300;
-  font-size: 18px;
+  font-size: 16px;
   line-height: 16px;
   letter-spacing: 2px;
+  color: #F8F8F8;
+  font-weight: 300;
+  text-transform: uppercase;
 `
 
 const BottomContainer = styled.div`
   margin-left: 8px;
+`
+
+const FlexColumnWrapper = styled.div`
+  display: flex;
+  
+  > div {
+    width: 50%:
+  }
 `
 
 const PlusContainer = styled.div`
@@ -108,6 +119,13 @@ const PlusImage = styled.div`
   :hover {
     transform: scale(1.1);
   }
+`
+
+const EastLogoSmall = styled(Icon)`
+  position: absolute;
+  z-index: 1;
+  top: 8px;
+  right: 8px;
 `
 
 const AddEast = styled.div`
@@ -145,7 +163,7 @@ const FracPart = styled.span`
 
 const EastBalance = (props: IEastBalanceProps) => {
   const { value } = props
-  const [integerPart, fractionalPart] = roundNumber(value, 8).toString().split('.')
+  const [integerPart, fractionalPart] = roundNumber(value, 2).toString().split('.')
   return <div>
     <IntegerPart>{integerPart}</IntegerPart>
     {fractionalPart &&
@@ -159,10 +177,11 @@ export const AccountCard = observer((props: { isShown: null | boolean, onClick: 
   const { authStore, dataStore } = useStores()
   const { address } = authStore
 
-  const { westBalance, eastBalance } = dataStore
-  const isPositiveBalance = +eastBalance > 0
+  const { westBalance, eastBalance, vault } = dataStore
+  const isPositiveBalance = +eastBalance > 0 || +vault.eastAmount > 0
 
-  return <Container {...props} isOutlined={!isPositiveBalance}>
+  return <Container {...props} isOutlined={false}>
+    <EastLogoSmall backgroundImage={eastLogoSmall} size={50} />
     {!isPositiveBalance &&
       <PlusContainer>
         <PlusImage onClick={() => router.navigate(RouteName.BuyEast)}/>
@@ -171,18 +190,37 @@ export const AccountCard = observer((props: { isShown: null | boolean, onClick: 
         </Block24>
       </PlusContainer>
     }
-    <ContentWrapper isActive={isPositiveBalance}>
-      <TopContainer>
-        <EastBalance value={eastBalance} />
-        <Block marginTop={4}>
-          <TokenName>EAST</TokenName>
-        </Block>
-      </TopContainer>
-      {address &&
+    <ContentWrapper>
+      {isPositiveBalance &&
+        <TopContainer>
+          <EastBalance value={eastBalance} />
+          <Block marginTop={12}>
+            <Description>EAST available</Description>
+          </Block>
+        </TopContainer>
+      }
+      {isPositiveBalance &&
         <BottomContainer>
-          <BottomItem>{address}</BottomItem>
-          <Block marginTop={8} />
-          <BottomItem>{roundNumber(westBalance) + ' WEST'}</BottomItem>
+          <div>
+            <BottomItem>{vault.eastAmount}</BottomItem>
+            <Block marginTop={4}>
+              <BottomItem>EAST issued with vault</BottomItem>
+            </Block>
+          </div>
+          <FlexColumnWrapper style={{ marginTop: '8px' }}>
+            <div>
+              <BottomItem>{vault.westAmount}</BottomItem>
+              <Block marginTop={4}>
+                <BottomItem>west in vault</BottomItem>
+              </Block>
+            </div>
+            <div>
+              <BottomItem>{vault.westAmount}</BottomItem>
+              <Block marginTop={4}>
+                <BottomItem>west in vault</BottomItem>
+              </Block>
+            </div>
+          </FlexColumnWrapper>
         </BottomContainer>
       }
     </ContentWrapper>

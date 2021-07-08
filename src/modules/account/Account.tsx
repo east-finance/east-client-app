@@ -30,7 +30,7 @@ const CardsContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-top: 159px;
+  margin-top: calc(45% - 260px);
   cursor: pointer;
 `
 
@@ -145,7 +145,7 @@ const Account = observer( () => {
   useOutsideAlerter(modalRef, onClickOutside)
 
   return <Container>
-    <BackgroundVideo isBlurred={!!primaryModal} />
+    {/*<BackgroundVideo isBlurred={!!primaryModal} />*/}
     {primaryModal &&
       <PrimaryModalContainer ref={modalRef}>
         {primaryModal}
