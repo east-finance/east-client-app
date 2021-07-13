@@ -12,6 +12,11 @@ import { RouteName } from '../../router/segments'
 import { useRoute } from 'react-router5'
 import { Icon } from '../../components/Icons'
 
+const FadeInFront = keyframes`
+  from{transform: scale(0.8); opacity: 0;}
+  to{transform: scale(1); opacity: 1;}
+`
+
 const FrontToFrontAgain = keyframes`
   from {transform: translate(0,0) scale(0.9,0.9);z-index:-1}
   53% {transform: translate(0,-250px) scale(0.9,0.9);z-index:10;}
@@ -33,17 +38,12 @@ const animationCondition = (isShown: null | boolean) => {
   } else if(isShown === false) {
     return css`${FrontToBack} ${aniTime} ${bezier} forwards`
   } else {
-    return 'none'
+    return css`${FadeInFront} 650ms ease forwards`
   }
 }
 
-const Container = styled.div<{ isOutlined?: boolean, isShown: null | boolean }>`
-  position: relative;
-  ${({ isOutlined }) => isOutlined && `
-    border: 1px solid white;
-    border-radius: 6px;
-  `}
-
+const Container = styled.div<{ isShown: null | boolean }>`
+  // z-index: 10;
   animation: ${props => animationCondition(props.isShown)}
 `
 
@@ -186,7 +186,7 @@ export const AccountCard = observer((props: { isShown: null | boolean, onClick: 
   const { westBalance, eastBalance, vault } = dataStore
   const isPositiveBalance = +eastBalance > 0 || +vault.eastAmount > 0
 
-  return <Container {...props} isOutlined={false}>
+  return <Container {...props}>
     <EastLogoSmall backgroundImage={eastLogoSmall} size={50} />
     {!isPositiveBalance &&
       <PlusContainer>
