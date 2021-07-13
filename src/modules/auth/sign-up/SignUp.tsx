@@ -177,7 +177,7 @@ const SignUp = () => {
         setRegistered(true)
       } catch (e) {
         console.log('Signup error:', e.message)
-        const { errors } =  e.response.data
+        const { errors = [] } =  e.response.data
         let emailError = ''
         let passwordError = ''
         if (errors.includes('user.already.exists')) {

@@ -1,7 +1,6 @@
 import React from 'react'
 import styled, { keyframes, css } from 'styled-components'
-import NoiseImg from '../../resources/images/noise.png'
-import { roundNumber } from '../../utils'
+import { roundNumber, spacifyNumber } from '../../utils'
 import useStores from '../../hooks/useStores'
 import { observer } from 'mobx-react'
 import { Block } from '../../components/Block'
@@ -12,30 +11,35 @@ import { RouteName } from '../../router/segments'
 const aniTime = '1000ms'
 const bezier = 'ease'
 
+const CollateralFill = keyframes`
+  from{right: 100%;}
+  to{right: 30%;}
+`
+
+const CollateralTextHide = keyframes`
+  from {opacity: 1; transform: scale(1); width: auto;}
+  to{opacity: 0; transform: scale(0.8); width: 0;}
+`
+
+const CollateralTextShow = keyframes`
+  from{opacity: 0; transform: scale(0.8); width: 0;}
+  to {opacity: 1; transform: scale(1); width: auto;}
+`
+
 const BackToFront = keyframes`
-  from {transform: translate(0,0);}
-  30% {transform: translate(260px,0) rotate(15deg);}
-  to {transform: translate(0,0);z-index:10;}
+  from {transform: scale(0.9,0.9);}
+  to {transform: scale(1,1);z-index:10;}
 `
 
 const BackToBackAgain = keyframes`
-  from {transform: translate(0,0);z-index:10;}
-  30% {transform: translate(260px,0) rotate(15deg);}
-  32% {z-index:-1;}
-  to {transform: translate(0,0);}
+  from {z-index:10; transform: scale(1,1)}
+  51% {z-index:-1;}
+  to {transform: scale(0.9,0.9);}
 `
 
 const FadeIn = keyframes`
-  from {
-     margin-right: 0px;
-     margin-top: 0px;
-     z-index: -10;
-  }
-  to {
-    margin-right: -64px;
-    margin-top: -64px;
-    z-index: -10;
-  }
+  from{transform: scale(0.7); opacity: 0;}
+  to{transform: scale(0.9); opacity: 1;}
 `
 
 const animationCondition = (isShown: null | boolean) => {
@@ -45,50 +49,43 @@ const animationCondition = (isShown: null | boolean) => {
     return css`${BackToBackAgain} ${aniTime} ${bezier} forwards`
   } else {
     // return 'none'
-    return css`${FadeIn} ${aniTime} ${bezier} forwards`
+    return css`${FadeIn} 650ms ease forwards;`
+  }
+}
+
+const textAnimationCondition = (isShown?: null | boolean) => {
+  if (isShown === true) {
+    return css`${CollateralTextShow} ${aniTime} ${bezier} forwards`
+  } else if(isShown === false) {
+    return css`${CollateralTextHide} ${aniTime} ${bezier} forwards`
+  } else {
+    return 'none'
+    // return css`${FadeIn} 650ms ease forwards;`
   }
 }
 
 const Container = styled.div<{ isShown: null | boolean }>`
   width: 444px;
-  height: 270px;
+  height: 268px;
   box-sizing: border-box;
-  
   position: absolute;
   z-index: -10;
-  margin-right: -64px;
-  margin-top: -64px;
+  bottom: -56px;
+  transform: scale(0.9);
+  overflow: hidden;
+  border-radius: 10px;
 
   animation: ${props => animationCondition(props.isShown)}
 `
 
 const DetailsBody = styled.div`
   height: 220px;
-  padding: 24px 16px;
+  padding: 24px;
   box-sizing: border-box;
   border-top-left-radius: 6px;
   border-top-right-radius: 6px;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0) 100%), rgba(255, 255, 255, 1);
+  background-color: rgba(255, 255, 255, 0.9);
   box-shadow: 0px 24px 40px rgba(0, 0, 0, 0.4);
-`
-
-const FlexContainer = styled.div`
-  display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap;
-`
-
-const FlexItem = styled.div`
-  width: 50%;
-`
-
-const Content = styled.div`
-  box-sizing: border-box;
-  // backdrop-filter: blur(51px);
-  width: inherit;
-  height: inherit;
-  border-radius: inherit;
-  padding: 24px 24px 16px 24px;
 `
 
 enum EastBalanceType {
@@ -119,126 +116,170 @@ const FracPart = styled.span<{ type: EastBalanceType }>`
   color: ${props => props.theme.darkBlue50};
 `
 
-const EastBalance = (props: IEastBalanceProps) => {
-  const { type, value, postfix } = props
-  const [integerPart, fractionalPart] = value.toString().split('.')
-  return <EastBalanceContainer style={props.style}>
-    <IntegerPart type={type}>{integerPart}</IntegerPart>
-    {(fractionalPart || postfix) &&
-      <FracPart type={type}>
-        {fractionalPart && `.${fractionalPart}`}
-        {postfix && ` ${postfix}`}
-      </FracPart>
-    }
-  </EastBalanceContainer>
-}
-
-const Description = styled.div`
-  color: ${props => props.theme.darkBlue50};
-  font-size: 11px;
-  font-weight: 300;
-`
-
-const DetailsFooter = styled.div<{ gradientSteps: string[]; percent: number; }>`
-  position: absolute;
-  box-sizing: border-box;
-  width: 100%;
-  bottom: 0;
-  left: 0;
-  height: 48px;
-  border-bottom-left-radius: 6px;
-  border-bottom-right-radius: 6px;
+const ProgressBar = styled.div<{ gradientSteps: string[]; percent: number; }>`
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding-left: 24px;
-  padding-right: 16px;
-  background: rgb(222,144,0);
-  background: linear-gradient(90deg, ${props => props.gradientSteps[0]} 0%, ${props => props.gradientSteps[1]} ${props => props.percent / 2}%, ${props => props.gradientSteps[2]} ${props => props.percent}%);
+  width: ${props => props.percent}%;
+  height: inherit;
+  background: linear-gradient(90deg, ${props => props.gradientSteps[0]} 0%, ${props => props.gradientSteps[1]} 100%);
+  border-bottom-left-radius: 6px;
 `
 
-const CollateralValue = styled.div`
-  font-weight: bold;
+const NoCollateralWrapper = styled.div`
+  width: 100%;
+  height: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`
+
+const CollateralValue = styled.div<{ isShown?: null | boolean }>`
+  padding-left: 24px;
+  font-family: Staatliches;
+  font-weight: 400;
   font-size: 18px;
-  line-height: 34px;
+  line-height: 36px;
   color: #FFFFFF;
 `
 
-const CardFooter = (props: { vaultCollateral: number }) => {
+const Text = styled.span<{ isShown?: null | boolean }>`
+  font-size: 18px;
+  line-height: 16px;
+  font-family: Staatliches;
+  color: #000000;
+  opacity: 0.5;
+  letter-spacing: 3px;
+  font-weight: 300;
+  text-transform: uppercase;
+  
+  animation: ${props => textAnimationCondition(props.isShown)}
+`
+
+const PrimaryText = styled(Text)`
+    opacity: 1;
+`
+
+const SmallButtonContainer = styled.div`
+  width: 104px;
+  display: inline-block;
+  :not(:first-child) {
+    margin-left: 16px;
+  }
+`
+
+const ProgressBarWrapper  = styled.div<{ gradientSteps: string[]; }>`
+  font-family: Staatliches;
+  transition: padding 600ms ease;
+  height: 48px;
+  background-color: #C0C0BA;
+  display: flex;
+  align-items: center;
+  position: relative;
+  padding-left: 195px;
+  
+  &::before {
+    z-index: 1;
+    position: absolute;
+    content: '';
+    left: 0%;
+    top: 0%;
+    bottom: 0%;
+    right: 100%;
+    animation: ${CollateralFill} 800ms ease forwards;
+    background: linear-gradient(90deg, ${props => props.gradientSteps[0]} 0%, ${props => props.gradientSteps[1]} 100%);
+    box-shadow: 0px 4px 12px ${props => props.gradientSteps[1]};
+  }
+`
+
+const ProgressBarText = styled.div`
+  z-index: 100;
+  display: flex;
+  justify-content: center;
+  color: white;
+`
+
+const Percent = styled.div`
+  
+`
+
+const Title = styled.div`
+  margin-left: 8px;
+  transform: scale(0);
+`
+
+const CardFooter = (props: { vaultCollateral: number, isShown: null | boolean }) => {
   const { configStore } = useStores()
-  const { router } = useRoute()
   const defaultCollateral = configStore.getWestCollateral()
-  const  liquidationCollateral = configStore.getLiquidationCollateral()
+  // const  liquidationCollateral = configStore.getLiquidationCollateral()
   const { vaultCollateral } = props
 
   let gradientSteps = ['#429b81', '#00805d', '#00805d'] // 250% collateral
-  const gradientPercent = Math.round(((vaultCollateral - liquidationCollateral) / (defaultCollateral - liquidationCollateral)) * 100)
+  // const gradientPercent = Math.round(((vaultCollateral - liquidationCollateral) / (defaultCollateral - liquidationCollateral)) * 100)
+  const gradientPercent = Math.round(vaultCollateral / defaultCollateral * 100)
   if (vaultCollateral >= 2.55) {
-    gradientSteps = ['#676797', '#4a4b9e', '#c0c0ba']
+    gradientSteps = ['#00805E', '#00800D']
   } else if (vaultCollateral <= 2.45 && vaultCollateral > 1.7) {
-    gradientSteps = ['#d78b01', '#d78b01', '#c0c0ba']
+    gradientSteps = ['#DE6A00', '#DE9000']
   } else if (vaultCollateral <= 1.7) {
-    gradientSteps = ['#f1212b', '#f1212b', '#c0c0ba']
+    gradientSteps = ['#F0212B', '#F0212B']
   }
 
-  return <DetailsFooter gradientSteps={gradientSteps} percent={gradientPercent}>
-    <CollateralValue>{Math.round(vaultCollateral * 100)}% collateral</CollateralValue>
-    <div style={{ width: '120px' }}>
-      <Button
-        size={'small'}
-        style={{ color: '#FFFFFF', background: 'rgba(4, 53, 105, 0.15)' }}
-        onClick={() => router.navigate(RouteName.SupplyVault)}
-      >
-      Add WEST
-      </Button>
-    </div>
-  </DetailsFooter>
+  const content = vaultCollateral > 0 ?
+    <ProgressBarWrapper gradientSteps={gradientSteps}>
+      <ProgressBarText>
+        <Percent>{Math.round(vaultCollateral * 100)}%</Percent>
+        <Title>collateral</Title>
+      </ProgressBarText>
+    </ProgressBarWrapper>
+    : <NoCollateralWrapper>
+      <CollateralValue>No collateral</CollateralValue>
+    </NoCollateralWrapper>
+
+  return content
 }
 
-export const DetailedCard = observer((props: { isShown: null | boolean, onClick: () => void }) => {
-  const { dataStore } = useStores()
-  const { eastBalance, vaultEastAmount, vault, transferedEastAmount, vaultCollateral } = dataStore
+export const DetailedCard = observer((props: { isShown: null | boolean, onClick: (e: any) => void }) => {
+  const { router } = useRoute()
+  const { dataStore, authStore } = useStores()
+  const { address } = authStore
+  const { westBalance, eastBalance, vaultEastAmount, vault, transferedEastAmount, vaultCollateral } = dataStore
   return <Container {...props}>
     <DetailsBody>
-      <Block marginTop={12}>
-        <EastBalance type={EastBalanceType.default} value={eastBalance} postfix={'EAST'} />
-      </Block>
+      <div>
+        <PrimaryText>{address}</PrimaryText>
+        <Block marginTop={0}>
+          <Text>current address</Text>
+        </Block>
+      </div>
       <Block marginTop={24}>
-        <FlexContainer>
-          <FlexItem>
-            <EastBalance type={EastBalanceType.small} value={vaultEastAmount} />
-            <Block marginTop={4}>
-              <Description>Collateralized</Description>
-            </Block>
-          </FlexItem>
-          <FlexItem>
-            <EastBalance type={EastBalanceType.small} value={transferedEastAmount} />
-            <Block marginTop={4}>
-              <Description>Transfered (not collateralized)</Description>
-            </Block>
-          </FlexItem>
-        </FlexContainer>
+        <div>
+          <PrimaryText>{spacifyNumber(westBalance)}</PrimaryText>
+          <Block marginTop={0}>
+            <Text>west balance</Text>
+          </Block>
+        </div>
       </Block>
       <Block marginTop={16}>
-        <Description>In Vault</Description>
-        <Block marginTop={8}>
-          <FlexContainer>
-            <FlexItem>
-              <EastBalance type={EastBalanceType.small} value={vault.westAmount} />
-              <Block marginTop={4}>
-                <Description>WEST</Description>
-              </Block>
-            </FlexItem>
-            <FlexItem>
-              <EastBalance type={EastBalanceType.small} value={vault.rwaAmount} />
-              <Block marginTop={4}>
-                <Description>USDap</Description>
-              </Block>
-            </FlexItem>
-          </FlexContainer>
-        </Block>
+        <SmallButtonContainer>
+          <Button
+            size={'small'}
+            style={{ color: '#FFFFFF', background: 'rgba(4, 53, 105, 0.15)' }}
+            onClick={() => router.navigate(RouteName.SupplyVault)}
+          >
+            Add WEST
+          </Button>
+        </SmallButtonContainer>
+        <SmallButtonContainer>
+          <Button
+            size={'small'}
+            style={{ color: '#FFFFFF', background: 'linear-gradient(90deg, #5352B8 0%, #323177 100%)' }}
+            onClick={() => router.navigate(RouteName.AddEast)}
+          >
+            Issue EAST
+          </Button>
+        </SmallButtonContainer>
       </Block>
     </DetailsBody>
-    <CardFooter vaultCollateral={vaultCollateral} />
+    <CardFooter vaultCollateral={vaultCollateral} isShown={props.isShown} />
   </Container>
 })

@@ -105,7 +105,7 @@ const PasswordRecovery = () => {
         console.error('Reset password error:', e.message)
         let msg = 'Unknown error. Try again later.'
         if (e.response) {
-          const { data: { errors } } = e.response
+          const { data: { errors = [] } } = e.response
           console.log('response data', errors)
           if (errors.includes(AuthError.TokenExpired) || errors.includes(AuthError.TokenAlreadyUsed)) {
             msg = 'Reset token is expired'

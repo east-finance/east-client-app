@@ -12,3 +12,21 @@ export const cutNumber = (number: string | number, maxFractional = 8): string =>
   }
   return number.toString()
 }
+
+export const spacifyFractional = (number: string | number) => {
+  return number.toString().replace(/(\d{3})/g, '$1 ').trim()
+}
+
+export const spacifyNumber = (number: string | number) => {
+  const match = number.toString().match(/[.,]/)
+  const separator = match ? match[0] : ''
+  // eslint-disable-next-line prefer-const
+  let [integerPart, fractionalPart] = number.toString().split(separator)
+  if (fractionalPart) {
+    fractionalPart = spacifyFractional(fractionalPart)
+  } else {
+    return number
+  }
+
+  return integerPart + separator + fractionalPart
+}

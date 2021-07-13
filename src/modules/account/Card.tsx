@@ -7,24 +7,24 @@ import eastLogoSmall from '../../resources/images/east-logo-small.png'
 import { Block, Block24 } from '../../components/Block'
 import { observer } from 'mobx-react'
 import useStores from '../../hooks/useStores'
-import { roundNumber } from '../../utils'
+import { roundNumber, spacifyFractional, spacifyNumber } from '../../utils'
 import { RouteName } from '../../router/segments'
 import { useRoute } from 'react-router5'
 import { Icon } from '../../components/Icons'
 
 const FrontToFrontAgain = keyframes`
-  from {transform: translate(0,0);z-index:-1}
-  30% {transform: translate(-260px,0) rotate(-15deg);z-index:10;}
-  to {transform: translate(0,0) rotate(0deg);z-index:10;}
+  from {transform: translate(0,0) scale(0.9,0.9);z-index:-1}
+  53% {transform: translate(0,-250px) scale(0.9,0.9);z-index:10;}
+  to {transform: translate(0,0) scale(1,1);z-index:10;}
 `
 
 const FrontToBack = keyframes`
-  from {transform: translate(0,0);}
-  30% {transform: translate(-260px,0) rotate(-15deg);}
-  to {transform: translate(0,0) rotate(0deg);}
+  from {transform: translate(0,0) scale(1,1);}
+  50% {transform: translate(0,-250px) scale(0.9,0.9);}
+  to {transform: translate(0,0)  scale(0.9,0.9);}
 `
 
-const aniTime = '1000ms'
+const aniTime = '750ms'
 const bezier = 'ease'
 
 const animationCondition = (isShown: null | boolean) => {
@@ -51,7 +51,7 @@ const ContentWrapper = styled.div`
   width: 444px;
   height: 260px;
   box-sizing: border-box;
-  padding: 32px 72px 16px 24px;
+  padding: 32px 72px 24px 24px;
   background-image: url(${NoiseImg}), url(${CardBackground});
   background-repeat: no-repeat;
   background-size: cover;
@@ -83,14 +83,14 @@ const BottomItem = styled.div`
 `
 
 const BottomContainer = styled.div`
-  margin-left: 8px;
 `
 
 const FlexColumnWrapper = styled.div`
   display: flex;
+  justify-content: space-between;
   
   > div {
-    width: 50%:
+    width: 40%;
   }
 `
 
@@ -163,7 +163,13 @@ const FracPart = styled.span`
 
 const EastBalance = (props: IEastBalanceProps) => {
   const { value } = props
-  const [integerPart, fractionalPart] = roundNumber(value, 2).toString().split('.')
+  const match = value.toString().match(/[.,]/)
+  const separator = match ? match[0] : ''
+  // eslint-disable-next-line prefer-const
+  let [integerPart, fractionalPart] = value.toString().split(separator)
+  if (fractionalPart) {
+    fractionalPart = spacifyFractional(fractionalPart)
+  }
   return <div>
     <IntegerPart>{integerPart}</IntegerPart>
     {fractionalPart &&
@@ -202,22 +208,22 @@ export const AccountCard = observer((props: { isShown: null | boolean, onClick: 
       {isPositiveBalance &&
         <BottomContainer>
           <div>
-            <BottomItem>{vault.eastAmount}</BottomItem>
+            <BottomItem>{spacifyNumber(vault.eastAmount)}</BottomItem>
             <Block marginTop={4}>
               <BottomItem>EAST issued with vault</BottomItem>
             </Block>
           </div>
-          <FlexColumnWrapper style={{ marginTop: '8px' }}>
+          <FlexColumnWrapper style={{ marginTop: '16px' }}>
             <div>
-              <BottomItem>{vault.westAmount}</BottomItem>
+              <BottomItem>{spacifyNumber(vault.westAmount)}</BottomItem>
               <Block marginTop={4}>
                 <BottomItem>west in vault</BottomItem>
               </Block>
             </div>
             <div>
-              <BottomItem>{vault.westAmount}</BottomItem>
+              <BottomItem>{spacifyNumber(vault.rwaAmount)}</BottomItem>
               <Block marginTop={4}>
-                <BottomItem>west in vault</BottomItem>
+                <BottomItem>usdap in vault</BottomItem>
               </Block>
             </div>
           </FlexColumnWrapper>

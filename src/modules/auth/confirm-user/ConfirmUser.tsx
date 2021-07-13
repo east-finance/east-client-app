@@ -103,7 +103,7 @@ const ConfirmUser = () => {
       let code = ''
       let msg = e.message
       if (e.response) {
-        const { data: { errors } } = e.response
+        const { data: { errors = [] } } = e.response
         if (errors) {
           if (errors.includes(AuthError.TokenAlreadyUsed)) {
             code = AuthError.TokenAlreadyUsed

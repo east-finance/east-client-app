@@ -108,9 +108,10 @@ const SignIn = observer(() => {
           setInProgress(true)
           tokenPair = await authStore.signIn(username, password, onRefreshFailed)
         } catch (e) {
+          console.error('Sign in e')
           let toastText = 'Unknown error. Try again later.'
           if (e.response) {
-            const { errors } =  e.response.data
+            const { errors = [] } =  e.response.data
             setUsernameError('login_error')
             setPasswordError('login_error')
             if (errors.includes(AuthError.UserNotFound)) {
