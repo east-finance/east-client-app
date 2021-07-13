@@ -144,6 +144,7 @@ const PrimaryText = styled(Text)`
 const SmallButtonContainer = styled.div`
   width: 104px;
   display: inline-block;
+  vertical-align: text-top;
   :not(:first-child) {
     margin-left: 16px;
   }
@@ -198,6 +199,14 @@ const Title = styled.div<{ isShown: IsShown }>`
   animation: ${props => titleAnimationCondition(props.isShown)}
 `
 
+const FreeEastText = styled.div`
+  color: rgba(4, 53, 105, 0.5);
+  width: 92px;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 18px;
+`
+
 const StaticTitle = styled.div``
 
 const CardFooter = (props: { vaultCollateral: number, isShown: null | boolean }) => {
@@ -235,7 +244,8 @@ export const DetailedCard = observer((props: { isShown: null | boolean, onClick:
   const { router } = useRoute()
   const { dataStore, authStore } = useStores()
   const { address } = authStore
-  const { westBalance, vaultCollateral } = dataStore
+  const { westBalance, vaultCollateral, vaultEastProfit } = dataStore
+  const { eastAmount: freeEastAmount } = vaultEastProfit
   return <Container {...props}>
     <DetailsBody>
       <div>
@@ -271,6 +281,13 @@ export const DetailedCard = observer((props: { isShown: null | boolean, onClick:
             Issue EAST
           </Button>
         </SmallButtonContainer>
+        {freeEastAmount > 0 &&
+          <SmallButtonContainer>
+            <FreeEastText>
+              {roundNumber(freeEastAmount, 1)} free EAST available
+            </FreeEastText>
+          </SmallButtonContainer>
+        }
       </Block>
     </DetailsBody>
     <CardFooter vaultCollateral={vaultCollateral} isShown={props.isShown} />
