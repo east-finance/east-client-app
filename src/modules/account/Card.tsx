@@ -19,6 +19,7 @@ const FadeInFront = keyframes`
 
 const FrontToFrontAgain = keyframes`
   from {transform: translate(0,0) scale(0.9,0.9);z-index:-1}
+  51% {z-index:-1;}
   53% {transform: translate(0,-250px) scale(0.9,0.9);z-index:10;}
   to {transform: translate(0,0) scale(1,1);z-index:10;}
 `
