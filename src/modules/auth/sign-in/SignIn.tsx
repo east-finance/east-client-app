@@ -14,6 +14,8 @@ import { FormErrors } from '../../../components/PasswordRules'
 import { AuthError } from '../../../api/apiErrors'
 import { ButtonSpinner, RelativeContainer } from '../../../components/Spinner'
 import { observer } from 'mobx-react'
+import { LSKeys, SignStrategy } from '../../../stores/SignStore'
+import { AxiosError } from 'axios'
 
 const Container = styled.div`
   width: 376px;
@@ -47,7 +49,7 @@ const AdditionalText = styled.span`
 `
 
 const SignIn = observer(() => {
-  const { authStore } = useStores()
+  const { authStore, configStore, signStore, dataStore } = useStores()
   const { router, route } = useRoute()
 
   const [username, setUsername] = useState(localStorage.getItem('test_login') || route.params.email || '')
@@ -83,6 +85,27 @@ const SignIn = observer(() => {
     }
   }
 
+  const handleLoginError = (e: AxiosError) => {
+    console.error('Sign in error', e.message)
+    let toastText = 'Unknown error. Try again later.'
+    if (e.response) {
+      const { errors = [] } =  e.response.data
+      setUsernameError('login_error')
+      setPasswordError('login_error')
+      if (errors.includes(AuthError.UserNotFound)) {
+        toastText = 'Account with this email is not found'
+      } else if (errors.includes(AuthError.WrongPassword)) {
+        toastText = 'Wrong password'
+      } else if (errors.includes(AuthError.UserShouldBeConfirmed)) {
+        toastText = 'Account is not confirmed'
+      }
+    }
+    toast.dismiss()
+    toast(<ErrorNotification title={toastText} />, {
+      hideProgressBar: true
+    })
+  }
+
   const onLoginClick = async () => {
     if (!inProgress) {
       const { userMessage, passMessage } = validateForm()
@@ -107,31 +130,50 @@ const SignIn = observer(() => {
         try {
           setInProgress(true)
           tokenPair = await authStore.signIn(username, password, onRefreshFailed)
+          await configStore.loadEastContractConfig()
+          await configStore.loadNodeConfig()
+          await signStore.initWeSDK()
         } catch (e) {
-          let toastText = 'Unknown error. Try again later.'
-          if (e.response) {
-            const { errors } =  e.response.data
-            setUsernameError('login_error')
-            setPasswordError('login_error')
-            if (errors.includes(AuthError.UserNotFound)) {
-              toastText = 'Account with this email is not found'
-            } else if (errors.includes(AuthError.WrongPassword)) {
-              toastText = 'Wrong password'
-            } else if (errors.includes(AuthError.UserShouldBeConfirmed)) {
-              toastText = 'Account is not confirmed'
-            }
-          }
-          toast.dismiss()
-          toast(<ErrorNotification title={toastText} />, {
-            hideProgressBar: true
-          })
+          handleLoginError(e)
         } finally {
           setInProgress(false)
         }
 
         if (tokenPair) {
           authStore.loginWithTokenPair(tokenPair)
-          router.navigate(RouteName.SignInWallet)
+          authStore.setPassword(password)
+
+          try {
+            setInProgress(true)
+            if (signStore.getSignStrategy() === SignStrategy.Seed) {
+              const encryptedSeed = localStorage.getItem(LSKeys.EncryptedSeed)
+              const lastSelectedAddress = localStorage.getItem(LSKeys.LastSelectedAddress)
+              if (encryptedSeed && lastSelectedAddress) {
+                const decryptedPhrase = signStore.decryptSeedPhrase(encryptedSeed, password, lastSelectedAddress)
+                if(decryptedPhrase) {
+                  const seed = signStore.weSDK.Seed.fromExistingPhrase(decryptedPhrase)
+                  console.log('Seed address:', seed.address)
+                  signStore.setSignStrategy(SignStrategy.Seed)
+                  signStore.setSeed(seed)
+                  authStore.setSelectedAddress(seed.address)
+                  await dataStore.startPolling(seed.address)
+                  authStore.setLoggedIn(true)
+                  router.navigate(RouteName.Account)
+                } else {
+                  throw Error('No available sign strategy')
+                }
+              } else {
+                throw Error('No available sign strategy')
+              }
+            } else {
+              throw Error('No available sign strategy')
+            }
+          } catch (e) {
+            router.navigate(RouteName.SignInSelectType)
+          } finally {
+            setInProgress(false)
+          }
+
         }
       }
     }

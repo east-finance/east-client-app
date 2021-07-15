@@ -78,6 +78,10 @@ export default class ConfigStore {
     return this.config.eastContractId || ''
   }
 
+  getEastContractVersion () {
+    return 1
+  }
+
   getClientAddress () {
     return this.config.clientAddress || ''
   }

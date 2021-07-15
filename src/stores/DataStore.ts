@@ -54,7 +54,7 @@ export default class DataStore {
   // Vault collateral percentage: converted from "expectedVaultWestAmount"
   get vaultCollateral () {
     const westPart = 1 - this.configStore.getUsdpPart()
-    const currentVaultCollateral = (+this.vault.westAmount * +this.westRate) / (+this.vault.eastAmount * westPart * +this.usdapRate)
+    const currentVaultCollateral = (+this.vault.westAmount * +this.westRate) / (+this.vault.eastAmount * westPart)
     return roundNumber(currentVaultCollateral, 2)
   }
 
@@ -192,7 +192,8 @@ export default class DataStore {
     const usdpAmount = westToUsdpAmount * westRate / usdapRate
     return {
       eastAmount: roundNumber(eastAmount, 8),
-      usdpAmount: roundNumber(usdpAmount, 8)
+      usdpAmount: roundNumber(usdpAmount, 8),
+      westAmount: roundNumber(+westAmount - westToUsdpAmount, 8)
     }
   }
 

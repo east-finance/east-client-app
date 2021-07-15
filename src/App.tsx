@@ -13,17 +13,20 @@ import Content from './Content'
 import theme from './components/theme'
 import StyleGlobal from './resources/styles/styles-global'
 import { Api } from './api'
+import SignStore from './stores/SignStore'
 
 const api = new Api()
 const configStore = new ConfigStore(api)
 const authStore = new AuthStore(router, api)
 const dataStore = new DataStore(api, configStore)
+const signStore = new SignStore(configStore, authStore)
 
 const stores = {
   api,
   authStore,
   configStore,
-  dataStore
+  dataStore,
+  signStore
 }
 
 initI18n()

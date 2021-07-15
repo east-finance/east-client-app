@@ -1,28 +1,36 @@
 import React from 'react'
 import styled, { keyframes, css } from 'styled-components'
-import CardBackground from '../../resources/images/card_bg.png'
+import CardBackground from '../../resources/images/card-dark-back.jpeg'
 import NoiseImg from '../../resources/images/noise.png'
 import iconPlus from '../../resources/images/plus.png'
+import eastLogoSmall from '../../resources/images/east-logo-small.png'
 import { Block, Block24 } from '../../components/Block'
 import { observer } from 'mobx-react'
 import useStores from '../../hooks/useStores'
-import { roundNumber } from '../../utils'
+import { roundNumber, spacifyFractional, spacifyNumber } from '../../utils'
 import { RouteName } from '../../router/segments'
 import { useRoute } from 'react-router5'
+import { Icon } from '../../components/Icons'
+
+const FadeInFront = keyframes`
+  from{transform: scale(0.8); opacity: 0;}
+  to{transform: scale(1); opacity: 1;}
+`
 
 const FrontToFrontAgain = keyframes`
-  from {transform: translate(0,0);z-index:-1}
-  30% {transform: translate(-260px,0) rotate(-15deg);z-index:10;}
-  to {transform: translate(0,0) rotate(0deg);z-index:10;}
+  from {transform: translate(0,0) scale(0.9,0.9);z-index:-1}
+  51% {z-index:-1;}
+  53% {transform: translate(0,-250px) scale(0.9,0.9);z-index:10;}
+  to {transform: translate(0,0) scale(1,1);z-index:10;}
 `
 
 const FrontToBack = keyframes`
-  from {transform: translate(0,0);}
-  30% {transform: translate(-260px,0) rotate(-15deg);}
-  to {transform: translate(0,0) rotate(0deg);}
+  from {transform: translate(0,0) scale(1,1);}
+  50% {transform: translate(0,-250px) scale(0.9,0.9);}
+  to {transform: translate(0,0)  scale(0.9,0.9);}
 `
 
-const aniTime = '1000ms'
+const aniTime = '750ms'
 const bezier = 'ease'
 
 const animationCondition = (isShown: null | boolean) => {
@@ -31,24 +39,20 @@ const animationCondition = (isShown: null | boolean) => {
   } else if(isShown === false) {
     return css`${FrontToBack} ${aniTime} ${bezier} forwards`
   } else {
-    return 'none'
+    return css`${FadeInFront} 650ms ease forwards`
   }
 }
 
-const Container = styled.div<{ isOutlined?: boolean, isShown: null | boolean }>`
-  ${({ isOutlined }) => isOutlined && `
-    border: 1px solid white;
-    border-radius: 6px;
-  `}
-
+const Container = styled.div<{ isShown: null | boolean }>`
+  // z-index: 10;
   animation: ${props => animationCondition(props.isShown)}
 `
 
-const ContentWrapper = styled.div<{ isActive?: boolean }>`
+const ContentWrapper = styled.div`
   width: 444px;
   height: 260px;
   box-sizing: border-box;
-  padding: 32px 72px 16px 24px;
+  padding: 32px 72px 24px 24px;
   background-image: url(${NoiseImg}), url(${CardBackground});
   background-repeat: no-repeat;
   background-size: cover;
@@ -59,12 +63,11 @@ const ContentWrapper = styled.div<{ isActive?: boolean }>`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  opacity: ${props => props.isActive ? 1 : 0.5};
 `
 
 const TopContainer = styled.div``
 
-const TokenName = styled.div`
+const Description = styled.div`
   font-size: 16px;
   line-height: 16px;
   letter-spacing: 2px;
@@ -72,15 +75,24 @@ const TokenName = styled.div`
 `
 
 const BottomItem = styled.div`
-  color: #FFFFFF;
-  font-weight: 300;
-  font-size: 18px;
+  font-size: 16px;
   line-height: 16px;
   letter-spacing: 2px;
+  color: #F8F8F8;
+  font-weight: 300;
+  text-transform: uppercase;
 `
 
 const BottomContainer = styled.div`
-  margin-left: 8px;
+`
+
+const FlexColumnWrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
+  
+  > div {
+    width: 40%;
+  }
 `
 
 const PlusContainer = styled.div`
@@ -108,6 +120,13 @@ const PlusImage = styled.div`
   :hover {
     transform: scale(1.1);
   }
+`
+
+const EastLogoSmall = styled(Icon)`
+  position: absolute;
+  z-index: 1;
+  top: 8px;
+  right: 8px;
 `
 
 const AddEast = styled.div`
@@ -145,7 +164,13 @@ const FracPart = styled.span`
 
 const EastBalance = (props: IEastBalanceProps) => {
   const { value } = props
-  const [integerPart, fractionalPart] = roundNumber(value, 8).toString().split('.')
+  const match = value.toString().match(/[.,]/)
+  const separator = match ? match[0] : ''
+  // eslint-disable-next-line prefer-const
+  let [integerPart, fractionalPart] = value.toString().split(separator)
+  if (fractionalPart) {
+    fractionalPart = spacifyFractional(fractionalPart)
+  }
   return <div>
     <IntegerPart>{integerPart}</IntegerPart>
     {fractionalPart &&
@@ -156,13 +181,13 @@ const EastBalance = (props: IEastBalanceProps) => {
 
 export const AccountCard = observer((props: { isShown: null | boolean, onClick: (e: any) => void }) => {
   const { router } = useRoute()
-  const { authStore, dataStore } = useStores()
-  const { address } = authStore
+  const { dataStore } = useStores()
 
-  const { westBalance, eastBalance } = dataStore
-  const isPositiveBalance = +eastBalance > 0
+  const { eastBalance, vault } = dataStore
+  const isPositiveBalance = +eastBalance > 0 || +vault.eastAmount > 0
 
-  return <Container {...props} isOutlined={!isPositiveBalance}>
+  return <Container {...props}>
+    <EastLogoSmall backgroundImage={eastLogoSmall} size={50} />
     {!isPositiveBalance &&
       <PlusContainer>
         <PlusImage onClick={() => router.navigate(RouteName.BuyEast)}/>
@@ -171,18 +196,37 @@ export const AccountCard = observer((props: { isShown: null | boolean, onClick: 
         </Block24>
       </PlusContainer>
     }
-    <ContentWrapper isActive={isPositiveBalance}>
-      <TopContainer>
-        <EastBalance value={eastBalance} />
-        <Block marginTop={4}>
-          <TokenName>EAST</TokenName>
-        </Block>
-      </TopContainer>
-      {address &&
+    <ContentWrapper>
+      {isPositiveBalance &&
+        <TopContainer>
+          <EastBalance value={eastBalance} />
+          <Block marginTop={12}>
+            <Description>EAST available</Description>
+          </Block>
+        </TopContainer>
+      }
+      {isPositiveBalance &&
         <BottomContainer>
-          <BottomItem>{address}</BottomItem>
-          <Block marginTop={8} />
-          <BottomItem>{roundNumber(westBalance) + ' WEST'}</BottomItem>
+          <div>
+            <BottomItem>{spacifyNumber(vault.eastAmount)}</BottomItem>
+            <Block marginTop={4}>
+              <BottomItem>EAST issued with vault</BottomItem>
+            </Block>
+          </div>
+          <FlexColumnWrapper style={{ marginTop: '16px' }}>
+            <div>
+              <BottomItem>{spacifyNumber(vault.westAmount)}</BottomItem>
+              <Block marginTop={4}>
+                <BottomItem>west in vault</BottomItem>
+              </Block>
+            </div>
+            <div>
+              <BottomItem>{spacifyNumber(vault.rwaAmount)}</BottomItem>
+              <Block marginTop={4}>
+                <BottomItem>usdap in vault</BottomItem>
+              </Block>
+            </div>
+          </FlexColumnWrapper>
         </BottomContainer>
       }
     </ContentWrapper>

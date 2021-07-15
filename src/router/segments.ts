@@ -4,6 +4,8 @@ export const RouteSegment = {
   auth: 'auth',
   signIn: 'sign-in',
   signUp: 'sign-up',
+  signInSelectType: 'select-type',
+  signInSeed: 'sign-in-seed',
   signInWallet: 'sign-in-wallet',
   passwordRecovery: 'password-recovery',
   passwordRestore: 'password-restore',
@@ -24,6 +26,8 @@ export const RouteSegment = {
 
 export const RouteName = {
   SignIn: buildRouteName(RouteSegment.auth, RouteSegment.signIn),
+  SignInSelectType: buildRouteName(RouteSegment.auth, RouteSegment.signInSelectType),
+  SignInSeed: buildRouteName(RouteSegment.auth, RouteSegment.signInSeed),
   SignInWallet: buildRouteName(RouteSegment.auth, RouteSegment.signInWallet),
   SignUp: buildRouteName(RouteSegment.auth, RouteSegment.signUp),
   PasswordRecovery: buildRouteName(RouteSegment.auth, RouteSegment.passwordRecovery),

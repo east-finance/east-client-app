@@ -27,7 +27,7 @@ const ButtonContainer = styled.div<ButtonProps>`
   user-select: none;
   
   ${({ size }) => size === 'small' && `
-    height: 32px;
+    height: 38px;
     border-radius: 42px;
   `}
 

@@ -12,7 +12,7 @@ import {
 } from '../../../../components/TextTable'
 import { roundNumber } from '../../../../utils'
 import { ButtonSpinner, RelativeContainer } from '../../../../components/Spinner'
-import { EastOpType, IVault } from '../../../../interfaces'
+import { EastOpType, TxTextType } from '../../../../interfaces'
 
 interface IProps {
   westAmount: string;
@@ -34,41 +34,35 @@ const ButtonsContainer = styled.div`
 `
 
 export const SupplyConfirmation = observer((props: IProps) => {
-  const { configStore, dataStore } = useStores()
-  const vault: IVault = dataStore.vault
+  const { configStore, dataStore, signStore } = useStores()
+  const { vault } = dataStore
 
   const [inProgress, setInProgress] = useState(false)
 
   const sendSupply = async () => {
-    const state = await window.WEWallet.publicState()
-    const { account: { address, publicKey } } = state
-    const ownerAddress = configStore.getEastOwnerAddress()
-    const eastContractId = configStore.getEastContractId()
-    if (state.locked) {
-      await window.WEWallet.auth({ data: 'EAST Client auth' })
-    }
-    const transfer = {
-      type: 'transferV3',
-      tx: {
-        recipient: ownerAddress,
-        assetId: 'WAVES',
-        amount: +props.westAmount * Math.pow(10, 8),
-        fee: configStore.getTransferFee(),
-        attachment: '',
-        timestamp: Date.now(),
-        atomicBadge: {
-          trustedSender: address
-        }
+    const { address, publicKey } = await signStore.getPublicData()
+    const transferBody = {
+      recipient: configStore.getEastOwnerAddress(),
+      amount: Math.round(+props.westAmount * Math.pow(10, 8)),
+      fee: configStore.getTransferFee(),
+      attachment: '',
+      timestamp: Date.now(),
+      atomicBadge: {
+        trustedSender: address
       }
     }
-    const transferId = await window.WEWallet.getTxId('transferV3', transfer.tx)
+    const transfer = {
+      type: TxTextType.transferV3,
+      tx: transferBody
+    }
+    const transferId = await signStore.getTransferId(transferBody)
     const dockerCall = {
-      type: 'dockerCallV4',
+      type: TxTextType.dockerCallV4,
       tx: {
         senderPublicKey: publicKey,
         authorPublicKey: publicKey,
-        contractId: eastContractId,
-        contractVersion: 1,
+        contractId: configStore.getEastContractId(),
+        contractVersion: configStore.getEastContractVersion(),
         timestamp: Date.now(),
         params: [{
           type: 'string',
@@ -84,8 +78,8 @@ export const SupplyConfirmation = observer((props: IProps) => {
       }
     }
     const transactions = [transfer, dockerCall]
-    const result = await window.WEWallet.broadcastAtomic(transactions, configStore.getAtomicFee())
-    console.log('Broadcast supply vault result:', result)
+    const result = await signStore.broadcastAtomic(transactions)
+    console.log('Broadcast SUPPLY vault result:', result)
   }
 
   const onAddWestClicked = async () => {

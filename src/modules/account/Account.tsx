@@ -17,7 +17,7 @@ import { TransactionsHistory } from './modals/TransactionsHistory'
 import { AddEast } from './modals/add_east/AddEast'
 import { TakeWest } from './modals/take_west/TakeWest'
 import { CloseVault } from './modals/close-vault/CloseVault'
-import { DetailedCard } from './DetailedCardOld'
+import { DetailedCard } from './DetailedCard'
 import useStores from '../../hooks/useStores'
 import { SupplyVault } from './modals/supply/SupplyVault'
 import { BackgroundVideo } from '../../components/BackgroundVideo'
@@ -30,7 +30,7 @@ const CardsContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-top: 159px;
+  margin-top: 150px;
   cursor: pointer;
 `
 
@@ -113,14 +113,14 @@ const AccountCards = observer(() => {
   const [isFrontShown, setFrontShown] = useState<null | boolean>(null)
   const isPositiveBalance = +dataStore.vaultEastAmount > 0
   const onClick = (e: any) => {
-    const { childNodes } = e.target
-    if (childNodes) {
-      if (childNodes.length > 0 && (childNodes[0] && childNodes[0].nodeType === 3)) {
-        e.preventDefault()
-        e.stopPropagation()
-        return false
-      }
-    }
+    // const { childNodes } = e.target
+    // if (childNodes) {
+    //   if (childNodes.length > 0 && (childNodes[0] && childNodes[0].nodeType === 3)) {
+    //     e.preventDefault()
+    //     e.stopPropagation()
+    //     return false
+    //   }
+    // }
     if (isPositiveBalance) {
       setFrontShown(isFrontShown === null ? false : !isFrontShown)
     }

@@ -9,9 +9,11 @@ const VideoContainer = styled.video<{ isBlurred: boolean }>`
   position: fixed;
   top: 0;
   z-index: -1;
-  transition: filter 1200ms ease;
-  
-  filter: blur(${props => props.isBlurred ? '12' : '0'}px);
+  // transition: filter 1200ms ease;  
+  //  
+  // ${({ isBlurred }) => isBlurred && `
+  //   filter: blur(12px)
+  // `}
 
   @media (min-aspect-ratio: 16/9) {
     width:100%;

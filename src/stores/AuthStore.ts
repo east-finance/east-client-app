@@ -113,6 +113,10 @@ export default class AuthStore {
     this.writeTokenPair(tokenPair)
   }
 
+  setPassword (password: string) {
+    this.password = password
+  }
+
   setLoggedIn (isLoggedIn: boolean): void {
     this.isLoggedIn = isLoggedIn
   }

@@ -5,7 +5,6 @@ import { PrimaryModal } from '../Modal'
 import { Block, Block16, Block24 } from '../../../components/Block'
 import { InputStatus, SimpleInput } from '../../../components/Input'
 import { Button, ButtonsContainer, NavigationLeftGradientButton } from '../../../components/Button'
-import { dockerCallTransfer } from '../../../utils/txFactory'
 import useStores from '../../../hooks/useStores'
 import { ITag, Tags } from '../../../components/Tags'
 import { roundNumber } from '../../../utils'
@@ -14,6 +13,8 @@ import { ButtonSpinner, RelativeContainer } from '../../../components/Spinner'
 import { observer } from 'mobx-react'
 import { EastOpType } from '../../../interfaces'
 import { useEffect } from 'react'
+import { toast } from 'react-toastify'
+import { ErrorNotification } from '../../../components/Notification'
 
 interface IProps {
   onClose: () => void
@@ -61,7 +62,7 @@ enum Steps {
 }
 
 export const TransferEast = observer((props: IProps) => {
-  const { configStore, dataStore } = useStores()
+  const { configStore, dataStore, signStore } = useStores()
 
   const totalFee = +configStore.getFeeByOpType(EastOpType.transfer)
   const eastAvailable = dataStore.eastBalance
@@ -93,6 +94,20 @@ export const TransferEast = observer((props: IProps) => {
     }
     if (!userAddress) {
       address = 'Enter address'
+    } else {
+      try {
+        const addressBytes = signStore.weSDK.tools.base58.decode(userAddress)
+        const networkByte = configStore.nodeConfig.chainId.charCodeAt(0)
+        if (addressBytes.length === 26) {
+          if (addressBytes[1] !== networkByte) {
+            address = `Wrong network byte (${String.fromCharCode(addressBytes[1])}, expected: ${String.fromCharCode(networkByte)})`
+          }
+        } else {
+          address = 'Wrong address format'
+        }
+      } catch (e) {
+        address = 'Address is not a base64 sequence'
+      }
     }
     return {
       east, address
@@ -105,6 +120,13 @@ export const TransferEast = observer((props: IProps) => {
     if (!east && !address) {
       setCurrentStep(Steps.confirm)
     }
+    if (address) {
+      toast.dismiss()
+      toast(<ErrorNotification title={'Invalid address'} message={address} />, {
+        hideProgressBar: true,
+        delay: 0
+      })
+    }
   }
 
   const options = [{text: '25%', value: '0.25' }, { text: '50%', value: '0.5' }, { text: '75%', value: '0.75' }, { text: '100%', value: '1' }]
@@ -116,20 +138,25 @@ export const TransferEast = observer((props: IProps) => {
   const onConfirmTransfer = async () => {
     try {
       setInProgress(true)
-      const state = await window.WEWallet.publicState()
-      console.log('WALLET state', state)
-      if (state.locked) {
-        await window.WEWallet.auth({ data: 'EAST Client auth' })
-      }
-      const { account: { publicKey } } = state
-      const tx = dockerCallTransfer({
-        publicKey,
+      const { publicKey } = await signStore.getPublicData()
+      const transferTx = {
+        senderPublicKey: publicKey,
+        authorPublicKey: publicKey,
         contractId: configStore.getEastContractId(),
-        recipient: userAddress,
-        amount: +eastAmount
-      })
-      const result = await window.WEWallet.broadcast('dockerCallV3', tx)
-      console.log('Broadcast transfer EAST result:', result)
+        contractVersion: configStore.getEastContractVersion(),
+        timestamp: Date.now(),
+        params: [{
+          type: 'string',
+          key: 'transfer',
+          value: JSON.stringify({
+            to: userAddress,
+            amount: +eastAmount
+          })
+        }],
+        fee: configStore.getDockerCallFee(),
+      }
+      const result = await signStore.broadcastDockerCall(transferTx)
+      console.log('Broadcast TRANSFER east result:', result)
       setCurrentStep(Steps.success)
     } catch(e) {
       console.error('Broadcast transfer EAST error: ', e.message)

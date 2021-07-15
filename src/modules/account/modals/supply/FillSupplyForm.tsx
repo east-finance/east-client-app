@@ -83,7 +83,7 @@ export const FillSupplyForm = observer((props: IProps) => {
   const collateralStep = 0.25
   const levels = Array(50).fill(null).map((_, index) => defaultCollateral + collateralStep * index)
   const levelOptions = levels
-    .filter(level => level > vaultCollateral)
+    .filter(level => level > vaultCollateral + 0.05)
     .slice(0, 5)
     .map(level => {
       return {
