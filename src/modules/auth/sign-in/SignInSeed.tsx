@@ -34,7 +34,7 @@ const SignInSeed = observer(() => {
       toast.dismiss()
       setStatus(InputStatus.default)
       setInProgress(true)
-      const seed = await signStore.weSDK.Seed.fromExistingPhrase(phrase)
+      const seed = await signStore.weSDK.Seed.fromExistingPhrase(phrase.trim())
       console.log('Seed address:', seed.address)
       signStore.setSignStrategy(SignStrategy.Seed)
       signStore.setSeed(seed)
