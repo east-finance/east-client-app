@@ -1,6 +1,5 @@
-import React, { InputHTMLAttributes, useEffect, useRef, useState } from 'react'
+import React, { InputHTMLAttributes, TextareaHTMLAttributes, useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
-import { Block, Block16 } from './Block'
 
 export enum InputStatus {
   default = 'default',
@@ -33,7 +32,37 @@ const InputContainer = styled.input<{ status?: InputStatus; }>`
   `}
 `
 
+const TextAreaContainer = styled.textarea<{ status?: InputStatus; }>`
+  width: 100%;
+  box-sizing: border-box;
+  padding: 12px 16px;
+  font-weight: 500;
+  font-size: 15px;
+  outline: none;
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid;
+  border-color: ${props => props.status === InputStatus.error ? props.theme.red : 'rgba(255, 255, 255, 0.5)'};
+  border-radius: 17px;
+  font-family: Cairo, Helvetica,Arial,sans-serif;
+  transition: border-color 250ms;
+
+  ::placeholder {
+    color: rgba(224, 224, 224, 0.75);
+  }
+  
+  ${({ status }) => status !== InputStatus.error && `
+    :hover, :focus {
+      border-color: #1D87D6;
+    }
+  `}
+`
+
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
+  status?: InputStatus;
+  label?: string;
+}
+
+interface TextAreaProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
   status?: InputStatus;
   label?: string;
 }
@@ -43,6 +72,12 @@ const InputRaw = (props: InputProps, ref: any) => {
 }
 
 export const Input = React.forwardRef(InputRaw)
+
+const TextAreaRaw = (props: TextAreaProps, ref: any) => {
+  return <TextAreaContainer {...props} ref={ref} />
+}
+
+export const TextArea = React.forwardRef(TextAreaRaw)
 
 interface InputExplainProps {
   text: string

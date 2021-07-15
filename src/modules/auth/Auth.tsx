@@ -13,6 +13,8 @@ import { NavigationLeft } from '../../components/Button'
 import PasswordRecovery from './password-recovery/PasswordRecovery'
 import PasswordReset from './password-reset/PasswordReset'
 import ConfirmUser from './confirm-user/ConfirmUser'
+import SignInSelectType from './sign-in/SignInSelectType'
+import SignInSeed from './sign-in/SignInSeed'
 
 const Container = styled.div`
   position: relative;
@@ -81,20 +83,28 @@ const Auth: React.FunctionComponent = () =>  {
     }
   }
   if ([RouteName.SignIn, RouteName.SignUp].includes(routeName)) {
+    title = 'Welcome to EAST'
     content = <Block marginTop={40}>
       <Tabs {...tabsProps} />
     </Block>
-    title = 'Welcome to EAST'
-  } else if(routeName === RouteName.SignInWallet) {
+  } else if(routeName === RouteName.SignInSelectType) {
+    title = 'Login'
     content = <div>
-      <NavigationContainer>
-        <NavigationLeft onClick={() => {
-          router.navigate(RouteName.SignIn)
-        }} />
-      </NavigationContainer>
+      <NavigationContainer><NavigationLeft onClick={() => router.navigate(RouteName.SignIn)} /></NavigationContainer>
+      <SignInSelectType />
+    </div>
+  } else if(routeName === RouteName.SignInSeed) {
+    title = 'Login with SEED phrase'
+    content = <div>
+      <NavigationContainer><NavigationLeft onClick={() => router.navigate(RouteName.SignIn)} /></NavigationContainer>
+      <SignInSeed />
+    </div>
+  } else if(routeName === RouteName.SignInWallet) {
+    title = 'Login with WE Wallet'
+    content = <div>
+      <NavigationContainer><NavigationLeft onClick={() => router.navigate(RouteName.SignIn)} /></NavigationContainer>
       <SignInWallet />
     </div>
-    title = 'Login with WE Wallet'
   } else if(routeName === RouteName.PasswordRecovery) {
     title = 'Password recovery'
     // content = <PasswordRecovery />

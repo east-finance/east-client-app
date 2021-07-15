@@ -8,7 +8,6 @@ import { ITag, Tags } from '../../../../components/Tags'
 import { Button } from '../../../../components/Button'
 import { ButtonSpinner, RelativeContainer } from '../../../../components/Spinner'
 import useStores from '../../../../hooks/useStores'
-import { claimOverpay } from '../../../../utils/txFactory'
 import { TxSendSuccess } from '../../common/TxSendSuccess'
 import { observer } from 'mobx-react'
 
@@ -27,7 +26,7 @@ const Centered = styled.div`
 `
 
 export const TakeWest = observer((props: IProps) => {
-  const { dataStore, configStore } = useStores()
+  const { dataStore, configStore, signStore } = useStores()
   const [isTxSent, setTxSent] = useState(false)
   const [westAmount, setWestAmount] = useState('')
   const [validationError, setValidationError] = useState('')
@@ -48,19 +47,22 @@ export const TakeWest = observer((props: IProps) => {
   }
 
   const sendClaimOverpay = async () => {
-    const state = await window.WEWallet.publicState()
-    const { account: { publicKey } } = state
-    if (state.locked) {
-      await window.WEWallet.auth({ data: 'EAST Client auth' })
-    }
-    const tx = claimOverpay({
-      publicKey: publicKey,
+    const { publicKey } = await signStore.getPublicData()
+    const claimOverpayTx = {
+      senderPublicKey: publicKey,
+      authorPublicKey: publicKey,
       contractId: configStore.getEastContractId(),
+      contractVersion: configStore.getEastContractVersion(),
+      timestamp: Date.now(),
+      params: [{
+        type: 'string',
+        key: 'claim_overpay_init',
+        value: JSON.stringify({ amount: +westAmount })
+      }],
       fee: configStore.getDockerCallFee(),
-      amount: +westAmount
-    })
-    console.log('Claim overpay Docker call tx:', tx)
-    const result = await window.WEWallet.broadcast('dockerCallV3', tx)
+    }
+    console.log('Claim overpay Docker call tx:', claimOverpayTx)
+    const result = await signStore.broadcastDockerCall(claimOverpayTx)
     console.log('Claim overpay broadcast result:', result)
   }
 

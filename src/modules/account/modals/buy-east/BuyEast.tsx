@@ -7,13 +7,15 @@ import { FillForm, FillFormData } from './FillForm'
 import useStores from '../../../../hooks/useStores'
 import { RechargeWest } from './RechargeWest'
 import { BuyWestSuccess } from './Success'
+import { TxTextType } from '../../../../interfaces'
+import { SignStrategy } from '../../../../stores/SignStore'
 
 interface IProps {
   onClose: () => void
 }
 
 export const BuyEast = (props: IProps) => {
-  const { configStore, dataStore, authStore } = useStores()
+  const { configStore, dataStore, authStore, signStore } = useStores()
   const [currentStep, setCurrentStep] = useState(Steps.fill)
   const [eastAmount, setEastAmount] = useState('')
   const [westAmount, setWestAmount] = useState('')
@@ -37,34 +39,34 @@ export const BuyEast = (props: IProps) => {
   }, [])
 
   const sendAtomic = async () => {
-    const state = await window.WEWallet.publicState()
-    const { account: { address, publicKey } } = state
+    const { address, publicKey } = await signStore.getPublicData()
     const ownerAddress = configStore.getEastOwnerAddress()
     const eastContractId = configStore.getEastContractId()
-    console.log('ownerAddress', ownerAddress)
-    console.log('eastContractId', eastContractId)
-    const transfer = {
-      type: 'transferV3',
-      tx: {
-        recipient: ownerAddress,
-        assetId: 'WAVES',
-        amount: Math.round(+westAmount * Math.pow(10, 8)),
-        fee: configStore.getTransferFee(),
-        attachment: '',
-        timestamp: Date.now(),
-        atomicBadge: {
-          trustedSender: address
-        }
+
+    const transferBody = {
+      recipient: ownerAddress,
+      amount: Math.round(+westAmount * Math.pow(10, 8)),
+      fee: configStore.getTransferFee(),
+      attachment: '',
+      timestamp: Date.now(),
+      atomicBadge: {
+        trustedSender: address
       }
     }
-    const transferId = await window.WEWallet.getTxId('transferV3', transfer.tx)
+    const transfer = {
+      type: TxTextType.transferV3,
+      tx: transferBody
+    }
+
+    const transferId = await signStore.getTransferId(transferBody)
+
     const dockerCall = {
-      type: 'dockerCallV4',
+      type: TxTextType.dockerCallV4,
       tx: {
         senderPublicKey: publicKey,
         authorPublicKey: publicKey,
         contractId: eastContractId,
-        contractVersion: 1,
+        contractVersion: configStore.getEastContractVersion(),
         timestamp: Date.now(),
         params: [{
           type: 'string',
@@ -80,10 +82,8 @@ export const BuyEast = (props: IProps) => {
       }
     }
     const transactions = [transfer, dockerCall]
-    // const signedTx = await window.WEWallet.signAtomicTransaction({ transactions, fee: '0' })
-    // console.log('signedTx', signedTx)
-    const result = await window.WEWallet.broadcastAtomic(transactions, configStore.getAtomicFee())
-    console.log('Broadcast atomic result', result)
+    const result = await signStore.broadcastAtomic(transactions)
+    console.log('Broadcast MINT atomic result:', result)
   }
 
   let content = null
@@ -130,10 +130,6 @@ export const BuyEast = (props: IProps) => {
         if (+westAmount > +westBalance) {
           setCurrentStep(Steps.rechargeWest)
         } else {
-          const state = await window.WEWallet.publicState()
-          if (state.locked) {
-            await window.WEWallet.auth({ data: 'EAST Client auth' })
-          }
           await sendAtomic()
           setCurrentStep(Steps.success)
         }

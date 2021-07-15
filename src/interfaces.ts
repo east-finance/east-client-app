@@ -48,3 +48,8 @@ export interface ITransaction {
   rwaAmountDiff: string;
   westAmountDiff: string;
 }
+
+export enum TxTextType {
+  transferV3 = 'transferV3',
+  dockerCallV4 = 'dockerCallV4'
+}

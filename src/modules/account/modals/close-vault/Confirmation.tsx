@@ -15,8 +15,6 @@ import {
 } from '../../../../components/TextTable'
 import { roundNumber } from '../../../../utils'
 import { ButtonSpinner, RelativeContainer } from '../../../../components/Spinner'
-import { IVault } from '../../../../interfaces'
-import { closeVault } from '../../../../utils/txFactory'
 
 interface IProps {
   onPrevClicked: () => void;
@@ -48,24 +46,28 @@ const ButtonsContainer = styled.div`
 `
 
 export const CloseVaultConfirmation = observer((props: IProps) => {
-  const { configStore, dataStore } = useStores()
-  const vault: IVault = dataStore.vault
+  const { configStore, dataStore, signStore } = useStores()
+  const { vault } = dataStore
 
   const [inProgress, setInProgress] = useState(false)
 
   const sendCloseVault = async () => {
-    const state = await window.WEWallet.publicState()
-    const { account: { publicKey } } = state
-    if (state.locked) {
-      await window.WEWallet.auth({ data: 'EAST Client auth' })
-    }
-    const tx = closeVault({
-      publicKey: publicKey,
+    const { address, publicKey } = await signStore.getPublicData()
+    const closeTx = {
+      senderPublicKey: publicKey,
+      authorPublicKey: publicKey,
       contractId: configStore.getEastContractId(),
-      fee: configStore.getDockerCallFee().toString()
-    })
-    console.log('Close vault Docker call tx:', tx)
-    const result = await window.WEWallet.broadcast('dockerCallV3', tx)
+      contractVersion: configStore.getEastContractVersion(),
+      timestamp: Date.now(),
+      params: [{
+        type: 'string',
+        key: 'close_init',
+        value: ''
+      }],
+      fee: configStore.getDockerCallFee(),
+    }
+    console.log('Close vault Docker call tx:', closeTx)
+    const result = await signStore.broadcastDockerCall(closeTx)
     console.log('Close vault broadcast result:', result)
   }
 

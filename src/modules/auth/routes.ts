@@ -10,6 +10,12 @@ export default {
     name: RouteSegment.signUp,
     path: '/sign-up'
   }, {
+    name: RouteSegment.signInSelectType,
+    path: '/select-type'
+  }, {
+    name: RouteSegment.signInSeed,
+    path: '/seed'
+  }, {
     name: RouteSegment.signInWallet,
     path: '/connect-wallet'
   }, {

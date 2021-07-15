@@ -10,6 +10,7 @@ import { BigNumber } from 'bignumber.js'
 import { WestDecimals } from '../../../constants'
 import { ButtonSpinner, RelativeContainer } from '../../../components/Spinner'
 import weLogoSmall from '../../../resources/images/we-logo-small.svg'
+import { SignStrategy } from '../../../stores/SignStore'
 
 const WELogo = styled.div`
   display: inline-block;
@@ -79,7 +80,7 @@ const CenteredContent = styled.div`
 `
 
 const SignInWallet = observer(() => {
-  const { authStore, dataStore, configStore } = useStores()
+  const { authStore, dataStore, signStore } = useStores()
   const { router } = useRoute()
 
   const [selectedAddress, setSelectedAddress] = useState('')
@@ -90,9 +91,8 @@ const SignInWallet = observer(() => {
   const onUseAddressClicked = async () => {
     try {
       setInProgress(true)
-      await configStore.loadEastContractConfig()
-      await configStore.loadNodeConfig()
       authStore.setSelectedAddress(selectedAddress)
+      signStore.setSignStrategy(SignStrategy.WeWallet)
       await dataStore.startPolling(selectedAddress)
       router.navigate(RouteName.Account)
       authStore.setLoggedIn(true)

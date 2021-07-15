@@ -14,9 +14,10 @@ import {
   TextTableSecondaryValue
 } from '../../../../components/TextTable'
 import useStores from '../../../../hooks/useStores'
-import { EastOpType } from '../../../../interfaces'
+import { EastOpType, TxTextType } from '../../../../interfaces'
 import { GradientText } from '../../../../components/Text'
 import { roundNumber } from '../../../../utils'
+import { sign } from 'crypto'
 
 interface IProps {
   eastAmount: string;
@@ -43,7 +44,7 @@ const SendButtonsContainer = styled.div`
 `
 
 export const ConfirmIssueTransaction = (props: IProps) => {
-  const { configStore, dataStore } = useStores()
+  const { configStore, dataStore, signStore } = useStores()
   const [inProgress, setInProgress] = useState(false)
   const totalFee = +configStore.getFeeByOpType(EastOpType.supply)
 
@@ -60,13 +61,9 @@ export const ConfirmIssueTransaction = (props: IProps) => {
   }
 
   const sendSupply = async () => {
-    const state = await window.WEWallet.publicState()
-    const { account: { address, publicKey } } = state
     const ownerAddress = configStore.getEastOwnerAddress()
     const eastContractId = configStore.getEastContractId()
-    if (state.locked) {
-      await window.WEWallet.auth({ data: 'EAST Client auth' })
-    }
+    const { address, publicKey } = await signStore.getPublicData()
 
     // Vault is over-supplied, and user want to convert FREE WEST to EAST and recalculate vault
     if (transferWestAmount <= 0) {
@@ -75,7 +72,7 @@ export const ConfirmIssueTransaction = (props: IProps) => {
         senderPublicKey: publicKey,
         authorPublicKey: publicKey,
         contractId: eastContractId,
-        contractVersion: 1,
+        contractVersion: configStore.getEastContractVersion(),
         timestamp: Date.now(),
         params: [{
           type: 'string',
@@ -85,37 +82,37 @@ export const ConfirmIssueTransaction = (props: IProps) => {
           })
         }],
         fee: configStore.getDockerCallFee(),
+        // atomicBadge: {
+        //   trustedSender: address
+        // }
+      }
+      console.log('Reissue vault tx:', reissueTx)
+      const result = await signStore.broadcastDockerCall(reissueTx)
+      console.log('Broadcast Reissue vault result:', result)
+    } else {
+      const transferBody = {
+        recipient: ownerAddress,
+        amount: Math.round(transferWestAmount * Math.pow(10, 8)),
+        fee: configStore.getTransferFee(),
+        attachment: '',
+        timestamp: Date.now(),
         atomicBadge: {
           trustedSender: address
         }
       }
-      console.log('Reissue Vault tx:', reissueTx)
-      const result = await window.WEWallet.broadcast('dockerCallV3', reissueTx)
-      console.log('Broadcast Reissue vault result:', result)
-    } else {
       const transfer = {
-        type: 'transferV3',
-        tx: {
-          recipient: ownerAddress,
-          assetId: 'WAVES',
-          amount: Math.round(transferWestAmount * Math.pow(10, 8)),
-          fee: configStore.getTransferFee(),
-          attachment: '',
-          timestamp: Date.now(),
-          atomicBadge: {
-            trustedSender: address
-          }
-        }
+        type: TxTextType.transferV3,
+        tx: transferBody
       }
-      const transferId = await window.WEWallet.getTxId('transferV3', transfer.tx)
+      const transferId = await signStore.getTransferId(transferBody)
       console.log('transferId', transferId)
       const dockerCall = {
-        type: 'dockerCallV4',
+        type: TxTextType.dockerCallV4,
         tx: {
           senderPublicKey: publicKey,
           authorPublicKey: publicKey,
           contractId: eastContractId,
-          contractVersion: 1,
+          contractVersion: configStore.getEastContractVersion(),
           timestamp: Date.now(),
           params: [{
             type: 'string',
@@ -131,12 +128,12 @@ export const ConfirmIssueTransaction = (props: IProps) => {
         }
       }
       const dockerCallReissue = {
-        type: 'dockerCallV4',
+        type: TxTextType.dockerCallV4,
         tx: {
           senderPublicKey: publicKey,
           authorPublicKey: publicKey,
           contractId: eastContractId,
-          contractVersion: 1,
+          contractVersion: configStore.getEastContractVersion(),
           timestamp: Date.now(),
           params: [{
             type: 'string',
@@ -152,7 +149,7 @@ export const ConfirmIssueTransaction = (props: IProps) => {
         }
       }
       const transactions = [transfer, dockerCall, dockerCallReissue]
-      const result = await window.WEWallet.broadcastAtomic(transactions, configStore.getAtomicFee())
+      const result = await signStore.broadcastAtomic(transactions)
       console.log('Broadcast Atomic(Transfer+Supply+Reissue) result:', result)
     }
   }
