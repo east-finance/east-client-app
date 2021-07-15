@@ -13,7 +13,8 @@ import { ButtonSpinner, RelativeContainer } from '../../../components/Spinner'
 import { observer } from 'mobx-react'
 import { EastOpType } from '../../../interfaces'
 import { useEffect } from 'react'
-import { config } from '@wavesenterprise/js-sdk'
+import { toast } from 'react-toastify'
+import { ErrorNotification } from '../../../components/Notification'
 
 interface IProps {
   onClose: () => void
@@ -93,6 +94,20 @@ export const TransferEast = observer((props: IProps) => {
     }
     if (!userAddress) {
       address = 'Enter address'
+    } else {
+      try {
+        const addressBytes = signStore.weSDK.tools.base58.decode(userAddress)
+        const networkByte = configStore.nodeConfig.chainId.charCodeAt(0)
+        if (addressBytes.length === 26) {
+          if (addressBytes[1] !== networkByte) {
+            address = `Wrong network byte (${String.fromCharCode(addressBytes[1])}, expected: ${String.fromCharCode(networkByte)})`
+          }
+        } else {
+          address = 'Wrong address format'
+        }
+      } catch (e) {
+        address = 'Address is not a base64 sequence'
+      }
     }
     return {
       east, address
@@ -104,6 +119,13 @@ export const TransferEast = observer((props: IProps) => {
     setFormErrors({ east, address })
     if (!east && !address) {
       setCurrentStep(Steps.confirm)
+    }
+    if (address) {
+      toast.dismiss()
+      toast(<ErrorNotification title={'Invalid address'} message={address} />, {
+        hideProgressBar: true,
+        delay: 0
+      })
     }
   }
 

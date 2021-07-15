@@ -181,10 +181,9 @@ const EastBalance = (props: IEastBalanceProps) => {
 
 export const AccountCard = observer((props: { isShown: null | boolean, onClick: (e: any) => void }) => {
   const { router } = useRoute()
-  const { authStore, dataStore } = useStores()
-  const { address } = authStore
+  const { dataStore } = useStores()
 
-  const { westBalance, eastBalance, vault } = dataStore
+  const { eastBalance, vault } = dataStore
   const isPositiveBalance = +eastBalance > 0 || +vault.eastAmount > 0
 
   return <Container {...props}>
