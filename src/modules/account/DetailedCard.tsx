@@ -10,7 +10,7 @@ import { RouteName } from '../../router/segments'
 
 type IsShown = null | boolean
 
-const aniTime = '1000ms'
+const aniTime = '750ms'
 const bezier = 'ease'
 
 const FadeInBack = keyframes`
@@ -51,17 +51,6 @@ const animationCondition = (isShown: IsShown) => {
     return css`${BackToBackAgain} ${aniTime} ${bezier} forwards`
   } else {
     return css`${FadeInBack} 650ms ease forwards;`
-  }
-}
-
-const textAnimationCondition = (isShown?: IsShown) => {
-  if (isShown === true) {
-    return css`${CollateralTextShow} 600ms ease forwards`
-  } else if(isShown === false) {
-    return css`${CollateralTextHide} 600ms ease forwards`
-  } else {
-    return 'none'
-    // return css`${FadeIn} 650ms ease forwards;`
   }
 }
 
