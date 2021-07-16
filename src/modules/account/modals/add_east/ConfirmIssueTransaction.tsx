@@ -138,9 +138,10 @@ export const ConfirmIssueTransaction = (props: IProps) => {
           params: [{
             type: 'string',
             key: 'reissue',
-            value: JSON.stringify({
-              // maxWestToExchange: reissueWestAmount
-            })
+            value: ''
+            // value: JSON.stringify({
+            //   // maxWestToExchange: reissueWestAmount
+            // })
           }],
           fee: configStore.getDockerCallFee(),
           atomicBadge: {

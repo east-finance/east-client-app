@@ -9,6 +9,9 @@ import { InputStatus, SimpleInput } from '../../../components/Input'
 import { CrossIcon } from '../../../components/Icons'
 import useStores from '../../../hooks/useStores'
 import { GradientText } from '../../../components/Text'
+import { SignStrategy } from '../../../stores/SignStore'
+import { useRoute } from 'react-router5'
+import { RouteName } from '../../../router/segments'
 
 interface IProps {
   onClose: () => void
@@ -179,7 +182,8 @@ const PasswordChange = (props: IPassChangeProps) => {
 }
 
 export const Settings = (props: IProps) => {
-  const { authStore, dataStore } = useStores()
+  const { router } = useRoute()
+  const { authStore, dataStore, signStore } = useStores()
 
   const [passChangeVisible, setPassChangeVisible] = useState(false)
 
@@ -188,6 +192,12 @@ export const Settings = (props: IProps) => {
   const onLogoutClicked = () => {
     dataStore.logout()
     authStore.logout()
+  }
+
+  const onChangeSeedClicked = () => {
+    dataStore.logout()
+    authStore.logout()
+    router.navigate(RouteName.SignInSeed)
   }
 
   return <PrimaryModal {...props}>
@@ -205,6 +215,9 @@ export const Settings = (props: IProps) => {
           <OptionsContainer>
             <Option onClick={onPassChangeClicked}>Change password</Option>
             {/* <Option>View SEED phrase</Option> */}
+            {signStore.signStrategy === SignStrategy.Seed &&
+              <Option onClick={onChangeSeedClicked}>Change SEED</Option>
+            }
             <Option onClick={onLogoutClicked}>Logout</Option>
           </OptionsContainer>
         </Block>

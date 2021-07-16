@@ -125,6 +125,9 @@ const TxItem = (props: { tx: ITransaction}) => {
   } else if (transactionType === EastOpType.claim_overpay) {
     primaryText = `${westDiff} WEST`
     description = 'Claim overpay'
+  } else if (transactionType === EastOpType.liquidate) {
+    primaryText = `${westDiff} WEST`
+    description = 'Vault liquidation'
   } else {
     primaryText = `${eastDiff} EAST`
     description = transactionType

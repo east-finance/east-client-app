@@ -233,8 +233,9 @@ export const DetailedCard = observer((props: { isShown: null | boolean, onClick:
   const { router } = useRoute()
   const { dataStore, authStore } = useStores()
   const { address } = authStore
-  const { westBalance, vaultCollateral, vaultEastProfit } = dataStore
+  const { westBalance, vaultCollateral, vaultEastProfit, vault } = dataStore
   const { eastAmount: freeEastAmount } = vaultEastProfit
+  const isVaultLiquidated = +vault.eastAmount > 0 && +vault.westAmount === 0
   return <Container {...props}>
     <DetailsBody>
       <div>
@@ -252,20 +253,33 @@ export const DetailedCard = observer((props: { isShown: null | boolean, onClick:
         </div>
       </Block>
       <Block marginTop={16}>
-        <SmallButtonContainer>
-          <Button
-            size={'small'}
-            style={{ color: '#FFFFFF', background: 'rgba(4, 53, 105, 0.15)' }}
-            onClick={() => router.navigate(RouteName.SupplyVault)}
-          >
-            Add WEST
-          </Button>
-        </SmallButtonContainer>
+        {!isVaultLiquidated &&
+          <SmallButtonContainer>
+            <Button
+              size={'small'}
+              style={{ color: '#FFFFFF', background: 'rgba(4, 53, 105, 0.15)' }}
+              onClick={(e: any) => {
+                e.preventDefault()
+                router.navigate(RouteName.SupplyVault)
+              }
+              }
+            >
+              Add WEST
+            </Button>
+          </SmallButtonContainer>
+        }
         <SmallButtonContainer>
           <Button
             size={'small'}
             style={{ color: '#FFFFFF', background: 'linear-gradient(90deg, #5352B8 0%, #323177 100%)' }}
-            onClick={() => router.navigate(RouteName.AddEast)}
+            onClick={(e: any) => {
+              e.preventDefault()
+              if (isVaultLiquidated) {
+                router.navigate(RouteName.BuyEast)
+              } else {
+                router.navigate(RouteName.AddEast)
+              }
+            }}
           >
             Issue EAST
           </Button>

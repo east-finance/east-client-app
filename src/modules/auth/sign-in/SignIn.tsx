@@ -134,6 +134,7 @@ const SignIn = observer(() => {
           await configStore.loadNodeConfig()
           await signStore.initWeSDK()
         } catch (e) {
+          tokenPair = null
           handleLoginError(e)
         } finally {
           setInProgress(false)

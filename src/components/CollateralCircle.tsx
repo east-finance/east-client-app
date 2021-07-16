@@ -107,9 +107,10 @@ export const CollateralCircle = (props: ICircleProps) => {
   }
   const radius = 38
   const fullCircleLength = Math.ceil(2 * Math.PI * radius)
-  const absolutePercent = (valueModule - Percentage.min) / (Percentage.max - Percentage.min)
+  const absolutePercent = valueModule > 0
+    ? (valueModule - Percentage.min) / (Percentage.max - Percentage.min)
+    : 1
   const primaryDashOffset = (fullCircleLength - (fullCircleLength * absolutePercent))
-
   return <Container>
     <TextContainer color={primaryColor}>
       <PrimaryText>{props.value}%</PrimaryText>

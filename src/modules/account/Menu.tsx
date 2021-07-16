@@ -112,10 +112,11 @@ export const AccountMenu = observer(() => {
   const isUserHaveVault = +dataStore.vault.eastAmount > 0
   const vaultProfit = -dataStore.supplyVaultWestDiff
   const isTransferAvailable = isUserHaveEast
+  const isVaultLiquidated = isUserHaveVault && +dataStore.vault.westAmount === 0
   return <Container>
     <MenuItemContainer>
       <Tooltip>Issue EAST</Tooltip>
-      <MenuItem onClick={() => router.navigate(isUserHaveVault ? RouteName.AddEast : RouteName.BuyEast)}>
+      <MenuItem onClick={() => router.navigate((isUserHaveVault && !isVaultLiquidated) ? RouteName.AddEast : RouteName.BuyEast)}>
         <IconPlus />
       </MenuItem>
     </MenuItemContainer>
