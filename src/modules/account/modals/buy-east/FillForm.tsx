@@ -129,7 +129,7 @@ export const FillForm = observer((props: IProps) => {
     setErrors(validateForm())
   }
   return <Container>
-    <Block marginTop={72}>
+    <Block marginTop={62}>
       <SimpleInput
         type={'number'}
         label={'Enter amount of EAST'}

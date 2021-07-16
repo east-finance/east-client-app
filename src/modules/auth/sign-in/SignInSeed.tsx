@@ -48,7 +48,7 @@ const SignInSeed = observer(() => {
       if (e.message && e.message.includes('minimum length')) {
         message = 'Minimum length: 15 characters'
       }
-      toast(<ErrorNotification title={'Invalid SEED phrase'} message={message} />, {
+      toast(<ErrorNotification title={'Error'} message={message} />, {
         hideProgressBar: true,
         autoClose: 6000
       })

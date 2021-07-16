@@ -12,7 +12,8 @@ export enum EastOpType {
   close_init = 'close_init',
   close = 'close',
   claim_overpay_init = 'claim_overpay_init',
-  claim_overpay = 'claim_overpay'
+  claim_overpay = 'claim_overpay',
+  liquidate = 'liquidate'
 }
 
 export interface IVault {
