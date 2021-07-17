@@ -3,7 +3,6 @@ import styled from 'styled-components'
 import ArrowLeft from '../resources/images/arrow-left.svg'
 import ArrowLeftButton from '../resources/images/arrow-left-button.png'
 
-
 interface ButtonProps extends HTMLAttributes<HTMLDivElement> {
   disabled?: boolean;
   type?: 'default' | 'primary' | 'submit';
