@@ -106,7 +106,7 @@ const TxItem = (props: { tx: ITransaction}) => {
     description = isReceived ? `Transfer from ${tx.address}` : `Transfer to ${params.to}`
   } else if (transactionType === EastOpType.mint) {
     primaryText = `${eastDiff} EAST`
-    description = 'Added to the vault'
+    description = 'Vault created'
   } else if (transactionType === EastOpType.close_init) {
     primaryText = `${eastDiff} EAST`
     description = 'Initialize vault close'

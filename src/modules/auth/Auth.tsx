@@ -65,6 +65,7 @@ const Auth: React.FunctionComponent = () =>  {
 
   const tabsProps = {
     defaultActiveId: routeName === RouteName.SignUp ? RouteSegment.signUp : RouteSegment.signIn,
+    activeTabId: routeName === RouteName.SignUp ? RouteSegment.signUp : RouteSegment.signIn,
     items: [{
       id: RouteSegment.signIn,
       name: 'Login',

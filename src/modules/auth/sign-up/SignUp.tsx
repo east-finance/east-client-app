@@ -216,12 +216,12 @@ const SignUp = () => {
     return <Container>
       <Block24>
         <H3 style={{ textAlign: 'center' }}>Complete registration</H3>
-        <Block16>
-          <SuccessMessage>We sent an email to {email.value}.</SuccessMessage>
-          <Block16>
-            <SecondaryText>Follow the link to confirm your e-mail.</SecondaryText>
-          </Block16>
-        </Block16>
+        <Block marginTop={32} style={{ textAlign: 'center' }}>
+          <SuccessMessage>We sent an email to {email.value}</SuccessMessage>
+          <Block marginTop={8}>
+            <SecondaryText>Follow the link to confirm your e-mail</SecondaryText>
+          </Block>
+        </Block>
         <Block marginTop={54}>
           <Button type={'primary'} onClick={() => setRegistered(false)}>Sign Up again</Button>
         </Block>
