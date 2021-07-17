@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 
 interface TabItem {
@@ -10,6 +10,7 @@ interface TabItem {
 interface TabsProps {
   items: TabItem[];
   defaultActiveId: string;
+  activeTabId:  string;
   onSelectTab?: (tabId: string) => void;
 }
 
@@ -55,6 +56,10 @@ const TabsContentItem = styled.div<{ isVisible: boolean }>`
 
 export const Tabs = (props: TabsProps) => {
   const [activeTabId, setActiveTabId] = useState(props.defaultActiveId)
+
+  useEffect(() => {
+    setActiveTabId(props.activeTabId)
+  },  [props.activeTabId])
 
   const onTitleItemClicked = (id: string) => {
     setActiveTabId(id)

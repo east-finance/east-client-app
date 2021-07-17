@@ -154,7 +154,7 @@ export const FillForm = observer((props: IProps) => {
       }
     </Block>
     <Block marginTop={56}>
-      <Description>EAST is collateralized by {usdpPartPercent}% USDP and {westPartPercent}% WEST.</Description>
+      <Description>EAST is collateralized by {usdpPartPercent}% USDP and {westPartPercent}% WEST</Description>
       <Centered><Link href={'https://wavesenterprise.com/'} target={'_blank'}>Learn more</Link></Centered>
     </Block>
     <Block24>

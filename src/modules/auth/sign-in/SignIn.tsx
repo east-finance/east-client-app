@@ -209,7 +209,7 @@ const SignIn = observer(() => {
     </Block16>
     <Block24 />
     <Input
-      autoComplete='new-password'
+      autoComplete='password'
       status={passwordError ? InputStatus.error : InputStatus.default}
       placeholder={'Password'}
       type={'password'}
