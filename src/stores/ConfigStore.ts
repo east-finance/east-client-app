@@ -4,6 +4,7 @@ import { Api } from '../api'
 import { BigNumber } from 'bignumber.js'
 import { WestDecimals } from '../constants'
 import { EastOpType } from '../interfaces'
+import { AuthCustomError } from '../modules/auth/utils'
 
 export default class ConfigStore {
   api
@@ -63,15 +64,20 @@ export default class ConfigStore {
   }
 
   async loadEastContractConfig () {
-    const eastContractId = this.getEastContractId()
-    const [{ value }] = await this.api.getContractState(this.getEastContractId(), 'config')
-    const remoteConfig = JSON.parse(value)
-    console.log(`East Contract (id: "${eastContractId}") config:`, remoteConfig)
-    this.eastContractConfig = {
-      ...this.eastContractConfig,
-      ...remoteConfig
+    try {
+      const eastContractId = this.getEastContractId()
+      const [{ value }] = await this.api.getContractState(this.getEastContractId(), 'config')
+      const remoteConfig = JSON.parse(value)
+      console.log(`East Contract (id: "${eastContractId}") config:`, remoteConfig)
+      this.eastContractConfig = {
+        ...this.eastContractConfig,
+        ...remoteConfig
+      }
+      return { ...this.eastContractConfig }
+    } catch (e) {
+      console.error(`Error on load East contract config(contractId: ${this.getEastContractId()}):`, e.message)
+      throw new AuthCustomError('Cannot load EAST contract config')
     }
-    return { ...this.eastContractConfig }
   }
 
   getEastContractId () {

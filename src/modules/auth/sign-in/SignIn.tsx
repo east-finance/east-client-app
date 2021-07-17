@@ -8,7 +8,7 @@ import { Input, InputStatus } from '../../../components/Input'
 import { Button } from '../../../components/Button'
 import WELogo from '../../../resources/images/we-logo-small.svg'
 import { RouteName } from '../../../router/segments'
-import { validateEmail } from '../utils'
+import { AuthCustomError, validateEmail } from '../utils'
 import { ErrorNotification } from '../../../components/Notification'
 import { FormErrors } from '../../../components/PasswordRules'
 import { AuthError } from '../../../api/apiErrors'
@@ -87,22 +87,26 @@ const SignIn = observer(() => {
 
   const handleLoginError = (e: AxiosError) => {
     console.error('Sign in error', e.message)
-    let toastText = 'Unknown error. Try again later.'
-    if (e.response) {
+    const title = 'Auth error'
+    let message = ''
+    if(e instanceof AuthCustomError) {
+      message = e.message
+    } else if (e.response) {
       const { errors = [] } =  e.response.data
       setUsernameError('login_error')
       setPasswordError('login_error')
       if (errors.includes(AuthError.UserNotFound)) {
-        toastText = 'Account with this email is not found'
+        message = 'Account with this email is not found'
       } else if (errors.includes(AuthError.WrongPassword)) {
-        toastText = 'Wrong password'
+        message = 'Wrong password'
       } else if (errors.includes(AuthError.UserShouldBeConfirmed)) {
-        toastText = 'Account is not confirmed'
+        message = 'Account is not confirmed'
       }
     }
     toast.dismiss()
-    toast(<ErrorNotification title={toastText} />, {
-      hideProgressBar: true
+    toast(<ErrorNotification title={title} message={message} />, {
+      hideProgressBar: true,
+      autoClose: 100000
     })
   }
 
@@ -172,7 +176,7 @@ const SignIn = observer(() => {
           } catch (e) {
             router.navigate(RouteName.SignInSelectType)
           } finally {
-            setInProgress(false)
+            // setInProgress(false)
           }
 
         }

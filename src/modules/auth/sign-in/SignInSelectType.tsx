@@ -2,20 +2,13 @@ import React from 'react'
 import { useRoute } from 'react-router5'
 import { Block, Block16 } from '../../../components/Block'
 import styled from 'styled-components'
-import useStores from '../../../hooks/useStores'
+import { isMobile } from 'react-device-detect'
 import { Button } from '../../../components/Button'
 import { observer } from 'mobx-react'
 import { RouteName } from '../../../router/segments'
 
 const Container = styled.div`
   margin: 0 auto;
-`
-
-const Description = styled.div`
-  text-align: center;
-  font-weight: bold;
-  font-size: 16px;
-  line-height: 16px;
 `
 
 const ButtonContainer = styled.div`
@@ -32,10 +25,16 @@ const InfoContainer = styled.div`
 const SignInSelectType = observer(() => {
   const { router } = useRoute()
 
+  const walletButtonText = isMobile
+    ? 'Use WE Wallet (desktop-only)'
+    : 'Use existing address (Waves Enterprise Wallet)'
+
   return <Container>
     <Block marginTop={150}>
       <ButtonContainer>
-        <Button type={'primary'} onClick={() => router.navigate(RouteName.SignInWallet)}>Use existing address (Waves Enterprise Wallet)</Button>
+        <Button type={'primary'} disabled={isMobile} onClick={() => router.navigate(RouteName.SignInWallet)}>
+          {walletButtonText}
+        </Button>
         <Block16>
           <InfoContainer>
             Secure way to connect your WE wallet to EAST
