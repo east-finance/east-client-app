@@ -40,7 +40,7 @@ export default class ConfigStore {
   async loadInitialConfig () {
     try {
       const start = Date.now()
-      const { data } = await axios.get('/app.config.json')
+      const { data } = await axios.get(`/app.config.json?t=${Date.now()}`)
       console.log('app.config.json loaded:', data, ', time elapsed:', Date.now() - start, 'ms')
       this.config = {
         ...data
