@@ -21,6 +21,8 @@ const authStore = new AuthStore(router, api)
 const dataStore = new DataStore(api, configStore)
 const signStore = new SignStore(configStore, authStore)
 
+router.setDependency('authStore', authStore)
+
 const stores = {
   api,
   authStore,

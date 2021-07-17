@@ -39,7 +39,13 @@ export default class AuthStore {
 
   async initStore (router: Router, api: Api): Promise<void> {
     const { name } = router.getState()
-    if (![RouteName.SignIn, RouteName.SignUp, RouteName.PasswordRecovery, RouteName.PasswordReset, RouteName.ConfirmUser].includes(name)) { //!name.startsWith(RouteSegment.auth)
+    if (![
+      RouteName.SignIn,
+      RouteName.SignUp,
+      RouteName.PasswordRecovery,
+      RouteName.PasswordReset,
+      RouteName.ConfirmUser
+    ].includes(name)) {
       router.navigate(RouteName.SignIn)
       // const tokenPair = this.readTokenPair()
       // if (tokenPair) {
@@ -118,6 +124,7 @@ export default class AuthStore {
   }
 
   setLoggedIn (isLoggedIn: boolean): void {
+    console.log('setLoggedIn:', isLoggedIn)
     this.isLoggedIn = isLoggedIn
   }
 
