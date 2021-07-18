@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import useStores from '../../hooks/useStores'
 import { observer } from 'mobx-react'
 import { toJS } from 'mobx'
@@ -8,9 +8,12 @@ import styled from 'styled-components'
 import { roundNumber } from '../../utils'
 import CursorImg from '../../resources/images/cursor-pointer.png'
 import useWindowSize from '../../hooks/useWindowSize'
+import { Block } from '../../components/Block'
+import { IOracleValue } from '../../interfaces'
 
 const Container = styled.div`
   position: relative;
+  margin-left: -5px;
 `
 
 const  WestPriceContainer = styled.div`
@@ -37,11 +40,12 @@ const TooltipValue = styled.div`
   font-size: 13px;
   line-height: 16px;
   color: #0A0606;
+  letter-spacing: 1px;
 `
 
 const TooltipTimestamp = styled(TooltipValue)`
-    font-size: 11px;
-    opacity: 0.7;
+  font-size: 11px;
+  opacity: 0.7;
 `
 
 const CustomTooltip = (props: any) => {
@@ -49,7 +53,11 @@ const CustomTooltip = (props: any) => {
     const { value, timestamp } = props.payload[0].payload
     return <TooltipContainer>
       <TooltipValue>{value}</TooltipValue>
-      <TooltipTimestamp>{moment(timestamp).format('MM MMM, hh:mm')}</TooltipTimestamp>
+      <Block marginTop={4}>
+        <TooltipTimestamp>
+          {moment(timestamp).format('MM MMM, HH:mm')}
+        </TooltipTimestamp>
+      </Block>
     </TooltipContainer>
   }
   return null
@@ -63,18 +71,47 @@ const CustomCursor = styled.div`
   cursor: pointer;
 `
 
+const getMinMax = (points: IOracleValue[]) => {
+  let min = 0
+  let max = 0
+  if (points.length > 0) {
+    const sorted = [...points].sort((a, b) => +a.value - +b.value)
+    min = +sorted[0].value
+    max = +sorted[sorted.length - 1].value
+  }
+  return { min, max }
+}
+
+const RelativeValueProp = 'relativeValue'
+
 export const WestChart = observer( () => {
   const { dataStore } = useStores()
-  const [canvasWidth] = useWindowSize()
+  const [ canvasWidth ] = useWindowSize()
 
-  const chartData = toJS(dataStore.westRatesHistory).reverse()
+  const { min, max } = getMinMax(dataStore.westRatesHistory)
+
+  const chartData = toJS(dataStore.westRatesHistory).reverse().map(item => {
+    const { value } = item
+    return {
+      ...item,
+      value: roundNumber(value, 4),
+      [RelativeValueProp]: ((+value - min) / (max - min))
+    }
+  })
 
   return <Container>
     <LineChart width={canvasWidth} height={45} data={chartData}>
-      <Line type="monotone" dataKey="value" stroke="#FFFFFF" strokeWidth={2} />
+      <Line
+        type="monotone"
+        dataKey={RelativeValueProp}
+        stroke="#FFFFFF"
+        strokeWidth={2}
+        dot={false}
+        activeDot={false}
+      />
       <Tooltip
         content={CustomTooltip}
-        offset={-45}
+        offset={-50}
         wrapperStyle={{ marginTop: '45px' }}
         // cursor={<CustomCursor />}
       />
