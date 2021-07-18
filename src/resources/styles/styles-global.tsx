@@ -29,11 +29,9 @@ const StyleGlobal = createGlobalStyle`
 
   @media (max-width: 767px) {
     #videoBG {
-      display: none;
+      // display: none;
     }
     body {
-      background: url('poster.jpg');
-      background-size: cover;
     }
   }
 `

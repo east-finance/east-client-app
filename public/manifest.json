@@ -1,6 +1,6 @@
 {
-  "short_name": "Deponent client",
-  "name": "Deponent client app",
+  "short_name": "EAST client",
+  "name": "EAST client app",
   "icons": [
     {
       "src": "favicon.png",
