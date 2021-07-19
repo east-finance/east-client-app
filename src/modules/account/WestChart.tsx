@@ -13,7 +13,6 @@ import { IOracleValue } from '../../interfaces'
 
 const Container = styled.div`
   position: relative;
-  margin-left: -5px;
 `
 
 const  WestPriceContainer = styled.div`
@@ -55,7 +54,7 @@ const CustomTooltip = (props: any) => {
       <TooltipValue>{value}</TooltipValue>
       <Block marginTop={4}>
         <TooltipTimestamp>
-          {moment(timestamp).format('MM MMM, HH:mm')}
+          {moment(timestamp).format('MMMM D, HH:mm')}
         </TooltipTimestamp>
       </Block>
     </TooltipContainer>

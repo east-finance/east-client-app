@@ -17,8 +17,8 @@ export const TextTableRow = styled.div`
 `
 
 export const TextTableKey = styled.div`
-  width: 50%;
-  min-width: 50%;
+  width: 40%;
+  min-width: 40%;
   margin-right: 20px;
   color: ${props => props.theme.darkBlue50};
   font-size: 15px;
@@ -33,7 +33,7 @@ export const TextTablePrimaryValue = styled.div`
 `
 
 export const TextTableSecondaryValue = styled.div`
-  font-weight: 700;
+  font-weight: 600;
   font-size: 18px;
   line-height: 18px;
   color: #043569;

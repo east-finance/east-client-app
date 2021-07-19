@@ -56,7 +56,7 @@ export default class DataStore {
   // If value < 0, vault is over-supplied and contains free west
   get supplyVaultWestDiff () {
     const diff = roundNumber(this.expectedVaultWestAmount - +this.vault.westAmount, 6)
-    if (Math.abs(diff) > 0.1) {
+    if (Math.abs(diff) > 0.01) {
       return diff
     }
     return 0
