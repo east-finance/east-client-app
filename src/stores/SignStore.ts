@@ -81,9 +81,9 @@ export default class SignStore {
   async getPublicData (): Promise<{ address: string, publicKey: string }> {
     if (this.signStrategy === SignStrategy.WeWallet) {
       const state = await window.WEWallet.publicState()
-      if (state.locked) {
-        await window.WEWallet.auth({ data: 'EAST Client auth' })
-      }
+      // if (state.locked) {
+      await window.WEWallet.auth({ data: 'EAST Client auth' })
+      // }
       const { account: { address, publicKey } } = state
       return {
         address,

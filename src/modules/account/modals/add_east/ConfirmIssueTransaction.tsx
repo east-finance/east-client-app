@@ -17,7 +17,6 @@ import useStores from '../../../../hooks/useStores'
 import { EastOpType, TxTextType } from '../../../../interfaces'
 import { GradientText } from '../../../../components/Text'
 import { roundNumber } from '../../../../utils'
-import { sign } from 'crypto'
 
 interface IProps {
   eastAmount: string;
@@ -165,7 +164,6 @@ export const ConfirmIssueTransaction = (props: IProps) => {
       toast(<ErrorNotification title={'Error on issue EAST'} />, {
         hideProgressBar: true
       })
-    } finally {
       setInProgress(false)
     }
   }

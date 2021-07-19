@@ -98,7 +98,6 @@ const SignInWallet = observer(() => {
       authStore.setLoggedIn(true)
     } catch (e) {
       console.error('Cannot get remote configs', e.message)
-    } finally {
       setInProgress(false)
     }
   }
