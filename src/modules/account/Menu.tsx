@@ -1,5 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
+import { isDesktop } from 'react-device-detect'
 import iconPlus from '../../resources/images/icon-plus.png'
 import iconLock from '../../resources/images/icon-lock.png'
 import iconTime from '../../resources/images/icon-time.png'
@@ -14,13 +15,12 @@ import { observer } from 'mobx-react'
 
 const Container = styled.div`
   display: inline-flex;
-  height: 112px;
   background: rgba(255, 255, 255, 0.5);
   backdrop-filter: blur(12px);
   border-radius: 54px;
   justify-content: space-between;
   align-items: center;
-  padding: 0 24px;
+  padding: min(24px, 3vw);
 `
 
 const Tooltip = styled.div`
@@ -50,7 +50,7 @@ const Tooltip = styled.div`
 const MenuItemContainer = styled.div`
   position: relative;
   &:not(:first-child) {
-    margin-left: 45px;
+    margin-left: min(45px, 3vw);
   }
 
   &:hover ${Tooltip} {
@@ -62,11 +62,11 @@ const MenuItem = styled.div<{ disabled?: boolean; }>`
   background: #FFFFFF;
   opacity: 0.9;
   border-radius: 112px;
-  width: 74px;
-  height: 64px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  width: min(74px, 10vw);
+  height: min(64px, 9vw);
+  background-repeat: no-repeat;
+  background-size: 40%;
+  background-position: center;
   transition: transform 150ms;
 
   ${({ disabled }) => disabled && `
@@ -82,28 +82,21 @@ const MenuItem = styled.div<{ disabled?: boolean; }>`
   `}
 `
 
+const MenuItemPlus = styled(MenuItem)`background-image: url(${iconPlus});`
+const MenuItemLock = styled(MenuItem)`background-image: url(${iconLock});`
+const MenuItemTime = styled(MenuItem)`background-image: url(${iconTime});`
+const MenuItemExport = styled(MenuItem)`background-image: url(${iconExport});`
+const MenuItemSettings = styled(MenuItem)`background-image: url(${iconSettings});`
+const MenuItemQuestion = styled(MenuItem)`background-image: url(${iconQuestion});`
+const MenuItemClose = styled(MenuItem)`background-image: url(${iconCloseRed});`
+
 const Delimiter = styled.div`
   width: 2px;
   height: 48px;
   background: white;
-  margin-left: 40px;
+  margin-left: min(40px, 2vw);
   margin-right: -5px;
 `
-
-const IconCommon = styled.div`
-  width: 32px;
-  height: 32px;
-  background-repeat: no-repeat;
-  background-size: 32px;
-`
-
-const IconPlus = styled(IconCommon)`background-image: url(${iconPlus});`
-const IconLock = styled(IconCommon)`background-image: url(${iconLock});`
-const IconTime = styled(IconCommon)`background-image: url(${iconTime});`
-const IconExport = styled(IconCommon)`background-image: url(${iconExport});`
-const IconSettings = styled(IconCommon)`background-image: url(${iconSettings});`
-const IconQuestion = styled(IconCommon)`background-image: url(${iconQuestion});`
-const IconClose = styled(IconCommon)`background-image: url(${iconCloseRed});`
 
 export const AccountMenu = observer(() => {
   const { dataStore } = useStores()
@@ -116,52 +109,46 @@ export const AccountMenu = observer(() => {
   return <Container>
     <MenuItemContainer>
       <Tooltip>Issue EAST</Tooltip>
-      <MenuItem onClick={() => router.navigate((isUserHaveVault && !isVaultLiquidated) ? RouteName.AddEast : RouteName.BuyEast)}>
-        <IconPlus />
-      </MenuItem>
+      <MenuItemPlus
+        onClick={() => router.navigate((isUserHaveVault && !isVaultLiquidated) ? RouteName.AddEast : RouteName.BuyEast)}
+      />
     </MenuItemContainer>
     {vaultProfit > 0.5 &&
       <MenuItemContainer>
         <Tooltip>Take WEST</Tooltip>
-        <MenuItem onClick={() => router.navigate(RouteName.TakeWest)}><IconLock /></MenuItem>
+        <MenuItemLock onClick={() => router.navigate(RouteName.TakeWest)} />
       </MenuItemContainer>
     }
     {isTransferAvailable &&
       <MenuItemContainer>
         <Tooltip>Transfer</Tooltip>
-        <MenuItem onClick={() => router.navigate(RouteName.TransferEast)}>
-          <IconExport />
-        </MenuItem>
+        <MenuItemExport onClick={() => router.navigate(RouteName.TransferEast)} />
       </MenuItemContainer>
     }
-    {isUserHaveVault &&
+    {(isUserHaveVault && isDesktop) &&
       <Delimiter />
     }
     {(isUserHaveVault || isUserHaveEast) &&
       <MenuItemContainer>
         <Tooltip>History</Tooltip>
-        <MenuItem onClick={() => router.navigate(RouteName.TransactionsHistory)}><IconTime /></MenuItem>
+        <MenuItemTime onClick={() => router.navigate(RouteName.TransactionsHistory)} />
       </MenuItemContainer>
     }
     <MenuItemContainer>
       <Tooltip>Settings</Tooltip>
-      <MenuItem onClick={() => router.navigate(RouteName.AccountSettings)}><IconSettings /></MenuItem>
+      <MenuItemSettings onClick={() => router.navigate(RouteName.AccountSettings)} />
     </MenuItemContainer>
     <MenuItemContainer>
       <Tooltip>FAQ</Tooltip>
-      <MenuItem onClick={() => router.navigate(RouteName.Faq)}>
-        <IconQuestion />
-      </MenuItem>
+      <MenuItemQuestion onClick={() => router.navigate(RouteName.Faq)} />
     </MenuItemContainer>
-    {isUserHaveVault &&
+    {(isUserHaveVault && isDesktop) &&
       <Delimiter />
     }
     {isUserHaveVault &&
       <MenuItemContainer>
         <Tooltip>Close</Tooltip>
-        <MenuItem onClick={() => router.navigate(RouteName.CloseVault)}>
-          <IconClose />
-        </MenuItem>
+        <MenuItemClose onClick={() => router.navigate(RouteName.CloseVault)} />
       </MenuItemContainer>
     }
   </Container>
