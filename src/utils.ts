@@ -19,14 +19,16 @@ export const spacifyFractional = (number: string | number) => {
 
 export const spacifyNumber = (number: string | number) => {
   const match = number.toString().match(/[.,]/)
-  const separator = match ? match[0] : ''
-  // eslint-disable-next-line prefer-const
-  let [integerPart, fractionalPart] = number.toString().split(separator)
-  if (fractionalPart) {
-    fractionalPart = spacifyFractional(fractionalPart)
-  } else {
-    return number
+  if (match && match[0]) {
+    const separator = match[0]
+    // eslint-disable-next-line prefer-const
+    let [integerPart, fractionalPart] = number.toString().split(separator)
+    if (fractionalPart) {
+      fractionalPart = spacifyFractional(fractionalPart)
+    } else {
+      return number
+    }
+    return integerPart + ',' + fractionalPart
   }
-
-  return integerPart + separator + fractionalPart
+  return number
 }
