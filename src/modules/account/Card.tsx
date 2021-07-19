@@ -164,17 +164,23 @@ const FracPart = styled.span`
 
 const EastBalance = (props: IEastBalanceProps) => {
   const { value } = props
+  let integerPart = value
+  let fractionalPart = ''
   const match = value.toString().match(/[.,]/)
-  const separator = match ? match[0] : ''
-  // eslint-disable-next-line prefer-const
-  let [integerPart, fractionalPart] = value.toString().split(separator)
-  if (fractionalPart) {
-    fractionalPart = spacifyFractional(fractionalPart)
+  if (match && match[0]) {
+    const separator = match[0]
+    // eslint-disable-next-line prefer-const
+    let parts = value.toString().split(separator)
+    integerPart = parts[0]
+    fractionalPart = parts[1]
+    if (fractionalPart) {
+      fractionalPart = spacifyFractional(fractionalPart)
+    }
   }
   return <div>
     <IntegerPart>{integerPart}</IntegerPart>
     {fractionalPart &&
-      <FracPart>,{fractionalPart.slice(0, 8)}</FracPart>
+      <FracPart>,{fractionalPart}</FracPart>
     }
   </div>
 }
