@@ -209,7 +209,11 @@ const SignInWallet = observer(() => {
       </Description>
       <Block marginTop={64} />
       <ButtonContainer>
-        <Button>Go to Chrome Web Store</Button>
+        <Button>
+          <a target={'_blank'} rel="noreferrer" href={'https://chrome.google.com/webstore/detail/waves-enterprise-wallet/nhihjlnjgibefgjhobhcphmnckoogdea?hl=en'}>
+            Go to Chrome Web Store
+          </a>
+        </Button>
       </ButtonContainer>
     </div>
   }

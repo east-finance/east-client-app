@@ -20,23 +20,7 @@ export const BuyEast = (props: IProps) => {
   const [eastAmount, setEastAmount] = useState('')
   const [westAmount, setWestAmount] = useState('')
   const [westBalance, setWestBalance] = useState('0')
-
-  const [westRate, setWestRate] = useState(dataStore.westRate)
-  const [usdapRate, setUsdapRate] = useState(dataStore.usdapRate)
   const [inProgress, setInProgress] = useState(false)
-
-  useEffect(() => {
-    const getData = async () => {
-      try {
-        const { westRate, usdapRate } = await dataStore.getTokenRates()
-        setWestRate(westRate)
-        setUsdapRate(usdapRate)
-      } catch (e) {
-        console.error('Cannot get oracle data', e.message)
-      }
-    }
-    getData()
-  }, [])
 
   const sendAtomic = async () => {
     const { address, publicKey } = await signStore.getPublicData()
@@ -91,8 +75,8 @@ export const BuyEast = (props: IProps) => {
   const formProps = {
     eastAmount,
     westAmount,
-    westRate,
-    usdapRate,
+    westRate: dataStore.westRate,
+    usdapRate: dataStore.usdapRate,
     inProgress
   }
   if (currentStep === Steps.fill) {

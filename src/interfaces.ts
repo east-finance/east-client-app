@@ -54,3 +54,8 @@ export enum TxTextType {
   transferV3 = 'transferV3',
   dockerCallV4 = 'dockerCallV4'
 }
+
+export interface IOracleValue {
+  value: string;
+  timestamp: string;
+}

@@ -7,6 +7,7 @@ import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import styled from 'styled-components'
 import { ToastCloseButton } from './components/Notification'
+import { useRoute, useRouter } from 'react-router5'
 
 const ToastWrapper = styled.div`
   position: absolute;
@@ -15,9 +16,9 @@ const ToastWrapper = styled.div`
 `
 
 const Content: FunctionComponent = observer( () => {
-  const { authStore } = useStores()
+  const { route } = useRoute()
   let content = null
-  if (authStore.isLoggedIn) {
+  if (route.name.startsWith('account')) {
     content = <Account />
   } else {
     content = <Auth />

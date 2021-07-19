@@ -2,15 +2,9 @@ import { makeAutoObservable, runInAction } from 'mobx'
 import { Api } from '../api'
 import { BigNumber } from 'bignumber.js'
 import { OracleStreamId, WestDecimals } from '../constants'
-import { IVault } from '../interfaces'
+import { IOracleValue, IVault } from '../interfaces'
 import ConfigStore from './ConfigStore'
 import { roundNumber, cutNumber } from '../utils'
-
-export interface IDataPoint {
-  value: number;
-  timestamp: number;
-  height: number;
-}
 
 const emptyUserVault: IVault = {
   id: 0,
@@ -35,7 +29,7 @@ export default class DataStore {
   eastBalance = '0.0'
   westRate = '0'
   usdapRate = '0'
-  westPriceHistory: IDataPoint[] = []
+  westRatesHistory: IOracleValue[] = []
 
   constructor(api: Api, configStore: ConfigStore) {
     makeAutoObservable(this)
@@ -62,7 +56,7 @@ export default class DataStore {
   // If value < 0, vault is over-supplied and contains free west
   get supplyVaultWestDiff () {
     const diff = roundNumber(this.expectedVaultWestAmount - +this.vault.westAmount, 6)
-    if (Math.abs(diff) > 0.1) {
+    if (Math.abs(diff) > 0.01) {
       return diff
     }
     return 0
@@ -90,20 +84,16 @@ export default class DataStore {
     return new Promise(resolve => setTimeout(resolve, timeout))
   }
 
-  async getTokenRates () {
-    const [{ value: westRate }] = await this.api.getOracleValues(OracleStreamId.WestRate, 1)
-    const [{ value: usdapRate }] = await this.api.getOracleValues(OracleStreamId.UsdapRate, 1)
-    return {
-      westRate,
-      usdapRate
-    }
-  }
-
   async startPolling (address: string) {
     const updateTokenRates = async () => {
-      const { westRate, usdapRate } = await this.getTokenRates()
+      const westRates = await this.api.getOracleValues(OracleStreamId.WestRate, 50)
+      const [{ value: westRate }] = westRates
       runInAction(() => {
         this.westRate = westRate
+        this.westRatesHistory = westRates
+      })
+      const [{ value: usdapRate }] = await this.api.getOracleValues(OracleStreamId.UsdapRate, 1)
+      runInAction(() => {
         this.usdapRate = usdapRate
       })
     }

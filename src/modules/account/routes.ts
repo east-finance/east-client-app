@@ -2,7 +2,7 @@ import { RouteSegment } from '../../router/segments'
 
 export default {
   name: RouteSegment.account,
-  path: '/',
+  path: '/account',
   children: [{
     name: RouteSegment.buyEast,
     path: '/buy-east'

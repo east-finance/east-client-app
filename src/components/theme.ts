@@ -9,5 +9,5 @@ export default {
   darkBlue: '#043569',
   darkBlue50: '#7796b0',
   darkBlue15: '#b9cdd7',
-  defaultMarginTop: '100px'
+  defaultMarginTop: '112px'
 }

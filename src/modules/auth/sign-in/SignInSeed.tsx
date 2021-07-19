@@ -22,6 +22,14 @@ const ButtonContainer = styled.div`
   margin: 0 auto;
 `
 
+const SeedContainer = styled.div`
+  margin-top: 146px;
+  
+  @media only screen and (max-width: 800px) {
+    margin-top: 64px;
+  }
+`
+
 const SignInSeed = observer(() => {
   const { signStore, authStore, dataStore } = useStores()
   const { router } = useRoute()
@@ -64,7 +72,7 @@ const SignInSeed = observer(() => {
   }
 
   return <Container>
-    <Block marginTop={146}>
+    <SeedContainer>
       <TextArea
         status={status}
         rows={5}
@@ -82,7 +90,7 @@ const SignInSeed = observer(() => {
           </Button>
         </ButtonContainer>
       </Block32>
-    </Block>
+    </SeedContainer>
   </Container>
 })
 

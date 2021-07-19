@@ -1,16 +1,76 @@
-import React, { useEffect, useRef, useState } from 'react'
-import styled from 'styled-components'
-import { Block } from '../../components/Block'
+import React from 'react'
 import useStores from '../../hooks/useStores'
 import { observer } from 'mobx-react'
 import { toJS } from 'mobx'
-import { IDataPoint } from '../../stores/DataStore'
 import moment from 'moment'
+import { LineChart, Line, Tooltip } from 'recharts'
+import styled from 'styled-components'
+import { roundNumber } from '../../utils'
+import CursorImg from '../../resources/images/cursor-pointer.png'
+import useWindowSize from '../../hooks/useWindowSize'
+import { Block } from '../../components/Block'
+import { IOracleValue } from '../../interfaces'
 
-const chartHeight = 50
-const topOffset = 10
+const Container = styled.div`
+  position: relative;
+`
 
-const getMinMax = (points: IDataPoint[]) => {
+const  WestPriceContainer = styled.div`
+  position: absolute;
+  right: 16px;
+  top: 45px;
+  text-align: right;
+  font-family: Cairo;
+  font-weight: bold;
+  font-size: 16px;
+  line-height: 24px;
+  color: #FFFFFF;
+`
+
+const TooltipContainer = styled.div`
+  background: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(12px);
+  border-radius: 54px;
+  padding: 16px 24px;
+`
+
+const TooltipValue = styled.div`
+  font-family: Staatliches;
+  font-size: 13px;
+  line-height: 16px;
+  color: #0A0606;
+  letter-spacing: 1px;
+`
+
+const TooltipTimestamp = styled(TooltipValue)`
+  font-size: 11px;
+  opacity: 0.7;
+`
+
+const CustomTooltip = (props: any) => {
+  if (props.active && props.payload && props.payload.length) {
+    const { value, timestamp } = props.payload[0].payload
+    return <TooltipContainer>
+      <TooltipValue>{value}</TooltipValue>
+      <Block marginTop={4}>
+        <TooltipTimestamp>
+          {moment(timestamp).format('MMMM D, HH:mm')}
+        </TooltipTimestamp>
+      </Block>
+    </TooltipContainer>
+  }
+  return null
+}
+
+const CustomCursor = styled.div`
+  width: 64px;
+  height: 55px;
+  background-image: url(${CursorImg});
+  background-size: 100% 100%;
+  cursor: pointer;
+`
+
+const getMinMax = (points: IOracleValue[]) => {
   let min = 0
   let max = 0
   if (points.length > 0) {
@@ -21,51 +81,43 @@ const getMinMax = (points: IDataPoint[]) => {
   return { min, max }
 }
 
+const RelativeValueProp = 'relativeValue'
+
 export const WestChart = observer( () => {
   const { dataStore } = useStores()
-  const [canvasWidth, setCanvasWidth] = useState(window.innerWidth)
-  const [canvasHeight, setCanvasHeight] = useState(100)
-  const points = toJS(dataStore.westPriceHistory)
-  const canvasRef = useRef(null)
+  const [ canvasWidth ] = useWindowSize()
 
-  const draw = (ctx: any) => {
-    if (points.length === 0) {
-      return false
+  const { min, max } = getMinMax(dataStore.westRatesHistory)
+
+  const chartData = toJS(dataStore.westRatesHistory).reverse().map(item => {
+    const { value } = item
+    return {
+      ...item,
+      value: roundNumber(value, 4),
+      [RelativeValueProp]: ((+value - min) / (max - min))
     }
-    console.log('from', moment(points[0].timestamp).format(), 'to', moment(points[points.length - 1].timestamp).format())
-    const { min, max } = getMinMax(points)
-    const xStep = Math.ceil(canvasWidth / points.length)
-    ctx.translate(0.5, 0.5)
-    ctx.lineWidth = 2
-    ctx.beginPath()
+  })
 
-    let xPosition = 0
-
-    const getYPosition = (value: number) => {
-      const yPercent = ((value - min) / (max - min))
-      return topOffset + chartHeight - yPercent * chartHeight
-    }
-
-    ctx.moveTo(0, getYPosition(points[0].value))
-    points.forEach((point: IDataPoint) => {
-      ctx.lineTo(xPosition, getYPosition(point.value))
-      xPosition += xStep
-    })
-
-    // ctx.bezierCurveTo(20, 100, 200, 100, 200, 20)
-    ctx.strokeStyle = 'white'
-    ctx.stroke()
-  }
-
-  useEffect(() => {
-    const canvas = canvasRef.current
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    const ctx = canvas.getContext('2d')
-    ctx.canvas.width  = canvasWidth
-    ctx.canvas.height = canvasHeight
-    draw(ctx)
-  }, [points])
-
-  return <canvas id={'west-canvas'} ref={canvasRef} />
+  return <Container>
+    <LineChart width={canvasWidth} height={45} data={chartData}>
+      <Line
+        type="monotone"
+        dataKey={RelativeValueProp}
+        stroke="#FFFFFF"
+        strokeWidth={2}
+        dot={false}
+        activeDot={false}
+      />
+      <Tooltip
+        content={CustomTooltip}
+        offset={-50}
+        wrapperStyle={{ marginTop: '45px' }}
+        // cursor={<CustomCursor />}
+      />
+    </LineChart>
+    <WestPriceContainer>
+      <div>${roundNumber(dataStore.westRate, 4)}</div>
+      <div>west</div>
+    </WestPriceContainer>
+  </Container>
 })

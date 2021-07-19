@@ -30,12 +30,19 @@ const CardsContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-top: 150px;
+  margin-top: 170px;
   cursor: pointer;
+  
+  @media only screen 
+  and (min-device-width: 375px) 
+  and (max-device-width: 812px) {
+    transform: scale(0.6)
+  }
 `
 
 const MenuContainer = styled.div`
-  position: absolute;
+  position: fixed;
+  left: 0;
   bottom: 20px;
   width: 100%;
   text-align: center;
@@ -47,6 +54,12 @@ const EastLogoContainer = styled.div`
   bottom: 48px;
   left: 37px;
   z-index: -1;
+  
+  @media only screen 
+  and (min-device-width: 375px) 
+  and (max-device-width: 812px) {
+    display: none;
+  }
 `
 
 const EastLogoWrapper = styled.div`

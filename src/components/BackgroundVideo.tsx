@@ -1,7 +1,6 @@
 import styled from 'styled-components'
 import BgWater from '../resources/images/bg-water-test2.mp4'
-import React, { useRef } from 'react'
-import { useEffect } from 'react'
+import React from 'react'
 
 // https://redstapler.co/responsive-css-video-background/
 
