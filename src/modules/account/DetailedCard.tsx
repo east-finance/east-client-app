@@ -284,7 +284,7 @@ export const DetailedCard = observer((props: { isShown: null | boolean, onClick:
             Issue EAST
           </Button>
         </SmallButtonContainer>
-        {freeEastAmount > 0 &&
+        {freeEastAmount >= 0.1 &&
           <SmallButtonContainer>
             <FreeEastText>
               {roundNumber(freeEastAmount, 1)} free EAST available
