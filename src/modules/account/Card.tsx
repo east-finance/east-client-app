@@ -207,26 +207,33 @@ export const AccountCard = observer((props: { isShown: null | boolean, onClick: 
       }
       {isPositiveBalance &&
         <BottomContainer>
-          <div>
-            <BottomItem>{spacifyNumber(vault.eastAmount)}</BottomItem>
-            <Block marginTop={4}>
-              <BottomItem>EAST issued with vault</BottomItem>
-            </Block>
-          </div>
-          <FlexColumnWrapper style={{ marginTop: '16px' }}>
+          {+vault.eastAmount > 0 &&
             <div>
-              <BottomItem>{spacifyNumber(vault.westAmount)}</BottomItem>
-              <Block marginTop={4}>
-                <BottomItem>west in vault</BottomItem>
-              </Block>
+              <div>
+                <BottomItem>{spacifyNumber(vault.eastAmount)}</BottomItem>
+                <Block marginTop={4}>
+                  <BottomItem>EAST issued with vault</BottomItem>
+                </Block>
+              </div>
+              <FlexColumnWrapper style={{ marginTop: '16px' }}>
+                <div>
+                  <BottomItem>{spacifyNumber(vault.westAmount)}</BottomItem>
+                  <Block marginTop={4}>
+                    <BottomItem>west in vault</BottomItem>
+                  </Block>
+                </div>
+                <div>
+                  <BottomItem>{spacifyNumber(vault.rwaAmount)}</BottomItem>
+                  <Block marginTop={4}>
+                    <BottomItem>usdap in vault</BottomItem>
+                  </Block>
+                </div>
+              </FlexColumnWrapper>
             </div>
-            <div>
-              <BottomItem>{spacifyNumber(vault.rwaAmount)}</BottomItem>
-              <Block marginTop={4}>
-                <BottomItem>usdap in vault</BottomItem>
-              </Block>
-            </div>
-          </FlexColumnWrapper>
+          }
+          {+vault.eastAmount === 0 &&
+            <BottomItem>no issued east yet</BottomItem>
+          }
         </BottomContainer>
       }
     </ContentWrapper>

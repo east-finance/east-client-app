@@ -110,7 +110,7 @@ export const WestChart = observer( () => {
       />
       <Tooltip
         content={CustomTooltip}
-        offset={-50}
+        offset={-45}
         wrapperStyle={{ marginTop: '45px' }}
         // cursor={<CustomCursor />}
       />
