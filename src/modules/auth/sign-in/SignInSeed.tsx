@@ -44,24 +44,28 @@ const SignInSeed = observer(() => {
       setInProgress(true)
       const seed = await signStore.weSDK.Seed.fromExistingPhrase(phrase.trim())
       console.log('Seed address:', seed.address)
+      await dataStore.startPolling(seed.address)
       signStore.setSignStrategy(SignStrategy.Seed)
       signStore.setSeed(seed)
       authStore.setSelectedAddress(seed.address)
-      await dataStore.startPolling(seed.address)
       authStore.setLoggedIn(true)
       router.navigate(RouteName.Account)
     } catch (e) {
-      console.error('Sign in with seed error:', e.message)
+      console.error('Sign in with seed error:', e.message, e.response)
+      let title = 'Error'
       let message = ''
       if (e.message && e.message.includes('minimum length')) {
         message = 'Minimum length: 15 characters'
       }
-      toast(<ErrorNotification title={'Error'} message={message} />, {
+      if (e.message && e.response && e.response.status) {
+        title = 'Cannot get user data'
+        message = 'Try again later'
+      }
+      toast(<ErrorNotification title={title} message={message} />, {
         hideProgressBar: true,
         autoClose: 6000
       })
       setStatus(InputStatus.error)
-    } finally {
       setInProgress(false)
     }
   }

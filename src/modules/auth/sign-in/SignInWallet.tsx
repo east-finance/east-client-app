@@ -11,6 +11,8 @@ import { WestDecimals } from '../../../constants'
 import { ButtonSpinner, RelativeContainer } from '../../../components/Spinner'
 import weLogoSmall from '../../../resources/images/we-logo-small.svg'
 import { SignStrategy } from '../../../stores/SignStore'
+import { toast } from 'react-toastify'
+import { ErrorNotification } from '../../../components/Notification'
 
 const WELogo = styled.div`
   display: inline-block;
@@ -94,11 +96,20 @@ const SignInWallet = observer(() => {
       authStore.setSelectedAddress(selectedAddress)
       signStore.setSignStrategy(SignStrategy.WeWallet)
       await dataStore.startPolling(selectedAddress)
-      router.navigate(RouteName.Account)
       authStore.setLoggedIn(true)
+      router.navigate(RouteName.Account)
     } catch (e) {
-      console.error('Cannot get remote configs', e.message)
+      console.error('Cannot get remote data', e.message)
       setInProgress(false)
+      let title = 'Sign in error'
+      const message = 'Try again later'
+      if (e.message && e.response && e.response.status) {
+        title = 'Cannot get user data'
+      }
+      toast(<ErrorNotification title={title} message={message} />, {
+        hideProgressBar: true,
+        autoClose: 6000
+      })
     }
   }
 
