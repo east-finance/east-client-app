@@ -123,19 +123,21 @@ export default class DataStore {
     }
 
     const updateData = async () => {
-      try {
-        await updateUserVault()
-        await updateEastTotalBalance()
-        await updateWestBalance()
-        await updateTokenRates()
-      } catch(e) {
-        console.error(`Cannot get data for "${address}":`, e.message)
-      }
+      await updateUserVault()
+      await updateEastTotalBalance()
+      await updateWestBalance()
+      await updateTokenRates()
     }
     clearInterval(this.pollingId)
     await updateData()
     console.log('Start polling user data')
-    this.pollingId = setInterval(updateData, 5 * 1000)
+    this.pollingId = setInterval(async () => {
+      try {
+        await updateData()
+      } catch (e) {
+        console.error('Cannot update user data:', e.message)
+      }
+    }, 5 * 1000)
   }
 
   stopPolling () {

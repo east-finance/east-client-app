@@ -110,6 +110,17 @@ const SignIn = observer(() => {
     })
   }
 
+  const signInWithExistedSeed = async (decryptedPhrase: string) => {
+    const seed = signStore.weSDK.Seed.fromExistingPhrase(decryptedPhrase)
+    console.log('Seed address:', seed.address)
+    signStore.setSignStrategy(SignStrategy.Seed)
+    signStore.setSeed(seed)
+    authStore.setSelectedAddress(seed.address)
+    await dataStore.startPolling(seed.address)
+    authStore.setLoggedIn(true)
+    router.navigate(RouteName.Account)
+  }
+
   const onLoginClick = async () => {
     if (!inProgress) {
       const { userMessage, passMessage } = validateForm()
@@ -156,14 +167,15 @@ const SignIn = observer(() => {
               if (encryptedSeed && lastSelectedAddress) {
                 const decryptedPhrase = signStore.decryptSeedPhrase(encryptedSeed, password, lastSelectedAddress)
                 if(decryptedPhrase) {
-                  const seed = signStore.weSDK.Seed.fromExistingPhrase(decryptedPhrase)
-                  console.log('Seed address:', seed.address)
-                  signStore.setSignStrategy(SignStrategy.Seed)
-                  signStore.setSeed(seed)
-                  authStore.setSelectedAddress(seed.address)
-                  await dataStore.startPolling(seed.address)
-                  authStore.setLoggedIn(true)
-                  router.navigate(RouteName.Account)
+                  try {
+                    await signInWithExistedSeed(decryptedPhrase)
+                  } catch (e) {
+                    toast(<ErrorNotification title={'Cannot get user data'} message={'Try again later'} />, {
+                      hideProgressBar: true,
+                      autoClose: 100000
+                    })
+                    setInProgress(false)
+                  }
                 } else {
                   throw Error('No available sign strategy')
                 }
