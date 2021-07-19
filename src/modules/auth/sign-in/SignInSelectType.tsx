@@ -27,7 +27,7 @@ const SignInSelectType = observer(() => {
 
   const walletButtonText = isMobile
     ? 'Use WE Wallet (desktop-only)'
-    : 'Use existing address (Waves Enterprise Wallet)'
+    : 'Use existing address (WE Wallet)'
 
   return <Container>
     <Block marginTop={150}>
