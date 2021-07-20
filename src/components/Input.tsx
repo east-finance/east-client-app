@@ -178,7 +178,6 @@ const SimpleInputComponent = styled.input`
   color: ${props => props.theme.darkBlue};
   font-weight: 500;
   font-size: 15px;
-  line-height: 16px;
   outline: none;
   border: none;
   font-family: Cairo,sans-serif;

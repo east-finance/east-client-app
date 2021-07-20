@@ -26,7 +26,9 @@ interface IProps {
 }
 
 const Container = styled.div`
-  width: 376px;
+  @media screen and (min-width: 900px) {
+    width: 376px;
+  }
   margin: 0 auto;
 `
 
