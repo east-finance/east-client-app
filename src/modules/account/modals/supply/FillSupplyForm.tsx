@@ -18,9 +18,12 @@ interface IProps {
 }
 
 const Container = styled.div`
-  width: 464px;
   margin: 0 auto;
   font-family: Cairo,sans-serif;
+  
+  @media screen and (min-width: 900px) {
+    width: 464px;
+  }
 `
 
 const Description = styled.div`

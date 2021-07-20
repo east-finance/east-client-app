@@ -63,7 +63,7 @@ const PrimaryText = styled.div`
   font-weight: bold;
   font-size: 16px;
   line-height: 16px;
-  line-break: anywhere;
+  // line-break: anywhere;
 `
 
 const SecondaryText = styled.div`

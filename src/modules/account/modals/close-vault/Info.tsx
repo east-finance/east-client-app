@@ -19,7 +19,9 @@ interface IProps {
 
 const Container = styled.div`
   margin: 0 auto;
-  width: 400px;
+  @media screen and (min-width: 900px) {
+    width: 400px;
+  }
 `
 
 const ButtonsContainer = styled.div`

@@ -21,8 +21,10 @@ interface IProps {
 }
 
 const Container = styled.div`
-  width: 464px;
   margin: 0 auto;
+  @media screen and (min-width: 900px) {
+    width: 464px;
+  }
 `
 
 const SubTitle = styled.div`
@@ -46,6 +48,7 @@ const SendAddress = styled.div`
   font-weight: 600;
   font-size: 18px;
   line-height: 22px;
+  line-break: anywhere;
 `
 
 const Fee = styled.div`

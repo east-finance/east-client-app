@@ -84,7 +84,7 @@ const PrimaryModalContainer = styled.div`
   display: block;
   position: fixed;
   z-index: 9999;
-  width: 625px;
+  width: min(625px, 90vw);
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);

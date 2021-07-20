@@ -1,5 +1,6 @@
 import React, { FunctionComponent, HTMLAttributes } from 'react'
 import styled from 'styled-components'
+import { isMobile } from 'react-device-detect'
 import ArrowLeft from '../resources/images/arrow-left.svg'
 import ArrowLeftButton from '../resources/images/arrow-left-button.png'
 
