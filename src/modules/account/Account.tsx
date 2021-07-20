@@ -37,7 +37,8 @@ const CardsContainer = styled.div`
   @media only screen 
   and (min-device-width: 375px) 
   and (max-device-width: 812px) {
-    transform: scale(0.8)
+    transform: scale(0.8);
+    -webkit-tap-highlight-color: transparent;
   }
 `
 
