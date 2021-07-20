@@ -68,6 +68,12 @@ const MenuItem = styled.div<{ disabled?: boolean; }>`
   background-size: 40%;
   background-position: center;
   transition: transform 150ms;
+  
+  @media only screen 
+  and (min-device-width: 375px) 
+  and (max-device-width: 812px) {
+      background-size: 50%;
+  }
 
   ${({ disabled }) => disabled && `
     opacity: 0.2;
