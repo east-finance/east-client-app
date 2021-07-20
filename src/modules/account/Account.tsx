@@ -27,16 +27,17 @@ const Container = styled.div`
 
 const CardsContainer = styled.div`
   position: relative;
+  width: 100vw;
+  height: calc(100vh - 110px);
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-top: 170px;
   cursor: pointer;
   
   @media only screen 
   and (min-device-width: 375px) 
   and (max-device-width: 812px) {
-    transform: scale(0.6)
+    transform: scale(0.8)
   }
 `
 
@@ -139,10 +140,12 @@ const AccountCards = observer(() => {
     }
   }
   return <CardsContainer>
-    <AccountCard isShown={isFrontShown} onClick={onClick} />
-    {isPositiveBalance &&
+    <div style={{ position: 'relative' }}>
+      <AccountCard isShown={isFrontShown} onClick={onClick} />
+      {isPositiveBalance &&
       <DetailedCard isShown={isFrontShown === null ? null : !isFrontShown} onClick={onClick} />
-    }
+      }
+    </div>
   </CardsContainer>
 })
 
