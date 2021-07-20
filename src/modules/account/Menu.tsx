@@ -106,23 +106,28 @@ export const AccountMenu = observer(() => {
   const vaultProfit = -dataStore.supplyVaultWestDiff
   const isTransferAvailable = isUserHaveEast
   const isVaultLiquidated = isUserHaveVault && +dataStore.vault.westAmount === 0
+
+  const onMenuClicked = (routeName: string) => {
+    router.navigate(routeName)
+  }
+
   return <Container>
     <MenuItemContainer>
-      <Tooltip>Issue EAST</Tooltip>
+      {isDesktop && <Tooltip>Issue EAST</Tooltip>}
       <MenuItemPlus
-        onClick={() => router.navigate((isUserHaveVault && !isVaultLiquidated) ? RouteName.AddEast : RouteName.BuyEast)}
+        onClick={() => onMenuClicked((isUserHaveVault && !isVaultLiquidated) ? RouteName.AddEast : RouteName.BuyEast)}
       />
     </MenuItemContainer>
     {vaultProfit > 0.5 &&
       <MenuItemContainer>
-        <Tooltip>Take WEST</Tooltip>
-        <MenuItemLock onClick={() => router.navigate(RouteName.TakeWest)} />
+        {isDesktop && <Tooltip>Take WEST</Tooltip>}
+        <MenuItemLock onClick={() => onMenuClicked(RouteName.TakeWest)} />
       </MenuItemContainer>
     }
     {isTransferAvailable &&
       <MenuItemContainer>
-        <Tooltip>Transfer</Tooltip>
-        <MenuItemExport onClick={() => router.navigate(RouteName.TransferEast)} />
+        {isDesktop && <Tooltip>Transfer</Tooltip>}
+        <MenuItemExport onClick={() => onMenuClicked(RouteName.TransferEast)} />
       </MenuItemContainer>
     }
     {(isUserHaveVault && isDesktop) &&
@@ -130,25 +135,25 @@ export const AccountMenu = observer(() => {
     }
     {(isUserHaveVault || isUserHaveEast) &&
       <MenuItemContainer>
-        <Tooltip>History</Tooltip>
-        <MenuItemTime onClick={() => router.navigate(RouteName.TransactionsHistory)} />
+        {isDesktop && <Tooltip>History</Tooltip>}
+        <MenuItemTime onClick={() => onMenuClicked(RouteName.TransactionsHistory)} />
       </MenuItemContainer>
     }
     <MenuItemContainer>
-      <Tooltip>Settings</Tooltip>
-      <MenuItemSettings onClick={() => router.navigate(RouteName.AccountSettings)} />
+      {isDesktop && <Tooltip>Settings</Tooltip>}
+      <MenuItemSettings onClick={() => onMenuClicked(RouteName.AccountSettings)} />
     </MenuItemContainer>
     <MenuItemContainer>
-      <Tooltip>FAQ</Tooltip>
-      <MenuItemQuestion onClick={() => router.navigate(RouteName.Faq)} />
+      {isDesktop && <Tooltip>FAQ</Tooltip>}
+      <MenuItemQuestion onClick={() => onMenuClicked(RouteName.Faq)} />
     </MenuItemContainer>
     {(isUserHaveVault && isDesktop) &&
       <Delimiter />
     }
     {isUserHaveVault &&
       <MenuItemContainer>
-        <Tooltip>Close</Tooltip>
-        <MenuItemClose onClick={() => router.navigate(RouteName.CloseVault)} />
+        {isDesktop && <Tooltip>Close</Tooltip>}
+        <MenuItemClose onClick={() => onMenuClicked(RouteName.CloseVault)} />
       </MenuItemContainer>
     }
   </Container>

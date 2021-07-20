@@ -79,6 +79,10 @@ const AccountContent = styled.div<{isVisible: boolean}>`
   > div {
     animation: ${props => props.isVisible ? fadeIn : fadeOut} 250ms ease forwards;
   }
+  
+  ${({ isVisible }) => !isVisible && `
+    pointer-events: none;
+  `}
 `
 
 const PrimaryModalContainer = styled.div`
