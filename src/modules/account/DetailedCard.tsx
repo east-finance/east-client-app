@@ -259,7 +259,7 @@ export const DetailedCard = observer((props: { isShown: null | boolean, onClick:
               size={'small'}
               style={{ color: '#FFFFFF', background: 'rgba(4, 53, 105, 0.15)' }}
               onClick={(e: any) => {
-                e.preventDefault()
+                e.stopPropagation()
                 router.navigate(RouteName.SupplyVault)
               }
               }
@@ -273,7 +273,7 @@ export const DetailedCard = observer((props: { isShown: null | boolean, onClick:
             size={'small'}
             style={{ color: '#FFFFFF', background: 'linear-gradient(90deg, #5352B8 0%, #323177 100%)' }}
             onClick={(e: any) => {
-              e.preventDefault()
+              e.stopPropagation()
               if (isVaultLiquidated) {
                 router.navigate(RouteName.BuyEast)
               } else {
