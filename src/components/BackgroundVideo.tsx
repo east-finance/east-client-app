@@ -36,7 +36,7 @@ export const BackgroundVideo = (props: IProps) => {
   //     videoRef.current.playbackRate = 0.5
   //   }
   // }, [])
-  return <VideoContainer id={'videoBG'} autoPlay muted loop {...props}>
+  return <VideoContainer id={'videoBG'} autoPlay muted loop playsInline={true} {...props}>
     <source src={BgWater} type="video/mp4" />
   </VideoContainer>
 }
