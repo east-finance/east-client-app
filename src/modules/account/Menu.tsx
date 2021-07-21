@@ -22,7 +22,9 @@ const Container = styled.div`
   align-items: center;
   padding: min(24px, 3vw);
   
-  @media (orientation: landscape) {
+  @media (orientation: landscape)
+  and (min-device-width: 375px) 
+  and (max-device-width: 812px){
     padding: 2vw;
   }
 `
@@ -91,7 +93,9 @@ const MenuItem = styled.div<{ disabled?: boolean; }>`
       background-size: 50%;
   }
   
-  @media (orientation: landscape) {
+  @media only screen (orientation: landscape)
+  and (min-device-width: 375px) 
+  and (max-device-width: 812px){
     width: 5vw;
     height: 4.32vw;
   }
