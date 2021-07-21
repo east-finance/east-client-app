@@ -79,12 +79,15 @@ const Time = styled.div`
   color: ${props => props.theme.darkBlue50};
 `
 
+const PrimaryModalContainer = styled(PrimaryModal)`
+`
+
 const TxItem = (props: { tx: ITransaction}) => {
   const { configStore } = useStores()
   const { tx } = props
   const { transactionType, eastAmountDiff, westAmountDiff, callTimestamp, params, callTxId, requestTxId } = tx
-  const date = moment(callTimestamp).format('MMM Do')
-  const time = moment(callTimestamp).format('hh:mm a')
+  const date = moment(callTimestamp).format('MMMM D')
+  const time = moment(callTimestamp).format('HH:mm')
   const isReceived = +eastAmountDiff > 0
   const isReceivedWest = +westAmountDiff > 0
 
@@ -173,7 +176,7 @@ export const TransactionsHistory = (props: IProps) => {
     loadTxs()
   }, [])
 
-  return <PrimaryModal {...props} style={{ padding: '24px 24px 0', overflow: 'hidden' }}>
+  return <PrimaryModalContainer {...props} style={{ padding: '24px 24px 4px', overflow: 'hidden' }}>
     <PrimaryTitle>Transaction history</PrimaryTitle>
     <ItemsContainer>
       {inProgress
@@ -181,5 +184,5 @@ export const TransactionsHistory = (props: IProps) => {
         : transactions.map((tx, index) => <TxItem key={index} tx={tx} />)
       }
     </ItemsContainer>
-  </PrimaryModal>
+  </PrimaryModalContainer>
 }
