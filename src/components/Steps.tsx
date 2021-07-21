@@ -24,6 +24,7 @@ const StepContainer = styled.div<{ isActive: boolean; isPassed: boolean; }>`
   padding: 8px 12px;
   font-size: 13px;
   line-height: 16px;
+  text-align: center;
 
   ${({ isActive, isPassed }) => (isActive || isPassed) && `
     background-image: linear-gradient(to right, #545ff5 0%, #3b8ad9 51%, #4687dc 100%);

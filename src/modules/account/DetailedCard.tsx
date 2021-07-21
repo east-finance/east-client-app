@@ -89,32 +89,6 @@ const DetailsBody = styled.div`
   box-shadow: 0px 24px 40px rgba(0, 0, 0, 0.4);
 `
 
-const ProgressBar = styled.div<{ gradientSteps: string[]; percent: number; }>`
-  display: flex;
-  align-items: center;
-  width: ${props => props.percent}%;
-  height: inherit;
-  background: linear-gradient(90deg, ${props => props.gradientSteps[0]} 0%, ${props => props.gradientSteps[1]} 100%);
-  border-bottom-left-radius: 6px;
-`
-
-const NoCollateralWrapper = styled.div`
-  width: 100%;
-  height: inherit;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`
-
-const CollateralValue = styled.div<{ isShown?: null | boolean }>`
-  padding-left: 24px;
-  font-family: Staatliches;
-  font-weight: 400;
-  font-size: 18px;
-  line-height: 36px;
-  color: #FFFFFF;
-`
-
 const Text = styled.span<{ isShown?: null | boolean }>`
   font-size: 18px;
   line-height: 16px;
@@ -198,20 +172,37 @@ const FreeEastText = styled.div`
 
 const StaticTitle = styled.div``
 
+enum CollateralLevelName {
+  high = 'high',
+  normal = 'normal',
+  low = 'low'
+}
+
+const getCollateralLevelName = (vaultCollateral: number) => {
+  if (vaultCollateral > 2.45) {
+    return CollateralLevelName.high
+  } else if (vaultCollateral <= 2.45 && vaultCollateral > 1.7) {
+    return CollateralLevelName.normal
+  } else {
+    return CollateralLevelName.low
+  }
+}
+
 const CardFooter = (props: { vaultCollateral: number, isShown: null | boolean }) => {
   const { configStore } = useStores()
   const defaultCollateral = configStore.getWestCollateral()
   // const  liquidationCollateral = configStore.getLiquidationCollateral()
   const { vaultCollateral } = props
 
-  let gradientSteps = ['#00800D', '#00805E'] // 250% collateral
+  const levelName = getCollateralLevelName(vaultCollateral)
+  let gradientSteps = ['#00800D', '#00805E'] // 250% default collateral
   // const gradientPercent = Math.round(((vaultCollateral - liquidationCollateral) / (defaultCollateral - liquidationCollateral)) * 100)
   const gradientPercent = Math.round(vaultCollateral / defaultCollateral * 100)
-  if (vaultCollateral >= 2.55) {
+  if (levelName === CollateralLevelName.high) {
     gradientSteps = ['#00800D', '#00805E']
-  } else if (vaultCollateral <= 2.45 && vaultCollateral > 1.7) {
+  } else if (levelName === CollateralLevelName.normal) {
     gradientSteps = ['#DE6A00', '#DE9000']
-  } else if (vaultCollateral <= 1.7) {
+  } else if (levelName === CollateralLevelName.low) {
     gradientSteps = ['#F0212B', '#F0212B']
   }
 
@@ -236,6 +227,38 @@ export const DetailedCard = observer((props: { isShown: null | boolean, onClick:
   const { westBalance, vaultCollateral, vaultEastProfit, vault } = dataStore
   const { eastAmount: freeEastAmount } = vaultEastProfit
   const isVaultLiquidated = +vault.eastAmount > 0 && +vault.westAmount === 0
+
+  const levelName = getCollateralLevelName(vaultCollateral)
+
+  const getAddWestButtonStyles = () => {
+    let color = '#000000'
+    let background = 'rgba(4, 53, 105, 0.15)' // High collateral
+    if (levelName === CollateralLevelName.normal) {
+      background = 'linear-gradient(90deg, #DE6A00 0%, #DE9000 100%)'
+      color = '#FFFFFF'
+    } else if (levelName === CollateralLevelName.low) {
+      background = '#F0212B'
+      color = '#FFFFFF'
+    }
+    return {
+      color,
+      background
+    }
+  }
+
+  const getAddEastButtonStyles = () => {
+    let color = '#FFFFFF'
+    let background = 'linear-gradient(90deg, #5352B8 0%, #323177 100%)' // High or low collateral
+    if (levelName === CollateralLevelName.normal) {
+      background = 'rgba(0, 0, 0, 0.1)'
+      color = '#000000'
+    }
+    return {
+      color,
+      background
+    }
+  }
+
   return <Container {...props}>
     <DetailsBody>
       <div>
@@ -257,9 +280,9 @@ export const DetailedCard = observer((props: { isShown: null | boolean, onClick:
           <SmallButtonContainer>
             <Button
               size={'small'}
-              style={{ color: '#FFFFFF', background: 'rgba(4, 53, 105, 0.15)' }}
+              style={getAddWestButtonStyles()}
               onClick={(e: any) => {
-                e.preventDefault()
+                e.stopPropagation()
                 router.navigate(RouteName.SupplyVault)
               }
               }
@@ -271,9 +294,9 @@ export const DetailedCard = observer((props: { isShown: null | boolean, onClick:
         <SmallButtonContainer>
           <Button
             size={'small'}
-            style={{ color: '#FFFFFF', background: 'linear-gradient(90deg, #5352B8 0%, #323177 100%)' }}
+            style={getAddEastButtonStyles()}
             onClick={(e: any) => {
-              e.preventDefault()
+              e.stopPropagation()
               if (isVaultLiquidated) {
                 router.navigate(RouteName.BuyEast)
               } else {

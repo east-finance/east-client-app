@@ -27,16 +27,25 @@ const Container = styled.div`
 
 const CardsContainer = styled.div`
   position: relative;
+  margin-top: 50px;
+  width: 100vw;
+  height: calc(100vh - 160px);
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-top: 170px;
   cursor: pointer;
   
   @media only screen 
   and (min-device-width: 375px) 
   and (max-device-width: 812px) {
-    transform: scale(0.6)
+    transform: scale(0.9);
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  @media (orientation: landscape)
+  and (min-device-width: 375px) 
+  and (max-device-width: 812px) {
+    transform: scale(0.8);
   }
 `
 
@@ -78,13 +87,18 @@ const AccountContent = styled.div<{isVisible: boolean}>`
   > div {
     animation: ${props => props.isVisible ? fadeIn : fadeOut} 250ms ease forwards;
   }
+  
+  ${({ isVisible }) => !isVisible && `
+    pointer-events: none;
+  `}
 `
 
 const PrimaryModalContainer = styled.div`
   display: block;
-  position: fixed;
+  position: absolute;
   z-index: 9999;
-  width: 625px;
+  width: min(625px, 90vw);
+  max-height: 100vh;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
@@ -139,10 +153,12 @@ const AccountCards = observer(() => {
     }
   }
   return <CardsContainer>
-    <AccountCard isShown={isFrontShown} onClick={onClick} />
-    {isPositiveBalance &&
+    <div style={{ position: 'relative' }}>
+      <AccountCard isShown={isFrontShown} onClick={onClick} />
+      {isPositiveBalance &&
       <DetailedCard isShown={isFrontShown === null ? null : !isFrontShown} onClick={onClick} />
-    }
+      }
+    </div>
   </CardsContainer>
 })
 

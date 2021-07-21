@@ -17,7 +17,9 @@ interface IProps {
 
 const Container = styled.div`
   margin: 0 auto;
-  width: 440px;
+  @media screen and (min-width: 900px) {
+     width: 440px;
+  }
 `
 
 const Centered = styled.div`

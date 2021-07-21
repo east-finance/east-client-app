@@ -24,6 +24,16 @@ const InputContainer = styled.input<{ status?: InputStatus; }>`
   ::placeholder {
     color: rgba(224, 224, 224, 0.75);
   }
+  
+  ::-webkit-outer-spin-button,
+  ::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  
+  &[type=number] {
+    -moz-appearance: textfield;
+  }
 
   ${({ status }) => status !== InputStatus.error && `
     :hover, :focus {
@@ -142,7 +152,7 @@ const SimpleInputContainer = styled.div<{ status?: InputStatus, value: any }>`
   width: 100%;
   font-style: normal;
   padding-top: 32px;
-  padding-bottom: 8px;
+  // padding-bottom: 8px;
   border-bottom: 1px solid ${props => props.theme.darkBlue15};
   transition: border-color 250ms;
   
@@ -171,18 +181,28 @@ const SimpleInputLabel = styled.div<{ isOpened: boolean, status?: InputStatus }>
 `
 
 const SimpleInputComponent = styled.input`
-  height: 16px;
   width: 100%;
   padding: 0;
   box-sizing: border-box;
   color: ${props => props.theme.darkBlue};
   font-weight: 500;
   font-size: 15px;
-  line-height: 16px;
+  line-height: 15px;
   outline: none;
   border: none;
   font-family: Cairo,sans-serif;
   background: transparent;
+  margin-bottom: 2px;
+  
+  ::-webkit-outer-spin-button,
+  ::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  
+  &[type=number] {
+    -moz-appearance: textfield;
+  }
 `
 
 export interface SimpleInputProps extends InputProps {
@@ -222,6 +242,10 @@ export const SimpleInput = (props: SimpleInputProps) => {
           value = mainPart + delimiter + decimalPart.slice(0, maxDecimals)
           setValue(value)
         }
+      }
+      if (value.includes('-')) {
+        value = value.replaceAll('-', '')
+        setValue(value)
       }
     }
   }

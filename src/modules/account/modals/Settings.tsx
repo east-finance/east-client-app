@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import styled from 'styled-components'
 import { toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
+import { isMobile } from 'react-device-detect'
 import { PrimaryTitle } from '../../../components/PrimaryTitle'
 import { PrimaryModal, SecondaryModal, SecondaryModalButton } from '../Modal'
 import { Block, Block16 } from '../../../components/Block'
@@ -25,7 +26,9 @@ const FlexWrapper = styled.div`
 `
 
 const Container = styled.div`
-  width: 376px;
+  @media screen and (min-width: 900px) {
+    width: 376px;
+  }
   margin: 0 auto;
 `
 
@@ -137,7 +140,20 @@ const PasswordChange = (props: IPassChangeProps) => {
 
   const validationError = oldPasswordError || passwordError
 
-  return <SecondaryModal style={{ visibility: props.visible ? 'visible' : 'hidden' }}>
+  let mobileStyles = {}
+  if (isMobile) {
+    mobileStyles = {
+      width: '100%',
+      left: 0,
+      display: props.visible ? 'block' : 'none',
+    }
+  }
+
+
+  return <SecondaryModal style={{
+    visibility: props.visible ? 'visible' : 'hidden',
+    ...mobileStyles
+  }}>
     <FlexWrapper>
       <IconContainer onClick={props.onClose}>
         <CrossIcon color={'white'} />
@@ -203,7 +219,6 @@ export const Settings = (props: IProps) => {
   return <PrimaryModal {...props}>
     <PrimaryTitle>Settings</PrimaryTitle>
     <div>
-      <PasswordChange visible={passChangeVisible} onClose={() => setPassChangeVisible(false)} />
       <Container>
         <Block marginTop={55}>
           <SimpleInput disabled label={'Email'} value={authStore.email} />
@@ -222,6 +237,7 @@ export const Settings = (props: IProps) => {
           </OptionsContainer>
         </Block>
       </Container>
+      <PasswordChange visible={passChangeVisible} onClose={() => setPassChangeVisible(false)} />
     </div>
   </PrimaryModal>
 }

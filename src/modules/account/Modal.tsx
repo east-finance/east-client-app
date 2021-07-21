@@ -21,6 +21,10 @@ const Container = styled.div<{ status?: ModalStatus }>`
   box-shadow: 0 4px 72px rgba(0, 0, 0, 0.15);
   border-radius: 41px;
   padding: 16px 60px 32px;
+  
+  @media screen and (max-width: 900px) {
+    padding: 16px;
+  }
 `
 
 const IconContainer = styled.div`
