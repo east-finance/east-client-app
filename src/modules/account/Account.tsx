@@ -27,8 +27,9 @@ const Container = styled.div`
 
 const CardsContainer = styled.div`
   position: relative;
+  margin-top: 50px;
   width: 100vw;
-  height: calc(100vh - 110px);
+  height: calc(100vh - 160px);
   display: flex;
   align-items: center;
   justify-content: center;
