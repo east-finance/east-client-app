@@ -88,9 +88,10 @@ const AccountContent = styled.div<{isVisible: boolean}>`
 
 const PrimaryModalContainer = styled.div`
   display: block;
-  position: fixed;
+  position: absolute;
   z-index: 9999;
   width: min(625px, 90vw);
+  max-height: 100vh;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);

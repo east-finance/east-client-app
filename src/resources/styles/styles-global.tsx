@@ -5,6 +5,17 @@ const StyleGlobal = createGlobalStyle`
   html {
     box-sizing: border-box;
     background: #f4f4f4;
+    
+    @media screen and (min-width: 320px) and (max-width: 767px) and (orientation: landscape) {
+      transform: rotate(-90deg);
+      transform-origin: left top;
+      width: 100vh;
+      height: 100vw;
+      overflow-x: hidden;
+      position: absolute;
+      top: 100%;
+      left: 0;
+    }
   }
   
   body {

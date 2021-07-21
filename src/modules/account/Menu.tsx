@@ -21,6 +21,10 @@ const Container = styled.div`
   justify-content: space-between;
   align-items: center;
   padding: min(24px, 3vw);
+  
+  @media (orientation: landscape) {
+    padding: 2vw;
+  }
 `
 
 const Tooltip = styled.div`
@@ -63,17 +67,11 @@ const MenuItem = styled.div<{ disabled?: boolean; }>`
   opacity: 0.9;
   border-radius: 112px;
   width: min(74px, 10vw);
-  height: min(64px, 9vw);
+  height: min(64px, 8.64vw);
   background-repeat: no-repeat;
   background-size: 40%;
   background-position: center;
   transition: transform 150ms;
-  
-  @media only screen 
-  and (min-device-width: 375px) 
-  and (max-device-width: 812px) {
-      background-size: 50%;
-  }
 
   ${({ disabled }) => disabled && `
     opacity: 0.2;
@@ -86,6 +84,17 @@ const MenuItem = styled.div<{ disabled?: boolean; }>`
       transform: scale(1.1);
     }
   `}
+  
+  @media only screen 
+  and (min-device-width: 375px) 
+  and (max-device-width: 812px) {
+      background-size: 50%;
+  }
+  
+  @media (orientation: landscape) {
+    width: 5vw;
+    height: 4.32vw;
+  }
 `
 
 const MenuItemPlus = styled(MenuItem)`background-image: url(${iconPlus});`
