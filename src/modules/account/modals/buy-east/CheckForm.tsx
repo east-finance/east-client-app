@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import { Block } from '../../../../components/Block'
-import { Button, ButtonsContainer, NavigationLeftGradientButton } from '../../../../components/Button'
+import { Button, ButtonsContainer } from '../../../../components/Button'
 import { ButtonSpinner, RelativeContainer } from '../../../../components/Spinner'
 import { TextTable, TextTableKey, TextTablePrimaryValue, TextTableRow, TextTableSecondaryValue } from '../../../../components/TextTable'
 import useStores from '../../../../hooks/useStores'
@@ -21,13 +21,6 @@ const Container = styled.div`
     width: 376px;
   }
   margin: 0 auto;
-`
-
-const Description = styled.div`
-  font-weight: 500;
-  font-size: 15px;
-  line-height: 22px;
-  color: #8D8D8D;
 `
 
 export const CheckForm = (props: IProps) => {

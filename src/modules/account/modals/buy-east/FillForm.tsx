@@ -120,7 +120,7 @@ export const FillForm = observer((props: IProps) => {
   const usdpPartPercent = configStore.getUsdpPart() * 100
   const westPartPercent = configStore.getWestCollateral() * 100
   const totalFee = +configStore.getFeeByOpType(EastOpType.mint)
-  const westAvailable = +dataStore.westBalance - +totalFee
+  const westAvailable = roundNumber(+dataStore.westBalance - +totalFee, 8)
   const buyOptions = [{text: '25%', value: '0.25' }, { text: '50%', value: '0.5' }, { text: '75%', value: '0.75' }, { text: '100%', value: '1' }]
   const onSelectOption = (tag: ITag) => {
     const amount = roundNumber(+tag.value * +dataStore.westBalance, 8).toString()
