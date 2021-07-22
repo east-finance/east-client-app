@@ -7,7 +7,7 @@ import eastLogoSmall from '../../resources/images/east-logo-small.png'
 import { Block, Block24 } from '../../components/Block'
 import { observer } from 'mobx-react'
 import useStores from '../../hooks/useStores'
-import { roundNumber, spacifyFractional, spacifyNumber } from '../../utils'
+import { spacifyFractional } from '../../utils'
 import { RouteName } from '../../router/segments'
 import { useRoute } from 'react-router5'
 import { Icon } from '../../components/Icons'
@@ -142,28 +142,34 @@ const AddEast = styled.div`
   text-shadow: 0px 6px 8px rgba(0, 0, 0, 0.25);
 `
 
-interface IEastBalanceProps {
-  value: string;
+const IntegerPart = styled.span<{ type: BalanceType }>`
+  font-size: ${props => props.type === BalanceType.large ? '64px' : '18px' };
+  line-height: ${props => props.type === BalanceType.large ? '48px' : '16px' };
+  color: #F8F8F8;
+  letter-spacing: ${props => props.type === BalanceType.large ? '3px' : '2px' };
+  font-weight: 300;
+`
+
+const FracPart = styled.span<{ type: BalanceType }>`
+  font-size: ${props => props.type === BalanceType.large ? '32px' : '18px' };
+  line-height: ${props => props.type === BalanceType.large ? '28px' : '16px' };
+  color: #F8F8F8;
+  letter-spacing: ${props => props.type === BalanceType.large ? '3px' : '2px' };
+  font-weight: 300;
+  opacity:  0.6;
+`
+
+enum BalanceType {
+  large = 'large',
+  small = 'small'
 }
 
-const IntegerPart = styled.span`
-  font-size: 64px;
-  line-height: 48px;
-  color: #F8F8F8;
-  letter-spacing: 3px;
-  font-weight: 300;
-`
+interface ITokenBalanceProps {
+  value: string;
+  type?: BalanceType;
+}
 
-const FracPart = styled.span`
-  font-size: 32px;
-  line-height: 28px;
-  color: #F8F8F8;
-  letter-spacing: 3px;
-  font-weight: 300;
-  margin-left: 4px;
-`
-
-const EastBalance = (props: IEastBalanceProps) => {
+const TokenBalance = (props: ITokenBalanceProps) => {
   const { value } = props
   let integerPart = value
   let fractionalPart = ''
@@ -179,9 +185,9 @@ const EastBalance = (props: IEastBalanceProps) => {
     }
   }
   return <div>
-    <IntegerPart>{integerPart}</IntegerPart>
+    <IntegerPart type={props.type || BalanceType.small}>{integerPart}</IntegerPart>
     {fractionalPart &&
-      <FracPart>,{fractionalPart}</FracPart>
+      <FracPart type={props.type || BalanceType.small}>,{fractionalPart}</FracPart>
     }
   </div>
 }
@@ -206,7 +212,7 @@ export const AccountCard = observer((props: { isShown: null | boolean, onClick: 
     <ContentWrapper>
       {isPositiveBalance &&
         <TopContainer>
-          <EastBalance value={eastBalance} />
+          <TokenBalance type={BalanceType.large} value={eastBalance} />
           <Block marginTop={12}>
             <Description>EAST available</Description>
           </Block>
@@ -217,20 +223,20 @@ export const AccountCard = observer((props: { isShown: null | boolean, onClick: 
           {+vault.eastAmount > 0 &&
             <div>
               <div>
-                <BottomItem>{spacifyNumber(vault.eastAmount)}</BottomItem>
+                <TokenBalance type={BalanceType.small} value={vault.eastAmount} />
                 <Block marginTop={4}>
                   <BottomItem>EAST issued with vault</BottomItem>
                 </Block>
               </div>
               <FlexColumnWrapper style={{ marginTop: '16px' }}>
                 <div>
-                  <BottomItem>{spacifyNumber(vault.westAmount)}</BottomItem>
+                  <TokenBalance type={BalanceType.small} value={vault.westAmount} />
                   <Block marginTop={4}>
                     <BottomItem>west in vault</BottomItem>
                   </Block>
                 </div>
                 <div>
-                  <BottomItem>{spacifyNumber(vault.rwaAmount)}</BottomItem>
+                  <TokenBalance type={BalanceType.small} value={vault.rwaAmount} />
                   <Block marginTop={4}>
                     <BottomItem>usdap in vault</BottomItem>
                   </Block>

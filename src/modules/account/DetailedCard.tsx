@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import styled, { keyframes, css } from 'styled-components'
 import { roundNumber, spacifyNumber } from '../../utils'
 import useStores from '../../hooks/useStores'
@@ -18,9 +18,9 @@ const FadeInBack = keyframes`
   to{transform: scale(0.9); opacity: 1;}
 `
 
-const CollateralFill = keyframes`
-  from{right: 100%;}
-  to{right: 30%;}
+const collateralFill = (from: number, to: number) => keyframes`
+  from { right: ${from}%; }
+  to { right: ${to}%; }
 `
 
 const CollateralTextHide = keyframes`
@@ -114,7 +114,7 @@ const SmallButtonContainer = styled.div`
   }
 `
 
-const ProgressBarWrapper  = styled.div<{ percent: number, gradientSteps: string[], isShown: IsShown }>`
+const ProgressBarWrapper  = styled.div<{ prevPercent: number, percent: number, gradientSteps: string[], isShown: IsShown }>`
   font-family: Staatliches;
   transition: padding 600ms ease;
   height: 48px;
@@ -142,7 +142,7 @@ const ProgressBarWrapper  = styled.div<{ percent: number, gradientSteps: string[
     bottom: 0%;
     right: ${props => Math.ceil(100 - props.percent)}%;
     transition: right 800ms ease forwards;
-    // animation: ${CollateralFill} 800ms ease forwards;
+    animation: ${props => collateralFill(Math.ceil(100 - props.prevPercent), Math.ceil(100 - props.percent))} 800ms ease forwards;
     background: linear-gradient(90deg, ${props => props.gradientSteps[0]} 0%, ${props => props.gradientSteps[1]} 100%);
     box-shadow: 0px 4px 12px ${props => props.gradientSteps[1]};
   }
@@ -193,12 +193,24 @@ const CardFooter = (props: { vaultCollateral: number, isShown: null | boolean })
   const { configStore } = useStores()
   const defaultCollateral = configStore.getWestCollateral()
   // const  liquidationCollateral = configStore.getLiquidationCollateral()
-  const { vaultCollateral } = props
+
+  const [prevCollateral, setPrevCollateral] = useState(0)
+  const [vaultCollateral, setCollateral] = useState(props.vaultCollateral)
+
+  useEffect(() => {
+    if (props.vaultCollateral !== vaultCollateral) {
+      setPrevCollateral(vaultCollateral)
+      setCollateral(props.vaultCollateral)
+    }
+  }, [props.vaultCollateral])
 
   const levelName = getCollateralLevelName(vaultCollateral)
   let gradientSteps = ['#00800D', '#00805E'] // 250% default collateral
   // const gradientPercent = Math.round(((vaultCollateral - liquidationCollateral) / (defaultCollateral - liquidationCollateral)) * 100)
-  const gradientPercent = Math.round(vaultCollateral / defaultCollateral * 100)
+  const prevPercent = prevCollateral > 0
+    ? Math.min(Math.round(prevCollateral / defaultCollateral * 100), 100)
+    : 0
+  const currentPercent = Math.min(Math.round(vaultCollateral / defaultCollateral * 100), 100)
   if (levelName === CollateralLevelName.high) {
     gradientSteps = ['#00800D', '#00805E']
   } else if (levelName === CollateralLevelName.normal) {
@@ -211,7 +223,12 @@ const CardFooter = (props: { vaultCollateral: number, isShown: null | boolean })
     ? <Title isShown={props.isShown}>collateral</Title>
     : <StaticTitle>no collateral</StaticTitle>
 
-  return <ProgressBarWrapper percent={gradientPercent} isShown={props.isShown} gradientSteps={gradientSteps}>
+  return <ProgressBarWrapper
+    isShown={props.isShown}
+    prevPercent={prevPercent}
+    percent={currentPercent}
+    gradientSteps={gradientSteps}
+  >
     <ProgressBarText>
       {vaultCollateral > 0 &&
         <Percent>{Math.round(vaultCollateral * 100)}%</Percent>

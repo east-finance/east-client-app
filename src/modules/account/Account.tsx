@@ -78,7 +78,7 @@ const EastLogoWrapper = styled.div`
 `
 
 const ChartContainer = styled.div`
-  position: absolute;
+  position: fixed;
   top: 0;
 `
 
