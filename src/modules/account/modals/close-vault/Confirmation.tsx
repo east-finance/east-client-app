@@ -52,7 +52,7 @@ export const CloseVaultConfirmation = observer((props: IProps) => {
   const [inProgress, setInProgress] = useState(false)
 
   const sendCloseVault = async () => {
-    const { address, publicKey } = await signStore.getPublicData()
+    const { publicKey } = await signStore.getPublicData()
     const closeTx = {
       senderPublicKey: publicKey,
       authorPublicKey: publicKey,
@@ -99,10 +99,10 @@ export const CloseVaultConfirmation = observer((props: IProps) => {
       </div>
     </Centered>
     <Block marginTop={38}>
-      <TextTable style={{ width: '320px' }}>
+      <TextTable style={{ width: '380px' }}>
         <TextTableRow>
           <TextTableKey>You will pay</TextTableKey>
-          <TextTablePrimaryValue>{roundNumber(dataStore.vaultEastAmount)} EAST</TextTablePrimaryValue>
+          <TextTablePrimaryValue>{roundNumber(dataStore.vaultEastAmount, 8)} EAST</TextTablePrimaryValue>
         </TextTableRow>
         <TextTableRow>
           <TextTableKey>You will unlock</TextTableKey>

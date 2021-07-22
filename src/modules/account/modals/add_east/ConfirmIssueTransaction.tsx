@@ -32,13 +32,6 @@ const Container = styled.div`
   margin: 0 auto;
 `
 
-const Description = styled.div`
-  font-weight: 500;
-  font-size: 15px;
-  line-height: 22px;
-  color: #8D8D8D;
-`
-
 const SendButtonsContainer = styled.div`
   display: flex;
   justify-content: space-between;

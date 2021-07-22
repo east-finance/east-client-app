@@ -13,6 +13,7 @@ import { AddWestToAddress } from '../../common/AddWestToAddress'
 import { ConfirmIssueTransaction } from './ConfirmIssueTransaction'
 import { TxSendSuccess } from '../../common/TxSendSuccess'
 import { useRoute } from 'react-router5'
+import { roundNumber } from '../../../../utils'
 
 interface IProps {
   onClose: () => void
@@ -74,7 +75,8 @@ export const AddEast = observer((props: IProps) => {
     const onNextClicked = (formData: FillFormData) => {
       setFormData(formData)
       setStepIndex(IssueSteps.ConfirmTransaction)
-      const westDelta = (+formData.westAmount + totalFee + supplyVaultWestDiff) - +dataStore.westBalance
+      const addWestAmount = roundNumber((+formData.westAmount + totalFee + supplyVaultWestDiff), 8)
+      const westDelta = roundNumber(addWestAmount - +dataStore.westBalance, 8)
       if (westDelta > 0) {
         setRefillWestAmount(westDelta.toString())
       }

@@ -39,8 +39,6 @@ export const FillSupplyForm = observer((props: IProps) => {
   const [westAmount, setWestAmount] = useState(props.westAmount || '')
   const [errors, setErrors] = useState({ west: '' })
 
-  console.log('vaultCollateral', vaultCollateral)
-
   useEffect(() => {
     if (errors.west) {
       setErrors(validateForm())

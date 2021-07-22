@@ -111,6 +111,12 @@ export const FillIssueForm = observer((props: IProps) => {
     setWestByEastAmount(value)
   }
 
+  const onBlur = (e: any) => {
+    const { value } = e.target
+    setEastAmount(value)
+    setWestByEastAmount(value)
+  }
+
   const onChangeWest = (e: any) => {
     const { value } = e.target
     setWestAmount(value)
@@ -127,15 +133,12 @@ export const FillIssueForm = observer((props: IProps) => {
       })
     }
   }
-  const westAvailable = +dataStore.westBalance - +totalFee
+  const westAvailable = roundNumber(+dataStore.westBalance - +totalFee, 8)
   const buyOptions = [{text: '25%', value: '0.25' }, { text: '50%', value: '0.5' }, { text: '75%', value: '0.75' }, { text: '100%', value: '1' }]
   const onSelectOption = (tag: ITag) => {
     const amount = roundNumber(+tag.value * westAvailable, 8).toString()
     setWestAmount(amount)
     setEastByWestAmount(amount)
-  }
-  const onBlur = () => {
-    // setErrors(validateForm())
   }
   const onSelectFreeEast = () => {
     const rounded = vaultFreeEast.toString()

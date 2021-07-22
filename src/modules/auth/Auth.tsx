@@ -55,7 +55,7 @@ const NavigationContainer = styled.div`
   top: 332px;
 
   @media only screen and (max-width: 800px) {
-    opacity: 0;
+    display: none;
   }
 `
 
@@ -98,7 +98,9 @@ const Auth: React.FunctionComponent = () =>  {
   } else if(routeName === RouteName.SignInSeed) {
     title = 'Login with SEED phrase'
     content = <div>
-      <NavigationContainer><NavigationLeft onClick={() => router.navigate(RouteName.SignIn)} /></NavigationContainer>
+      <NavigationContainer>
+        <NavigationLeft onClick={() => router.navigate(RouteName.SignIn)} />
+      </NavigationContainer>
       <SignInSeed />
     </div>
   } else if(routeName === RouteName.SignInWallet) {
