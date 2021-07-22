@@ -71,6 +71,7 @@ const SecondaryText = styled.div`
   font-size: 15px;
   line-height: 18px;
   color: #000000;
+  word-break: break-word;
 `
 
 const Time = styled.div`
@@ -109,7 +110,7 @@ const TxItem = (props: { tx: ITransaction}) => {
     description = isReceived ? `Transfer from ${tx.address}` : `Transfer to ${params.to}`
   } else if (transactionType === EastOpType.mint) {
     primaryText = `${eastDiff} EAST`
-    description = 'Vault created'
+    description = 'Create vault'
   } else if (transactionType === EastOpType.close_init) {
     primaryText = `${eastDiff} EAST`
     description = 'Initialize vault close'
@@ -118,7 +119,7 @@ const TxItem = (props: { tx: ITransaction}) => {
     }
   } else if (transactionType === EastOpType.close) {
     primaryText = `${eastDiff} EAST`
-    description = 'Vault is closed'
+    description = 'Close vault'
   } else if (transactionType === EastOpType.supply) {
     primaryText = `${westDiff} WEST`
     description = 'Supply vault'
@@ -180,7 +181,7 @@ export const TransactionsHistory = (props: IProps) => {
     <PrimaryTitle>Transaction history</PrimaryTitle>
     <ItemsContainer>
       {inProgress
-        ? Array(1).fill(null).map((_, index) => <TxItemSkeleton key={index} />)
+        ? Array(5).fill(null).map((_, index) => <TxItemSkeleton key={index} />)
         : transactions.map((tx, index) => <TxItem key={index} tx={tx} />)
       }
     </ItemsContainer>

@@ -29,11 +29,10 @@ const CardsContainer = styled.div`
   position: relative;
   margin-top: 50px;
   width: 100vw;
-  height: calc(100vh - 160px);
+  height: calc(100vh - 180px);
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
   
   @media only screen 
   and (min-device-width: 375px) 

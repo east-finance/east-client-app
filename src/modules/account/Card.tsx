@@ -45,6 +45,7 @@ const animationCondition = (isShown: null | boolean) => {
 
 const Container = styled.div<{ isShown: null | boolean }>`
   // z-index: 10;
+  cursor:  pointer;
   animation: ${props => animationCondition(props.isShown)}
 `
 

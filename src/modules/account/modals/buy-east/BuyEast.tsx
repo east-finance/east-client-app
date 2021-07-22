@@ -8,13 +8,13 @@ import useStores from '../../../../hooks/useStores'
 import { RechargeWest } from './RechargeWest'
 import { BuyWestSuccess } from './Success'
 import { TxTextType } from '../../../../interfaces'
-import { SignStrategy } from '../../../../stores/SignStore'
+import { observer } from 'mobx-react'
 
 interface IProps {
   onClose: () => void
 }
 
-export const BuyEast = (props: IProps) => {
+export const BuyEast = observer((props: IProps) => {
   const { configStore, dataStore, authStore, signStore } = useStores()
   const [currentStep, setCurrentStep] = useState(Steps.fill)
   const [eastAmount, setEastAmount] = useState('')
@@ -138,4 +138,4 @@ export const BuyEast = (props: IProps) => {
     <PrimaryTitle>issue east stablecoin</PrimaryTitle>
     <div>{content}</div>
   </PrimaryModal>
-}
+})

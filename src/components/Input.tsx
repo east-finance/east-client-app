@@ -229,12 +229,9 @@ export const SimpleInput = (props: SimpleInputProps) => {
   }
   const onBlur = (e: any) => {
     setFocused(false)
-    if (props.onBlur) {
-      props.onBlur(e)
-    }
+    let value = e.target.value
     // Remove last chars for number with decimals
     if (props.type === 'number') {
-      let value = e.target.value
       const delimiter = value.includes(',') ? ',' : value.includes('.') ? '.' : null
       if (delimiter) {
         const [mainPart, decimalPart] = value.split(delimiter)
@@ -247,6 +244,15 @@ export const SimpleInput = (props: SimpleInputProps) => {
         value = value.replaceAll('-', '')
         setValue(value)
       }
+    }
+    if (props.onBlur) {
+      props.onBlur({
+        ...e,
+        target: {
+          ...e.target,
+          value
+        }
+      })
     }
   }
   const onChange = (e: any) => {

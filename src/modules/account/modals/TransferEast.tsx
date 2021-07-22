@@ -153,7 +153,7 @@ export const TransferEast = observer((props: IProps) => {
           key: 'transfer',
           value: JSON.stringify({
             to: userAddress,
-            amount: +eastAmount
+            amount: +roundNumber(eastAmount, 8)
           })
         }],
         fee: configStore.getDockerCallFee(),
@@ -176,7 +176,9 @@ export const TransferEast = observer((props: IProps) => {
           status={formErrors.east ? InputStatus.error : InputStatus.default}
           label={`Enter amount of EAST (${eastAvailable} available)`}
           value={eastAmount}
+          maxDecimals={8}
           onChange={(e: any) => setEastAmount(e.target.value)}
+          onBlur={(e: any) => setEastAmount(e.target.value)}
         />
         <Block marginTop={8}>
           <Tags data={options} onClick={onSelectOption} />

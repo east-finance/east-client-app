@@ -75,6 +75,7 @@ const Container = styled.div<{ isShown: IsShown }>`
   transform: scale(0.9);
   overflow: hidden;
   border-radius: 10px;
+  cursor:  pointer;
 
   animation: ${props => animationCondition(props.isShown)}
 `
