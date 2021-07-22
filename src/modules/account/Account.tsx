@@ -33,6 +33,7 @@ const CardsContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  touch-action: none;
   
   @media only screen 
   and (min-device-width: 375px) 
