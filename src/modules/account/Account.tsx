@@ -116,6 +116,10 @@ const PrimaryModalContainer = styled.div`
   @media only screen and (max-width: 960px) and (orientation:landscape)  {
     width: 50vw;
   }
+  
+  @media only screen and (min-width: 384px) and (max-width: 767px) and (orientation:landscape) {
+    width: 50vw;
+  }
 `
 
 const getPrimaryModalByRoute = () => {

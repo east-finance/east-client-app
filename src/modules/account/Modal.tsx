@@ -22,7 +22,7 @@ const Container = styled.div<{ status?: ModalStatus }>`
   border-radius: 41px;
   padding: 16px 60px 32px;
   
-  @media only screen and (min-width : 480px) {
+  @media only screen and (min-width : 480px) and (max-width : 812px) {
     padding: 16px;
   }
 `

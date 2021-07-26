@@ -37,12 +37,14 @@ const FlexContainer = styled.div`
   display: flex;
   margin-top: 48px;
   margin-bottom: 48px;
+  flex-wrap: wrap;
 `
 
 const ItemsContainer = styled.div`
   width: 50%;
   display: flex;
   flex-direction: column;
+  min-width: 120px;
 `
 
 const Title = styled.div`

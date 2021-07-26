@@ -99,7 +99,7 @@ export const CloseVaultConfirmation = observer((props: IProps) => {
       </div>
     </Centered>
     <Block marginTop={38}>
-      <TextTable style={{ width: '380px' }}>
+      <TextTable>
         <TextTableRow>
           <TextTableKey>You will pay</TextTableKey>
           <TextTablePrimaryValue>{roundNumber(dataStore.vaultEastAmount, 8)} EAST</TextTablePrimaryValue>

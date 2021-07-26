@@ -1,5 +1,4 @@
 import React, { useLayoutEffect, useState } from 'react'
-import { throttle } from '../utils'
 
 function useWindowSize() {
   const [size, setSize] = useState([0, 0])
@@ -7,10 +6,10 @@ function useWindowSize() {
     function updateSize() {
       setSize([document.documentElement.clientWidth, document.documentElement.clientHeight])
     }
-    window.addEventListener('resize', throttle(updateSize, 100))
+    window.addEventListener('resize', updateSize)
     updateSize()
     return () => {
-      window.removeEventListener('resize', throttle(updateSize, 100))
+      window.removeEventListener('resize', updateSize)
     }
   }, [])
   return size
