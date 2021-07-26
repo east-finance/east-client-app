@@ -11,6 +11,7 @@ import useStores from '../../../../hooks/useStores'
 import { TxSendSuccess } from '../../common/TxSendSuccess'
 import { observer } from 'mobx-react'
 import { isDesktop } from 'react-device-detect'
+import { roundNumber } from '../../../../utils'
 
 interface IProps {
   onClose: () => void
@@ -71,7 +72,7 @@ export const TakeWest = observer((props: IProps) => {
 
   const buyOptions = [{text: '25%', value: '0.25' }, { text: '50%', value: '0.5' }, { text: '75%', value: '0.75' }, { text: '100%', value: '1' }]
   const onSelectOption = (tag: ITag) => {
-    const amount = +tag.value * westProfit
+    const amount = roundNumber(+tag.value * westProfit, 8)
     setWestAmount(amount.toString())
     const error = validateForm(amount.toString())
     setValidationError(error)
