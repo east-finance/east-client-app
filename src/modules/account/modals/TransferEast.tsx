@@ -170,7 +170,7 @@ export const TransferEast = observer((props: IProps) => {
 
   if (currentStep === Steps.fill) {
     content = <Container>
-      <Block marginTop={96}>
+      <Block marginTop={'10%'}>
         <SimpleInput
           type={'number'}
           status={formErrors.east ? InputStatus.error : InputStatus.default}
@@ -190,7 +190,7 @@ export const TransferEast = observer((props: IProps) => {
         value={userAddress}
         onChange={(e:  any) => setUserAddress(e.target.value)}
       />
-      <Block marginTop={96}>
+      <Block marginTop={'15%'}>
         <Button style={{ width: '304px', margin: '0 auto' }} type={'primary'} onClick={onClickContinue}>Continue</Button>
       </Block>
     </Container>
@@ -200,7 +200,7 @@ export const TransferEast = observer((props: IProps) => {
       <Block16>
         <SubTitle>Confirmation</SubTitle>
       </Block16>
-      <Block marginTop={49} style={{ 'textAlign': 'center' }}>
+      <Block marginTop={'5%'} style={{ 'textAlign': 'center' }}>
         <ConfirmTitle>You will send</ConfirmTitle>
         <Block marginTop={8}>
           <SendAmount>{eastAmount} EAST</SendAmount>
@@ -217,7 +217,7 @@ export const TransferEast = observer((props: IProps) => {
           </Block>
         </Block>
       </Block>
-      <Block marginTop={64}>
+      <Block marginTop={'10%'}>
         <ButtonsContainer style={{ width: '80%', margin: '0 auto' }}>
           <NavigationLeftGradientButton onClick={() => setCurrentStep(Steps.fill)} />
           <Button type={'primary'} disabled={inProgress} onClick={onConfirmTransfer}>
@@ -231,7 +231,7 @@ export const TransferEast = observer((props: IProps) => {
     </Container>
   } else {
     content = <TxSendSuccess
-      text={'EAST will be transfered after the transaction is completed. It may take a few minutes.'}
+      text={'EAST will be transferred after the transaction is completed. It may take a few minutes.'}
       onClose={props.onClose}
     />
   }

@@ -24,9 +24,7 @@ interface IProps {
 const Container = styled.div`
   margin: 0 auto;
   font-family: Cairo,sans-serif;
-  @media screen and (min-width: 900px) {
-    width: 464px;
-  }
+  max-width: 464px;
 `
 
 const WestPostfix = styled.div`
@@ -146,7 +144,7 @@ export const FillIssueForm = observer((props: IProps) => {
     setWestByEastAmount(rounded)
   }
   return <Container>
-    <Block marginTop={32}>
+    <Block marginTop={'2%'}>
       <SimpleInput
         type={'number'}
         label={'Enter amount of EAST'}
@@ -185,7 +183,7 @@ export const FillIssueForm = observer((props: IProps) => {
         </Block>
       }
     </Block>
-    <Block marginTop={72}>
+    <Block marginTop={'10%'}>
       <ButtonsContainer>
         <Button type={'primary'} onClick={onNextClicked} style={{ width: '304px' }}>
           Continue to confirmation

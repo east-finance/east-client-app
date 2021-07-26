@@ -23,13 +23,13 @@ const emptyUserVault: IVault = {
 export default class DataStore {
   api
   configStore
-  pollingId: any = null
   vault: IVault = {...emptyUserVault}
   westBalance = '0.0'
   eastBalance = '0.0'
   westRate = '0'
   usdapRate = '0'
   westRatesHistory: IOracleValue[] = []
+  pollingId: number | null = null
 
   constructor(api: Api, configStore: ConfigStore) {
     makeAutoObservable(this)
@@ -78,78 +78,6 @@ export default class DataStore {
 
   get transferedEastAmount () {
     return (+this.eastBalance - +this.vaultEastAmount).toString() || '0'
-  }
-
-  sleep(timeout: number) {
-    return new Promise(resolve => setTimeout(resolve, timeout))
-  }
-
-  async startPolling (address: string) {
-    const updateTokenRates = async () => {
-      const westRates = await this.api.getOracleValues(OracleStreamId.WestRate, 50)
-      const [{ value: westRate }] = westRates
-      runInAction(() => {
-        this.westRate = westRate
-        this.westRatesHistory = westRates
-      })
-      const [{ value: usdapRate }] = await this.api.getOracleValues(OracleStreamId.UsdapRate, 1)
-      runInAction(() => {
-        this.usdapRate = usdapRate
-      })
-    }
-
-    const updateUserVault = async () => {
-      const vault = await this.api.getVault(address)
-      // console.log('User Vault:', vault)
-      if (vault) {
-        runInAction(() => {
-          this.vault = vault
-        })
-      }
-    }
-
-    const updateEastTotalBalance = async () => {
-      const balance = await this.getEastBalance(address)
-      runInAction(() => {
-        this.eastBalance = balance
-      })
-    }
-
-    const updateWestBalance = async () => {
-      const westBalance = await this.getWestBalance(address)
-      runInAction(() => {
-        this.westBalance = roundNumber(westBalance, 8).toString()
-      })
-    }
-
-    const updateData = async () => {
-      await updateUserVault()
-      await updateEastTotalBalance()
-      await updateWestBalance()
-      await updateTokenRates()
-    }
-    clearInterval(this.pollingId)
-    await updateData()
-    console.log('Start polling user data')
-    this.pollingId = setInterval(async () => {
-      try {
-        await updateData()
-      } catch (e) {
-        console.error('Cannot update user data:', e.message)
-      }
-    }, 5 * 1000)
-  }
-
-  stopPolling () {
-    console.log('Stop polling user data')
-    clearInterval(this.pollingId)
-  }
-
-  logout () {
-    this.stopPolling()
-    runInAction(() => {
-      this.vault = {...emptyUserVault}
-    })
   }
 
   async getEastBalance(address: string): Promise<string> {
@@ -203,5 +131,81 @@ export default class DataStore {
     const rwaPart = this.configStore.getUsdpPart()
     const westAmount  = (+eastAmount * rwaPart) / +this.westRate
     return roundNumber(westAmount, 8)
+  }
+
+
+  sleep(timeout: number) {
+    return new Promise(resolve => setTimeout(resolve, timeout))
+  }
+
+  async startPolling (address: string) {
+    const updateTokenRates = async () => {
+      const westRates = await this.api.getOracleValues(OracleStreamId.WestRate, 50)
+      const [{ value: westRate }] = westRates
+      runInAction(() => {
+        this.westRate = westRate
+        this.westRatesHistory = westRates
+      })
+      const [{ value: usdapRate }] = await this.api.getOracleValues(OracleStreamId.UsdapRate, 1)
+      runInAction(() => {
+        this.usdapRate = usdapRate
+      })
+    }
+
+    const updateUserVault = async () => {
+      const vault = await this.api.getVault(address)
+      if (vault) {
+        runInAction(() => {
+          this.vault = vault
+        })
+      }
+    }
+
+    const updateEastTotalBalance = async () => {
+      const balance = await this.getEastBalance(address)
+      runInAction(() => {
+        this.eastBalance = balance
+      })
+    }
+
+    const updateWestBalance = async () => {
+      const westBalance = await this.getWestBalance(address)
+      runInAction(() => {
+        this.westBalance = roundNumber(westBalance, 8).toString()
+      })
+    }
+
+    if(this.pollingId) {
+      clearTimeout(this.pollingId)
+    } else {
+      console.log('Start polling user data')
+    }
+
+    try {
+      await Promise.all([updateUserVault(), updateEastTotalBalance(), updateWestBalance(), updateTokenRates()])
+    } catch (e) {
+      console.error('Cannot update user data:', e.message)
+    } finally {
+      const id = setTimeout(() => {
+        this.startPolling(address)
+      }, 5000)
+      runInAction(() => {
+        this.pollingId = id
+      })
+    }
+  }
+
+  stopPolling () {
+    console.log('Stop polling user data')
+    if (this.pollingId) {
+      clearTimeout(this.pollingId)
+    }
+  }
+
+  logout () {
+    this.stopPolling()
+    runInAction(() => {
+      this.vault = {...emptyUserVault}
+    })
   }
 }

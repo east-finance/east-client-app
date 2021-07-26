@@ -14,6 +14,7 @@ import { ConfirmIssueTransaction } from './ConfirmIssueTransaction'
 import { TxSendSuccess } from '../../common/TxSendSuccess'
 import { useRoute } from 'react-router5'
 import { roundNumber } from '../../../../utils'
+import { isDesktop } from 'react-device-detect'
 
 interface IProps {
   onClose: () => void
@@ -103,7 +104,7 @@ export const AddEast = observer((props: IProps) => {
   return <PrimaryModal {...props} status={modalStatus}>
     <PrimaryTitle>issue east stablecoin</PrimaryTitle>
     <div>
-      {(!refillWestAmount && stepIndex !== IssueSteps.Success) &&
+      {(isDesktop && !refillWestAmount && stepIndex !== IssueSteps.Success) &&
         <Block marginTop={40}>
           <Centered>
             <Steps steps={[{

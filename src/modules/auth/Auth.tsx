@@ -41,12 +41,12 @@ const EastLogoWrapper = styled.div`
 `
 
 const Title = styled.div`
+  font-family: BrutalType,sans-serif;
   text-align: center;
   letter-spacing: -1px;
   font-weight: 800;
   font-size: 48px;
   color: white;
-  font-family: BrutalType,Helvetica,Arial,sans-serif;
 `
 
 const NavigationContainer = styled.div`

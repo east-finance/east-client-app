@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 
-export const Block = styled.div<{ marginTop: number }>`
-  margin-top: ${({ marginTop = 0 }) => marginTop}px;
+export const Block = styled.div<{ marginTop: number | string }>`
+  margin-top: ${({ marginTop = 0 }) => typeof marginTop === 'number' ? `${marginTop}px` : marginTop};
 `
 
 export const Block16 = styled.div`

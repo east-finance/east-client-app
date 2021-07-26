@@ -33,10 +33,10 @@ const CardsContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  touch-action: none;
+  touch-action: pinch-zoom;
   
   @media only screen 
-  and (min-device-width: 375px) 
+  and (min-device-width: 375px)
   and (max-device-width: 812px) {
     transform: scale(0.9);
     -webkit-tap-highlight-color: transparent;
@@ -47,6 +47,11 @@ const CardsContainer = styled.div`
   and (max-device-width: 812px) {
     transform: scale(0.8);
   }
+  
+  // tablet
+  @media only screen and (min-width:768px) and (max-width:1024px) and (orientation:landscape) {
+    transform: scale(0.6);
+  }
 `
 
 const MenuContainer = styled.div`
@@ -56,6 +61,11 @@ const MenuContainer = styled.div`
   width: 100%;
   text-align: center;
   // animation: ${fadeInControls} 1000ms ease forwards;
+  
+  // tablet
+  @media screen and (min-width:768px) and (max-width:1024px) and (orientation:landscape) {
+    bottom: 10px;
+  }
 `
 
 const EastLogoContainer = styled.div`
@@ -102,6 +112,10 @@ const PrimaryModalContainer = styled.div`
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+
+  @media only screen and (max-width: 960px) and (orientation:landscape)  {
+    width: 50vw;
+  }
 `
 
 const getPrimaryModalByRoute = () => {

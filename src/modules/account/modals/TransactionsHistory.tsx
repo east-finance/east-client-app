@@ -20,14 +20,14 @@ const ItemColumn = styled.div`
 
 const ItemsContainer = styled.div`
   margin-top: 32px;
-  max-height: 380px;
-  height: 380px;
+  max-height: min(380px, 60vh);
+  height: min(380px, 60vh);
   overflow-y: scroll;
 `
 
 const ItemContainer = styled.div`
   display: flex;
-  height: 76px;
+  height: min(76px, 10vh);
   box-sizing: border-box;
   justify-content: space-between;
   align-items: center;
@@ -45,11 +45,6 @@ const TxItemSkeleton = styled(ItemContainer)`
   background-image: linear-gradient(90deg, #EDEDED 0px, #e8e8e8 40px, #EDEDED 80px);
   background-size: 576px;
   animation: ${shineBatch} 1.6s infinite linear;
-`
-
-const LinkWrapper = styled.div`
-  background: rgba(224, 224, 224, 0.25);
-  border-radius: 8px;
 `
 
 const ExplorerLink = styled(GradientText)`

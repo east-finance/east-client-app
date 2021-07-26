@@ -10,6 +10,7 @@ import { ButtonSpinner, RelativeContainer } from '../../../../components/Spinner
 import useStores from '../../../../hooks/useStores'
 import { TxSendSuccess } from '../../common/TxSendSuccess'
 import { observer } from 'mobx-react'
+import { isDesktop } from 'react-device-detect'
 
 interface IProps {
   onClose: () => void
@@ -103,12 +104,12 @@ export const TakeWest = observer((props: IProps) => {
   let content = null
   if (isTxSent) {
     content = <TxSendSuccess
-      text={'WEST will be transfered after the transaction is completed. It may take a few minutes.'}
+      text={'WEST will be transferred after the transaction is completed. It may take a few minutes.'}
       onClose={props.onClose}
     />
   } else {
     content = <div>
-      <Block marginTop={120}>
+      <Block marginTop={'20%'}>
         <Container>
           <SimpleInput
             type={'number'}
@@ -122,9 +123,9 @@ export const TakeWest = observer((props: IProps) => {
           </Block>
         </Container>
       </Block>
-      <Block marginTop={120}>
+      <Block marginTop={'20%'}>
         <Centered>
-          <Button type={'primary'} disabled={inProgress || !westAmount || !!validationError} onClick={onWithdrawClicked}>
+          <Button type={'primary'} disabled={inProgress} onClick={onWithdrawClicked}>
             <RelativeContainer>
               {inProgress && <ButtonSpinner />}
               Withdraw WEST
@@ -135,8 +136,10 @@ export const TakeWest = observer((props: IProps) => {
     </div>
   }
 
+  const title = isDesktop ? 'take west out of the vault' : 'take west'
+
   return <PrimaryModal {...props}>
-    <PrimaryTitle>take west out of the vault</PrimaryTitle>
+    <PrimaryTitle>{title}</PrimaryTitle>
     {content}
   </PrimaryModal>
 })

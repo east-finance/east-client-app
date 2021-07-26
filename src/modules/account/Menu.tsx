@@ -25,7 +25,12 @@ const Container = styled.div`
   @media (orientation: landscape)
   and (min-device-width: 375px) 
   and (max-device-width: 812px){
-    padding: 2vw;
+    padding: 1vw;
+  }
+  
+  // tablet
+  @media screen and (min-width:768px) and (max-width:1024px) and (orientation:landscape) {
+    padding: 1vw;
   }
 `
 
@@ -90,12 +95,19 @@ const MenuItem = styled.div<{ disabled?: boolean; }>`
   @media only screen 
   and (min-device-width: 375px) 
   and (max-device-width: 812px) {
-      background-size: 50%;
+    background-size: 50%;
   }
   
+  // phone
   @media only screen (orientation: landscape)
   and (min-device-width: 375px) 
-  and (max-device-width: 812px){
+  and (max-device-width: 812px) {
+    width: 5vw;
+    height: 4.32vw;
+  }
+  
+  // tablet
+  @media screen and (min-width:768px) and (max-width:1024px) and (orientation:landscape) {
     width: 5vw;
     height: 4.32vw;
   }

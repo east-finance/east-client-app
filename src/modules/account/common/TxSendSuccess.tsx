@@ -37,14 +37,14 @@ const Container = styled.div`
 
 export const TxSendSuccess = (props: IProps) => {
   return <Container>
-    <Block marginTop={72}>
+    <Block marginTop={'15%'}>
       <IconSuccess />
     </Block>
     <Block marginTop={32}>
       <div>The request has been created.</div>
       <div>{props.text}</div>
     </Block>
-    <Block marginTop={80}>
+    <Block marginTop={'15%'}>
       <ButtonsContainer>
         <Button type={'primary'} onClick={props.onClose}>Close this window</Button>
       </ButtonsContainer>

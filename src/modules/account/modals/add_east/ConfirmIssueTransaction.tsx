@@ -164,7 +164,7 @@ export const ConfirmIssueTransaction = (props: IProps) => {
   }
 
   return <Container>
-    <Block marginTop={58}>
+    <Block marginTop={'15%'}>
       <TextTable>
         <TextTableRow>
           <TextTableKey>You will get</TextTableKey>
@@ -200,7 +200,7 @@ export const ConfirmIssueTransaction = (props: IProps) => {
         </TextTableRow>
       </TextTable>
     </Block>
-    <Block marginTop={40}>
+    <Block marginTop={'15%'}>
       <SendButtonsContainer>
         <NavigationLeftGradientButton onClick={props.onPrevClicked} />
         <Button
