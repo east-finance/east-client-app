@@ -109,13 +109,19 @@ export const FillIssueForm = observer((props: IProps) => {
     setWestByEastAmount(value)
   }
 
-  const onBlur = (e: any) => {
+  const onBlurEast = (e: any) => {
     const { value } = e.target
     setEastAmount(value)
     setWestByEastAmount(value)
   }
 
   const onChangeWest = (e: any) => {
+    const { value } = e.target
+    setWestAmount(value)
+    setEastByWestAmount(value)
+  }
+
+  const onBlurWest = (e: any) => {
     const { value } = e.target
     setWestAmount(value)
     setEastByWestAmount(value)
@@ -151,7 +157,7 @@ export const FillIssueForm = observer((props: IProps) => {
         value={eastAmount}
         status={errors.east ? InputStatus.error : InputStatus.default}
         onChange={onChangeEast}
-        onBlur={onBlur}
+        onBlur={onBlurEast}
       />
       {+vaultFreeEast > 0 &&
       <Block marginTop={8}>
@@ -174,7 +180,7 @@ export const FillIssueForm = observer((props: IProps) => {
           value={westAmount}
           status={errors.west ? InputStatus.error : InputStatus.default}
           onChange={onChangeWest}
-          onBlur={onBlur}
+          onBlur={onBlurWest}
         />
       </Block>
       {+dataStore.westBalance > 0 &&
