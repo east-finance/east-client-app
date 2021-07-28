@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useState } from 'react'
+import React, { ChangeEvent, FocusEvent, useState } from 'react'
 import { PrimaryModal } from '../../Modal'
 import { PrimaryTitle } from '../../../../components/PrimaryTitle'
 import { Block } from '../../../../components/Block'
@@ -85,6 +85,13 @@ export const TakeWest = observer((props: IProps) => {
     setValidationError(error)
   }
 
+  const onBlur = (e: FocusEvent<HTMLInputElement>) => {
+    const { value } = e.target
+    setWestAmount(value)
+    const error = validateForm(value)
+    setValidationError(error)
+  }
+
   const onWithdrawClicked = async () => {
     const error = validateForm(westAmount)
     setValidationError(error)
@@ -118,6 +125,7 @@ export const TakeWest = observer((props: IProps) => {
             label={`Enter amount of WEST (${westProfit} available)`}
             value={westAmount}
             onChange={onChangeInput}
+            onBlur={onBlur}
           />
           <Block marginTop={8}>
             <Tags data={buyOptions} onClick={onSelectOption} />

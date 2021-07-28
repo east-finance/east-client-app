@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { ChangeEvent, useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { Block } from '../../../../components/Block'
 import { InputStatus, SimpleInput } from '../../../../components/Input'
@@ -57,7 +57,7 @@ export const FillSupplyForm = observer((props: IProps) => {
     }
   }
 
-  const onChangeWest = (e: any) => {
+  const onChangeWest = (e: ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target
     setWestAmount(value)
   }

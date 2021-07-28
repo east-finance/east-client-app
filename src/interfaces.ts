@@ -59,3 +59,51 @@ export interface IOracleValue {
   value: string;
   timestamp: string;
 }
+
+export interface IBlockchainTx {
+  fee: number;
+  timestamp: number;
+  atomicBadge?: {
+    trustedSender: string;
+  }
+}
+
+export interface ITransferTx extends IBlockchainTx {
+  recipient: string;
+  amount: number;
+  attachment: string;
+}
+
+export interface ICallContractParam {
+  type: string;
+  key: string;
+  value: string;
+}
+
+export interface ICallContractTx extends IBlockchainTx {
+  senderPublicKey: string;
+  authorPublicKey: string;
+  contractId: string;
+  contractVersion: number;
+  params: ICallContractParam[];
+}
+
+export interface IWrappedBlockchainTx {
+  type: TxTextType;
+  tx: ICallContractTx | ITransferTx;
+}
+
+export enum ContractExecutionStatus {
+  pending = 'pending',
+  success = 'success',
+  fail = 'fail',
+}
+
+export interface TxCallStatus {
+  address: string;
+  error: string | null;
+  id: number;
+  status: ContractExecutionStatus;
+  tx_id: string;
+  type: EastOpType;
+}

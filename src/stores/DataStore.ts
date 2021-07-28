@@ -175,6 +175,10 @@ export default class DataStore {
       })
     }
 
+    const getTxStatuses = async () => {
+      const statuses = await this.api.getTransactionsStatuses(address)
+    }
+
     if(this.pollingId) {
       clearTimeout(this.pollingId)
     } else {
@@ -182,7 +186,12 @@ export default class DataStore {
     }
 
     try {
-      await Promise.all([updateUserVault(), updateEastTotalBalance(), updateWestBalance(), updateTokenRates()])
+      await Promise.all([
+        updateUserVault(),
+        updateEastTotalBalance(),
+        updateWestBalance(),
+        updateTokenRates()
+      ])
     } catch (e) {
       console.error('Cannot update user data:', e.message)
     } finally {

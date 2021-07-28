@@ -1,4 +1,12 @@
-import React, { InputHTMLAttributes, TextareaHTMLAttributes, useEffect, useRef, useState } from 'react'
+import React, {
+  ChangeEvent,
+  FocusEvent,
+  InputHTMLAttributes,
+  TextareaHTMLAttributes,
+  useEffect,
+  useRef,
+  useState
+} from 'react'
 import styled from 'styled-components'
 
 export enum InputStatus {
@@ -221,13 +229,13 @@ export const SimpleInput = (props: SimpleInputProps) => {
     setValue(props.value ? props.value.toString() : '')
   }, [props.value])
 
-  const onFocus = (e: any) => {
+  const onFocus = (e: FocusEvent<HTMLInputElement>) => {
     setFocused(true)
     if (props.onFocus) {
       props.onFocus(e)
     }
   }
-  const onBlur = (e: any) => {
+  const onBlur = (e: FocusEvent<HTMLInputElement>) => {
     setFocused(false)
     let value = e.target.value
     // Remove last chars for number with decimals
@@ -255,7 +263,7 @@ export const SimpleInput = (props: SimpleInputProps) => {
       })
     }
   }
-  const onChange = (e: any) => {
+  const onChange = (e: ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value
     setValue(value)
     if (props.onChange) {

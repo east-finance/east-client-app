@@ -8,7 +8,7 @@ export default {
     path: '/buy-east'
   }, {
     name: RouteSegment.addEast,
-    path: '/addEast?eastAmount&westAmount&step'
+    path: '/add-east?eastAmount&westAmount&step'
   }, {
     name: RouteSegment.supply,
     path: '/supply'

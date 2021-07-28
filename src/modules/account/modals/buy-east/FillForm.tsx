@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { ChangeEvent, FocusEvent, useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { Block, Block24 } from '../../../../components/Block'
 import { InputStatus, SimpleInput } from '../../../../components/Input'
@@ -79,29 +79,39 @@ export const FillForm = observer((props: IProps) => {
     }
   }
 
-  const setEastByWestAmount = (west: string) => {
-    const { eastAmount } = dataStore.calculateEastAmount({
-      westAmount: west
-    })
+  const setEastByWestAmount = (value: string) => {
+    const { eastAmount } = dataStore.calculateEastAmount({ westAmount: value })
     if (eastAmount > 0) {
-      setEastAmount(roundNumber(eastAmount).toString())
+      setEastAmount(roundNumber(eastAmount, 8).toString())
     } else {
       setEastAmount('')
     }
   }
 
-  const onChangeEast = (e: any) => {
-    const { value } = e.target
-    setEastAmount(value)
-    const westAmount = dataStore.calculateWestAmount(value)
-    if (westAmount > 0) {
-      setWestAmount(roundNumber(westAmount).toString())
-    } else {
-      setWestAmount('')
-    }
+  const setWestByEastAmount = (value: string) => {
+    const westAmount = roundNumber(dataStore.calculateWestAmount(value), 8)
+    setWestAmount(westAmount > 0 ? westAmount.toString() : '')
   }
 
-  const onChangeWest = (e: any) => {
+  const onChangeEast = (e: ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target
+    setEastAmount(value)
+    setWestByEastAmount(value)
+  }
+
+  const onBlurEast = (e: FocusEvent<HTMLInputElement>) => {
+    const { value } = e.target
+    setEastAmount(value)
+    setWestByEastAmount(value)
+  }
+
+  const onChangeWest = (e: ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target
+    setWestAmount(value)
+    setEastByWestAmount(value)
+  }
+
+  const onBlurWest = (e: FocusEvent<HTMLInputElement>) => {
     const { value } = e.target
     setWestAmount(value)
     setEastByWestAmount(value)
@@ -127,18 +137,15 @@ export const FillForm = observer((props: IProps) => {
     setWestAmount(amount)
     setEastByWestAmount(amount)
   }
-  const onBlur = () => {
-    setErrors(validateForm())
-  }
   return <Container>
-    <Block marginTop={62}>
+    <Block marginTop={'15%'}>
       <SimpleInput
         type={'number'}
         label={'Enter amount of EAST'}
         value={eastAmount}
         status={errors.east ? InputStatus.error : InputStatus.default}
         onChange={onChangeEast}
-        onBlur={onBlur}
+        onBlur={onBlurEast}
       />
       <Block marginTop={4} />
       <SimpleInput
@@ -147,7 +154,7 @@ export const FillForm = observer((props: IProps) => {
         value={westAmount}
         status={errors.west ? InputStatus.error : InputStatus.default}
         onChange={onChangeWest}
-        onBlur={onBlur}
+        onBlur={onBlurWest}
       />
       {+dataStore.westBalance > 0 &&
         <Block marginTop={8}>
@@ -155,7 +162,7 @@ export const FillForm = observer((props: IProps) => {
         </Block>
       }
     </Block>
-    <Block marginTop={56}>
+    <Block marginTop={'10%'}>
       <Description>EAST is collateralized by {usdpPartPercent}% USDP and {westPartPercent}% WEST</Description>
       <Centered><Link href={'https://wavesenterprise.com/'} target={'_blank'}>Learn more</Link></Centered>
     </Block>

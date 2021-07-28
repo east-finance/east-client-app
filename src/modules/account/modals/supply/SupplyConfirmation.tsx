@@ -102,12 +102,12 @@ export const SupplyConfirmation = observer((props: IProps) => {
       <TextTable style={{ width: '320px' }}>
         <TextTableRow>
           <TextTableKey>You will add</TextTableKey>
-          <TextTableSecondaryValue>{roundNumber(props.westAmount, 2)} WEST</TextTableSecondaryValue>
+          <TextTableSecondaryValue>{roundNumber(props.westAmount, 8)} WEST</TextTableSecondaryValue>
         </TextTableRow>
         <TextTableRow>
           <TextTableKey>Will be in vault</TextTableKey>
           <TextTableSecondaryValue>
-            <div>{roundNumber(totalWestInVault, 2)} WEST</div>
+            <div>{roundNumber(totalWestInVault, 8)} WEST</div>
           </TextTableSecondaryValue>
         </TextTableRow>
         <TextTableRow>

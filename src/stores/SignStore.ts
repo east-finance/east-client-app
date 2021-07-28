@@ -2,7 +2,8 @@ import { makeAutoObservable } from 'mobx'
 import { create, MAINNET_CONFIG, Seed, WeSdk } from '@wavesenterprise/js-sdk'
 import ConfigStore from './ConfigStore'
 import AuthStore from './AuthStore'
-import { TxTextType } from '../interfaces'
+import { ICallContractTx, ITransferTx, TxTextType } from '../interfaces'
+import { Api } from '../api'
 
 export enum LSKeys {
   SignStrategy = 'sign_strategy',
@@ -19,11 +20,13 @@ export default class SignStore {
   configStore: ConfigStore
   authStore: AuthStore
   weSDK: WeSdk
+  api: Api
 
   signStrategy: SignStrategy = SignStrategy.WeWallet
   currentSeed: Seed | null = null
 
-  constructor(configStore: ConfigStore, authStore: AuthStore) {
+  constructor(api: Api,configStore: ConfigStore, authStore: AuthStore) {
+    this.api = api
     this.configStore = configStore
     this.authStore = authStore
     this.weSDK = this.createWeSDK()
@@ -99,17 +102,40 @@ export default class SignStore {
     }
   }
 
-  getTransferId(tx: any) {
+  getTransferId(tx: ITransferTx) {
     if (this.signStrategy === SignStrategy.WeWallet) {
       return window.WEWallet.getTxId(TxTextType.transferV3, tx)
     } else if(this.currentSeed) {
       return this.weSDK.API.Transactions.Transfer.V3(tx).getId(this.currentSeed.keyPair.publicKey)
     } else {
-      throw Error('No current seed provided, cannot get tx id')
+      throw Error('No current seed provided, cannot get transfer tx id')
     }
   }
 
-  broadcastAtomic (txs: Array<{ type: TxTextType, tx: any }>) {
+  getDockerCallId(tx: ICallContractTx) {
+    if (this.signStrategy === SignStrategy.WeWallet) {
+      return window.WEWallet.getTxId(TxTextType.dockerCallV4, tx)
+    } else if(this.currentSeed) {
+      return this.weSDK.API.Transactions.CallContract.V4(tx).getId(this.currentSeed.keyPair.publicKey)
+    } else {
+      throw Error('No current seed provided, cannot get call tx id')
+    }
+  }
+
+  async sendTxWatch (txId: string, address: string, type: string) {
+    return this.api.sendTransactionBroadcast(txId, address, type)
+  }
+
+  async broadcastAtomic (txs: Array<{ type: TxTextType, tx: any }>) {
+    // const dockerCallTxs = txs.filter(tx => tx.type === TxTextType.dockerCallV4)
+    // if (dockerCallTxs.length > 0) {
+    //   await Promise.all(dockerCallTxs.map(async dockerCallTx => {
+    //     const txId = await this.getDockerCallId(dockerCallTx.tx)
+    //     const type = dockerCallTx.tx.params[0].key
+    //     await this.sendTxWatch(txId, this.authStore.address, type)
+    //   }))
+    // }
+
     if (this.signStrategy === SignStrategy.WeWallet) {
       const atomicFee = this.configStore.getAtomicFee()
       return window.WEWallet.broadcastAtomic(txs, atomicFee)

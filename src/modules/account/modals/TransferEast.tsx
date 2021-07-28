@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { ChangeEvent, FocusEvent, useState } from 'react'
 import styled from 'styled-components'
 import { PrimaryTitle } from '../../../components/PrimaryTitle'
 import { PrimaryModal } from '../Modal'
@@ -177,8 +177,8 @@ export const TransferEast = observer((props: IProps) => {
           label={`Enter amount of EAST (${eastAvailable} available)`}
           value={eastAmount}
           maxDecimals={8}
-          onChange={(e: any) => setEastAmount(e.target.value)}
-          onBlur={(e: any) => setEastAmount(e.target.value)}
+          onChange={(e: ChangeEvent<HTMLInputElement>) => setEastAmount(e.target.value)}
+          onBlur={(e: FocusEvent<HTMLInputElement>) => setEastAmount(e.target.value)}
         />
         <Block marginTop={8}>
           <Tags data={options} onClick={onSelectOption} />

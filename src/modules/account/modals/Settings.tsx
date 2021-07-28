@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { ChangeEvent, useState } from 'react'
 import styled from 'styled-components'
 import { toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
@@ -167,21 +167,21 @@ const PasswordChange = (props: IPassChangeProps) => {
             label={'Old password'}
             autoComplete='new-password'
             status={oldPasswordError ? InputStatus.error : InputStatus.default}
-            onChange={(e: any) => setOldPassword(e.target.value)}
+            onChange={(e: ChangeEvent<HTMLInputElement>) => setOldPassword(e.target.value)}
           />
           <SimpleInput
             type={'password'}
             label={'New password'}
             autoComplete='new-password'
             status={passwordError ? InputStatus.error : InputStatus.default}
-            onChange={(e: any) => setPassword(e.target.value)}
+            onChange={(e: ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
           />
           <SimpleInput
             type={'password'}
             label={'Confirm new password'}
             autoComplete='new-password'
             status={passwordError ? InputStatus.error : InputStatus.default}
-            onChange={(e: any) => setConfirm(e.target.value)}
+            onChange={(e: ChangeEvent<HTMLInputElement>) => setConfirm(e.target.value)}
           />
         </PasswordChangeForm>
       </Block>

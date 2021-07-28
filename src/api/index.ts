@@ -4,7 +4,7 @@ import {
   ITokenPair,
   ITransaction,
   IVault,
-  IOracleValue
+  IOracleValue, TxCallStatus, ContractExecutionStatus
 } from '../interfaces'
 import { OracleStreamId } from '../constants'
 import { IEastBalanceResponse } from './ApiInterfaces'
@@ -115,6 +115,20 @@ export class Api {
 
   public getTransactionsHistory = async (address: string): Promise<ITransaction[]> => {
     const { data } = await this._apiClient.get(`${API_ADDRESS}/v1/user/transactions?address=${address}`)
+    return data
+  }
+
+  public getTransactionsStatuses = async (address: string): Promise<TxCallStatus[]> => {
+    const { data } = await this._apiClient.get(`${API_ADDRESS}/v1/user/transactions/statuses?address=${address}&limit=10&offset=0`)
+    return data
+  }
+
+  public sendTransactionBroadcast = async (txId: string, address: string, type: string): Promise<{ status: ContractExecutionStatus.success }> => {
+    const { data } = await this._apiClient.post(`${API_ADDRESS}/v1/user/transactions/statuses`, {
+      txId,
+      address,
+      type
+    })
     return data
   }
 }

@@ -19,7 +19,7 @@ const api = new Api()
 const configStore = new ConfigStore(api)
 const authStore = new AuthStore(router, api)
 const dataStore = new DataStore(api, configStore)
-const signStore = new SignStore(configStore, authStore)
+const signStore = new SignStore(api, configStore, authStore)
 
 router.setDependency('authStore', authStore)
 

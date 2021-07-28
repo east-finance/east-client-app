@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { ChangeEvent, FocusEvent, useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { Block } from '../../../../components/Block'
 import { InputStatus, SimpleInput } from '../../../../components/Input'
@@ -103,25 +103,25 @@ export const FillIssueForm = observer((props: IProps) => {
     }
   }
 
-  const onChangeEast = (e: any) => {
+  const onChangeEast = (e: ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target
     setEastAmount(value)
     setWestByEastAmount(value)
   }
 
-  const onBlurEast = (e: any) => {
+  const onBlurEast = (e: FocusEvent<HTMLInputElement>) => {
     const { value } = e.target
     setEastAmount(value)
     setWestByEastAmount(value)
   }
 
-  const onChangeWest = (e: any) => {
+  const onChangeWest = (e: ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target
     setWestAmount(value)
     setEastByWestAmount(value)
   }
 
-  const onBlurWest = (e: any) => {
+  const onBlurWest = (e: FocusEvent<HTMLInputElement>) => {
     const { value } = e.target
     setWestAmount(value)
     setEastByWestAmount(value)
