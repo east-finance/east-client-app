@@ -6,9 +6,19 @@ import { ICallContractTx, ITransferTx, TxTextType } from '../interfaces'
 import { Api } from '../api'
 
 export enum LSKeys {
-  SignStrategy = 'sign_strategy',
-  EncryptedSeed = 'encrypted_seed',
-  LastSelectedAddress = 'last_selected_address'
+  userAccounts = 'user_accounts'
+}
+
+export enum LSAccountProps {
+  SignStrategy = 'signStrategy',
+  EncryptedSeed = 'encryptedSeed',
+  LastSelectedAddress = 'lastSelectedAddress'
+}
+
+interface LSUserAccount {
+  [LSAccountProps.SignStrategy]: SignStrategy;
+  [LSAccountProps.EncryptedSeed]: string;
+  [LSAccountProps.LastSelectedAddress]: string;
 }
 
 export enum SignStrategy {
@@ -21,7 +31,6 @@ export default class SignStore {
   authStore: AuthStore
   weSDK: WeSdk
   api: Api
-
   signStrategy: SignStrategy = SignStrategy.WeWallet
   currentSeed: Seed | null = null
 
@@ -30,18 +39,17 @@ export default class SignStore {
     this.configStore = configStore
     this.authStore = authStore
     this.weSDK = this.createWeSDK()
-    this.initStore()
     makeAutoObservable(this)
   }
 
-  initStore() {
-    const lsSignStrategy = localStorage.getItem(LSKeys.SignStrategy)
-    if (lsSignStrategy && Object.values(SignStrategy).includes(lsSignStrategy as SignStrategy)) {
-      this.signStrategy = lsSignStrategy as SignStrategy
+  initStore(email: string): void {
+    const account = this.getLSAccount(email)
+    if (account) {
+      this.setSignStrategy(account[LSAccountProps.SignStrategy])
     }
   }
 
-  createWeSDK () {
+  createWeSDK (): WeSdk {
     const config = {
       ...MAINNET_CONFIG,
       nodeAddress: '/nodeAddress',
@@ -52,32 +60,60 @@ export default class SignStore {
 
     const weSDKInstance = create({
       initialConfiguration: config,
-      fetchInstance: window.fetch // For Node.js use node-fetch: check /examples
+      fetchInstance: window.fetch
     })
     return weSDKInstance
   }
 
-  initWeSDK () {
+  initWeSDK (): void {
     this.weSDK = this.createWeSDK()
   }
 
-  setSignStrategy (strategy: SignStrategy) {
+  setSignStrategy (strategy: SignStrategy): void {
     this.signStrategy = strategy
-    localStorage.setItem(LSKeys.SignStrategy, SignStrategy.Seed)
+    this.writeAccountKey(LSAccountProps.SignStrategy, strategy)
   }
 
-  getSignStrategy() {
+  getSignStrategy(): SignStrategy {
     return this.signStrategy
   }
 
-  setSeed (seed: Seed) {
-    this.currentSeed = seed
-    const encryptedSeed = seed.encrypt(this.authStore.password)
-    localStorage.setItem(LSKeys.EncryptedSeed, encryptedSeed)
-    localStorage.setItem(LSKeys.LastSelectedAddress, seed.address)
+  getEncryptedSeed(): string {
+    const account = this.getLSAccount()
+    return account[LSAccountProps.EncryptedSeed] || ''
   }
 
-  decryptSeedPhrase(encryptedSeed: string, password: string, address: string) {
+  getLastSelectedAddress(): string {
+    const account = this.getLSAccount()
+    return account[LSAccountProps.LastSelectedAddress] || ''
+  }
+
+  getLSAccount (email = this.authStore.email): LSUserAccount {
+    const accounts = JSON.parse(localStorage.getItem(LSKeys.userAccounts) || '{}')
+    return accounts[email]
+  }
+
+  writeAccountKey (key: string, value: string): void {
+    const email = this.authStore.email
+    let accounts = JSON.parse(localStorage.getItem(LSKeys.userAccounts) || '{}')
+    const existedEmailData = accounts[email] ? accounts[email] : {}
+    accounts = {
+      ...accounts,
+      [email]: {
+        ...existedEmailData,
+        [key]: value
+      }
+    }
+    localStorage.setItem(LSKeys.userAccounts, JSON.stringify(accounts))
+  }
+
+  setSeed (seed: Seed): void {
+    this.currentSeed = seed
+    this.writeAccountKey(LSAccountProps.EncryptedSeed, seed.encrypt(this.authStore.password))
+    this.writeAccountKey(LSAccountProps.LastSelectedAddress, seed.address)
+  }
+
+  decryptSeedPhrase(encryptedSeed: string, password: string, address: string): string {
     return this.weSDK.Seed.decryptSeedPhrase(encryptedSeed, password, address)
   }
 
@@ -102,7 +138,7 @@ export default class SignStore {
     }
   }
 
-  getTransferId(tx: ITransferTx) {
+  getTransferId(tx: ITransferTx): Promise<string> {
     if (this.signStrategy === SignStrategy.WeWallet) {
       return window.WEWallet.getTxId(TxTextType.transferV3, tx)
     } else if(this.currentSeed) {
@@ -112,7 +148,7 @@ export default class SignStore {
     }
   }
 
-  getDockerCallId(tx: ICallContractTx) {
+  getDockerCallId(tx: ICallContractTx): Promise<string> {
     if (this.signStrategy === SignStrategy.WeWallet) {
       return window.WEWallet.getTxId(TxTextType.dockerCallV4, tx)
     } else if(this.currentSeed) {
@@ -122,7 +158,7 @@ export default class SignStore {
     }
   }
 
-  async sendTxWatch (txId: string, address: string, type: string) {
+  sendTxWatch (txId: string, address: string, type: string) {
     return this.api.sendTransactionBroadcast(txId, address, type)
   }
 
@@ -158,12 +194,14 @@ export default class SignStore {
     }
   }
 
-  broadcastDockerCall (dockerCallBody: any) {
+  broadcastDockerCall (dockerCallBody: ICallContractTx): Promise<any> {
     if (this.signStrategy === SignStrategy.WeWallet) {
       return window.WEWallet.broadcast('dockerCallV3', dockerCallBody)
     } else if(this.currentSeed) {
       const tx = this.weSDK.API.Transactions.CallContract.V4(dockerCallBody)
       return tx.broadcast(this.currentSeed.keyPair)
+    } else {
+      throw new Error('No current seed provided')
     }
   }
 }

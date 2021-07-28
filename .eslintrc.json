@@ -36,7 +36,8 @@
         "semi": [
             "error",
             "never"
-        ]
+        ],
+        "@typescript-eslint/explicit-function-return-type": "off"
     },
     "ignorePatterns": ["*.js", "reportWebVitals.ts", "setupTests.ts", "LoadFile.tsx"]
 }

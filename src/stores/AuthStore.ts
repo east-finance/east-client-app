@@ -112,14 +112,14 @@ export default class AuthStore {
     this.router.navigate(RouteName.SignIn)
   }
 
-  loginWithTokenPair (tokenPair: ITokenPair) {
+  loginWithTokenPair (tokenPair: ITokenPair): void {
     const { id, name }: WEJWTPayload = decodeJWT(tokenPair.access_token)
     this.id = id
     this.email = name
     this.writeTokenPair(tokenPair)
   }
 
-  setPassword (password: string) {
+  setPassword (password: string): void {
     this.password = password
   }
 

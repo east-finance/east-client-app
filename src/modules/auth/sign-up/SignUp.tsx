@@ -1,5 +1,5 @@
 import React, { ChangeEvent, useEffect, useRef, useState } from 'react'
-import { Block, Block16, Block24 } from '../../../components/Block'
+import { Block, Block24 } from '../../../components/Block'
 import styled from 'styled-components'
 import useStores from '../../../hooks/useStores'
 import { Input, InputStatus, InputTooltip } from '../../../components/Input'

@@ -14,7 +14,7 @@ import { FormErrors } from '../../../components/PasswordRules'
 import { AuthError } from '../../../api/apiErrors'
 import { ButtonSpinner, RelativeContainer } from '../../../components/Spinner'
 import { observer } from 'mobx-react'
-import { LSKeys, SignStrategy } from '../../../stores/SignStore'
+import { SignStrategy } from '../../../stores/SignStore'
 import { AxiosError } from 'axios'
 
 const Container = styled.div`
@@ -145,6 +145,9 @@ const SignIn = observer(() => {
         try {
           setInProgress(true)
           tokenPair = await authStore.signIn(username, password, onRefreshFailed)
+          authStore.loginWithTokenPair(tokenPair)
+          authStore.setPassword(password)
+          signStore.initStore(username)
           await configStore.loadEastContractConfig()
           await configStore.loadNodeConfig()
           await signStore.initWeSDK()
@@ -156,14 +159,11 @@ const SignIn = observer(() => {
         }
 
         if (tokenPair) {
-          authStore.loginWithTokenPair(tokenPair)
-          authStore.setPassword(password)
-
           try {
             setInProgress(true)
             if (signStore.getSignStrategy() === SignStrategy.Seed) {
-              const encryptedSeed = localStorage.getItem(LSKeys.EncryptedSeed)
-              const lastSelectedAddress = localStorage.getItem(LSKeys.LastSelectedAddress)
+              const encryptedSeed = signStore.getEncryptedSeed()
+              const lastSelectedAddress = signStore.getLastSelectedAddress()
               if (encryptedSeed && lastSelectedAddress) {
                 const decryptedPhrase = signStore.decryptSeedPhrase(encryptedSeed, password, lastSelectedAddress)
                 if(decryptedPhrase) {

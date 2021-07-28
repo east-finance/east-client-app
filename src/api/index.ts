@@ -123,7 +123,9 @@ export class Api {
     return data
   }
 
-  public sendTransactionBroadcast = async (txId: string, address: string, type: string): Promise<{ status: ContractExecutionStatus.success }> => {
+  public sendTransactionBroadcast = async (
+    txId: string, address: string, type: string
+  ): Promise<{ status: ContractExecutionStatus.success }> => {
     const { data } = await this._apiClient.post(`${API_ADDRESS}/v1/user/transactions/statuses`, {
       txId,
       address,
