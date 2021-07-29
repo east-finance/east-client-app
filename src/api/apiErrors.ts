@@ -6,3 +6,7 @@ export enum AuthError {
   WrongPassword = 'wrong.password',
   TooManyRequests = 'too.many.requests'
 }
+
+export enum PollingError {
+  EmptyOracleData = 'empty.oracle.data'
+}

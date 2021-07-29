@@ -170,7 +170,7 @@ const SignIn = observer(() => {
                   try {
                     await signInWithExistedSeed(decryptedPhrase)
                   } catch (e) {
-                    toast(<ErrorNotification title={'Cannot get user data'} message={'Try again later'} />, {
+                    toast(<ErrorNotification title={'Cannot get initial data'} message={'Try again later'} />, {
                       hideProgressBar: true,
                       autoClose: 100000
                     })

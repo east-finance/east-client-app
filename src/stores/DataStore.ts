@@ -5,6 +5,7 @@ import { OracleStreamId, WestDecimals } from '../constants'
 import { IOracleValue, IVault } from '../interfaces'
 import ConfigStore from './ConfigStore'
 import { roundNumber, cutNumber } from '../utils'
+import { PollingError } from '../api/apiErrors'
 
 const emptyUserVault: IVault = {
   id: 0,
@@ -87,7 +88,8 @@ export default class DataStore {
 
   async getWestBalance(address: string): Promise<string> {
     const { balance } = await this.api.getAddressBalance(address)
-    return new BigNumber(balance).dividedBy(Math.pow(10, WestDecimals)).toString()
+    const westBalance = new BigNumber(balance).dividedBy(Math.pow(10, WestDecimals)).toString()
+    return roundNumber(westBalance, 8).toString()
   }
 
   calculateWestAmount (eastAmount: string | number) {
@@ -138,69 +140,63 @@ export default class DataStore {
     return new Promise(resolve => setTimeout(resolve, timeout))
   }
 
-  async startPolling (address: string) {
-    const updateTokenRates = async () => {
-      const westRates = await this.api.getOracleValues(OracleStreamId.WestRate, 50)
-      const [{ value: westRate }] = westRates
-      runInAction(() => {
-        this.westRate = westRate
-        this.westRatesHistory = westRates
-      })
-      const [{ value: usdapRate }] = await this.api.getOracleValues(OracleStreamId.UsdapRate, 1)
-      runInAction(() => {
-        this.usdapRate = usdapRate
-      })
+  async pollData (address: string) {
+    const [vault, eastBalance, westBalance, westRates, usdapRates] = await Promise.all([
+      this.api.getVault(address),
+      this.getEastBalance(address),
+      this.getWestBalance(address),
+      this.api.getOracleValues(OracleStreamId.WestRate, 50),
+      this.api.getOracleValues(OracleStreamId.UsdapRate, 1)
+    ])
+
+    if(westRates.length === 0 || usdapRates.length === 0) {
+      throw new Error(PollingError.EmptyOracleData)
     }
 
-    const updateUserVault = async () => {
-      const vault = await this.api.getVault(address)
-      if (vault) {
-        runInAction(() => {
-          this.vault = vault
-        })
-      }
-    }
+    const [{ value: westRate }] = westRates
+    const [{ value: usdapRate }] = usdapRates
 
-    const updateEastTotalBalance = async () => {
-      const balance = await this.getEastBalance(address)
-      runInAction(() => {
-        this.eastBalance = balance
-      })
-    }
+    runInAction(() => {
+      this.vault = vault
+      this.eastBalance = eastBalance
+      this.westBalance = westBalance
+      this.westRate = westRate
+      this.westRatesHistory = westRates
+      this.usdapRate = usdapRate
+    })
 
-    const updateWestBalance = async () => {
-      const westBalance = await this.getWestBalance(address)
-      runInAction(() => {
-        this.westBalance = roundNumber(westBalance, 8).toString()
-      })
+    return {
+      westRate,
+      usdapRate,
+      eastBalance,
+      westBalance
     }
+  }
 
-    const getTxStatuses = async () => {
-      const statuses = await this.api.getTransactionsStatuses(address)
-    }
-
+  async startPolling (address: string, initialStart = true) {
     if(this.pollingId) {
       clearTimeout(this.pollingId)
     } else {
       console.log('Start polling user data')
     }
 
-    try {
-      await Promise.all([
-        updateUserVault(),
-        updateEastTotalBalance(),
-        updateWestBalance(),
-        updateTokenRates()
-      ])
-    } catch (e) {
-      console.error('Cannot update user data:', e.message)
-    } finally {
-      const id = setTimeout(() => {
-        this.startPolling(address)
-      }, 5000)
+    const runNextPoll = () => {
       runInAction(() => {
-        this.pollingId = id
+        this.pollingId = setTimeout(() => this.startPolling(address, false), 5000)
       })
+    }
+
+    if (initialStart) {
+      await this.pollData(address)
+      runNextPoll()
+    } else {
+      try {
+        await this.pollData(address)
+      } catch (e) {
+        console.error('Polling error:', e.message)
+      } finally {
+        runNextPoll()
+      }
     }
   }
 

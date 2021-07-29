@@ -13,6 +13,7 @@ import weLogoSmall from '../../../resources/images/we-logo-small.svg'
 import { SignStrategy } from '../../../stores/SignStore'
 import { toast } from 'react-toastify'
 import { ErrorNotification } from '../../../components/Notification'
+import { PollingError } from '../../../api/apiErrors'
 
 const WELogo = styled.div`
   display: inline-block;
@@ -103,7 +104,7 @@ const SignInWallet = observer(() => {
       setInProgress(false)
       let title = 'Sign in error'
       const message = 'Try again later'
-      if (e.message && e.response && e.response.status) {
+      if ((e.message && e.response && e.response.status) || (e.message === PollingError.EmptyOracleData)) {
         title = 'Cannot get user data'
       }
       toast(<ErrorNotification title={title} message={message} />, {

@@ -11,6 +11,7 @@ import { ButtonSpinner, RelativeContainer } from '../../../components/Spinner'
 import { SignStrategy } from '../../../stores/SignStore'
 import { toast } from 'react-toastify'
 import { ErrorNotification } from '../../../components/Notification'
+import { PollingError } from '../../../api/apiErrors'
 
 const Container = styled.div`
   width: 376px;
@@ -51,14 +52,14 @@ const SignInSeed = observer(() => {
       authStore.setLoggedIn(true)
       router.navigate(RouteName.Account)
     } catch (e) {
-      console.error('Sign in with seed error:', e.message, e.response)
+      console.error('Sign in with seed error:', e.message, ', response:', e.response)
       let title = 'Error'
       let message = ''
       if (e.message && e.message.includes('minimum length')) {
         message = 'Minimum length: 15 characters'
       }
-      if (e.message && e.response && e.response.status) {
-        title = 'Cannot get user data'
+      if (e.message && e.response && e.response.status || (e.message === PollingError.EmptyOracleData)) {
+        title = 'Cannot get initial data'
         message = 'Try again later'
       }
       toast(<ErrorNotification title={title} message={message} />, {
