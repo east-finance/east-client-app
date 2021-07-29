@@ -18,6 +18,7 @@ export enum EastOpType {
 
 export interface IVault {
   id: number;
+  isActive:  boolean;
   address: string;
   createdAt: string;
   eastAmount: string;

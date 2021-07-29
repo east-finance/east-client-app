@@ -78,9 +78,7 @@ export const FillIssueForm = observer((props: IProps) => {
   }
 
   const setEastByWestAmount = (west: string) => {
-    let { eastAmount } = dataStore.calculateEastAmount({
-      westAmount: west
-    })
+    let { eastAmount } = dataStore.calculateEastAmount(west)
     if (vaultFreeEast > 0) {
       eastAmount += +vaultFreeEast
     }

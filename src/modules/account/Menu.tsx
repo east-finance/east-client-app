@@ -134,6 +134,7 @@ export const AccountMenu = observer(() => {
   const { router } = useRoute()
   const isUserHaveEast = +dataStore.eastBalance > 0
   const isUserHaveVault = +dataStore.vault.eastAmount > 0
+  const isVaultClosed = (dataStore.vault.id && !dataStore.vault.isActive)
   const vaultProfit = -dataStore.supplyVaultWestDiff
   const isTransferAvailable = isUserHaveEast
   const isVaultLiquidated = isUserHaveVault && +dataStore.vault.westAmount === 0
@@ -164,7 +165,7 @@ export const AccountMenu = observer(() => {
     {(isUserHaveVault && isDesktop) &&
       <Delimiter />
     }
-    {(isUserHaveVault || isUserHaveEast) &&
+    {(isUserHaveVault || isUserHaveEast || isVaultClosed) &&
       <MenuItemContainer>
         {isDesktop && <Tooltip>History</Tooltip>}
         <MenuItemTime onClick={() => onMenuClicked(RouteName.TransactionsHistory)} />

@@ -9,6 +9,7 @@ import { PollingError } from '../api/apiErrors'
 
 const emptyUserVault: IVault = {
   id: 0,
+  isActive: false,
   address: '',
   createdAt: '',
   eastAmount: '',
@@ -69,7 +70,7 @@ export default class DataStore {
 
   get vaultEastProfit () {
     const westAmount = this.vaultFreeWest
-    const data = this.calculateEastAmount({ westAmount })
+    const data = this.calculateEastAmount(westAmount)
     return data
   }
 
@@ -101,8 +102,7 @@ export default class DataStore {
     return roundNumber(westAmount, 7)
   }
 
-  calculateEastAmount (data: { westAmount: string | number }) {
-    const { westAmount } = data
+  calculateEastAmount (westAmount: string | number ) {
     const usdpPart = this.configStore.getUsdpPart()
     const westCollateral = this.configStore.getWestCollateral()
     const westRate = +this.westRate
@@ -110,7 +110,12 @@ export default class DataStore {
 
     const usdpPartInPosition = usdpPart / ((1 - usdpPart) * westCollateral + usdpPart)
     const westToUsdpAmount = usdpPartInPosition * +westAmount
-    const eastAmount = (westToUsdpAmount * westRate) / usdpPart
+
+    // const eastAmount = (westToUsdpAmount * westRate) / usdpPart
+
+    const eastPriceInWest = (usdpPart / westRate) + ((1 - usdpPart) / westRate * westCollateral)
+    const eastAmount = +westAmount / eastPriceInWest
+
     const usdpAmount = westToUsdpAmount * westRate / usdapRate
     return {
       eastAmount: roundNumber(eastAmount, 8),
