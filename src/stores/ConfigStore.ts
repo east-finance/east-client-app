@@ -26,7 +26,7 @@ export default class ConfigStore {
   eastContractConfig = {
     oracleContractId: '',
     adminAddress: '',
-    usdpPart: 0.5,
+    rwaPart: 0,
     westCollateral: 2.5,
     liquidationCollateral: 1.3
   }
@@ -100,8 +100,8 @@ export default class ConfigStore {
     return this.eastContractConfig.oracleContractId || ''
   }
 
-  getUsdpPart () {
-    return this.eastContractConfig['usdpPart'] || 0.5
+  getRwaPart () {
+    return this.eastContractConfig['rwaPart'] || 0
   }
 
   getWestCollateral () {

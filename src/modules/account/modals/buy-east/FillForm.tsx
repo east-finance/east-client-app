@@ -127,7 +127,7 @@ export const FillForm = observer((props: IProps) => {
       })
     }
   }
-  const usdpPartPercent = configStore.getUsdpPart() * 100
+  const usdpPartPercent = configStore.getRwaPart() * 100
   const westPartPercent = configStore.getWestCollateral() * 100
   const totalFee = +configStore.getFeeByOpType(EastOpType.mint)
   const westAvailable = roundNumber(+dataStore.westBalance - +totalFee, 8)

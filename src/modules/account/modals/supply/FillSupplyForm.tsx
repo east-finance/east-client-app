@@ -93,7 +93,7 @@ export const FillSupplyForm = observer((props: IProps) => {
       }
     })
   const onSelectLevelOption = (tag: ITag) => {
-    const westPart = 1 - configStore.getUsdpPart()
+    const westPart = 1 - configStore.getRwaPart()
     const expectedVaultWestAmount = (+tag.value * (+dataStore.vault.eastAmount * westPart * +dataStore.usdapRate)) / +dataStore.westRate
     setWestAmount(roundNumber(expectedVaultWestAmount - +dataStore.vault.westAmount, 8).toString())
   }

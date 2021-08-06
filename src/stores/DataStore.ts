@@ -6,6 +6,9 @@ import { IOracleValue, IVault } from '../interfaces'
 import ConfigStore from './ConfigStore'
 import { roundNumber, cutNumber } from '../utils'
 import { PollingError } from '../api/apiErrors'
+import { toast } from 'react-toastify'
+
+const toastErrorId = 'pollingErrorId'
 
 const emptyUserVault: IVault = {
   id: 0,
@@ -29,9 +32,10 @@ export default class DataStore {
   westBalance = '0.0'
   eastBalance = '0.0'
   westRate = '0'
-  usdapRate = '0'
+  usdapRate = '1'
   westRatesHistory: IOracleValue[] = []
   pollingId: number | null = null
+  pollingFailCounter = 0
 
   constructor(api: Api, configStore: ConfigStore) {
     makeAutoObservable(this)
@@ -39,18 +43,18 @@ export default class DataStore {
     this.configStore = configStore
   }
 
-  // Calculated expected fully supplied (==250%) vault west amount
+  // Calculated expected fully supplied (== 250%) vault west amount
   get expectedVaultWestAmount () {
-    const westPart = 1 - this.configStore.getUsdpPart()
-    const westCollateral = this.configStore.getWestCollateral()
-    const expectedWestAmount = (+this.vault.eastAmount * westPart * +this.usdapRate * westCollateral) / +this.westRate
-    return  roundNumber(expectedWestAmount, 8)
+    const expectedWestAmount = this.calculateWestAmount(this.vault.eastAmount)
+    return roundNumber(expectedWestAmount, 8)
   }
 
   // Vault collateral percentage: converted from "expectedVaultWestAmount"
   get vaultCollateral () {
-    const westPart = 1 - this.configStore.getUsdpPart()
-    const currentVaultCollateral = (+this.vault.westAmount * +this.westRate) / (+this.vault.eastAmount * westPart * +this.usdapRate)
+    const rwaPart = this.configStore.getRwaPart()
+    const westPart = 1 - rwaPart
+    const usdapRate = rwaPart > 0 ? +this.usdapRate : 1
+    const currentVaultCollateral = (+this.vault.westAmount * +this.westRate) / (+this.vault.eastAmount * westPart * usdapRate)
     return roundNumber(currentVaultCollateral, 2)
   }
 
@@ -94,7 +98,7 @@ export default class DataStore {
   }
 
   calculateWestAmount (eastAmount: string | number) {
-    const usdpPart = this.configStore.getUsdpPart()
+    const usdpPart = this.configStore.getRwaPart()
     const westCollateral = this.configStore.getWestCollateral()
     const westRate = +this.westRate
 
@@ -103,7 +107,7 @@ export default class DataStore {
   }
 
   calculateEastAmount (westAmount: string | number ) {
-    const usdpPart = this.configStore.getUsdpPart()
+    const usdpPart = this.configStore.getRwaPart()
     const westCollateral = this.configStore.getWestCollateral()
     const westRate = +this.westRate
     const usdapRate = +this.usdapRate
@@ -125,7 +129,7 @@ export default class DataStore {
   }
 
   exchangeWest (westAmount: string | number) {
-    const rwaPart = this.configStore.getUsdpPart()
+    const rwaPart = this.configStore.getRwaPart()
     const eastAmount = (+westAmount * +this.westRate) / rwaPart
     const rwaAmount = +westAmount * +this.westRate / +this.usdapRate
     return {
@@ -135,7 +139,7 @@ export default class DataStore {
   }
 
   exchangeEast (eastAmount: string | number) {
-    const rwaPart = this.configStore.getUsdpPart()
+    const rwaPart = this.configStore.getRwaPart()
     const westAmount  = (+eastAmount * rwaPart) / +this.westRate
     return roundNumber(westAmount, 8)
   }
@@ -145,36 +149,59 @@ export default class DataStore {
     return new Promise(resolve => setTimeout(resolve, timeout))
   }
 
-  async pollData (address: string) {
-    const [vault, eastBalance, westBalance, westRates, usdapRates] = await Promise.all([
+  async pollData (address: string): Promise<void> {
+    const getOracleRates = async (streamId: OracleStreamId, limit: number) => {
+      const rates = await this.api.getOracleValues(streamId, limit)
+      if(!rates || (rates && rates.length === 0)) {
+        throw new Error(PollingError.EmptyOracleData)
+      }
+      return rates
+    }
+
+    const values = await Promise.allSettled([
       this.api.getVault(address),
       this.getEastBalance(address),
       this.getWestBalance(address),
-      this.api.getOracleValues(OracleStreamId.WestRate, 50),
-      this.api.getOracleValues(OracleStreamId.UsdapRate, 1)
+      getOracleRates(OracleStreamId.WestRate, 50),
+      getOracleRates(OracleStreamId.UsdapRate, 1)
     ])
 
-    if(westRates.length === 0 || usdapRates.length === 0) {
-      throw new Error(PollingError.EmptyOracleData)
-    }
-
-    const [{ value: westRate }] = westRates
-    const [{ value: usdapRate }] = usdapRates
+    const [vault, eastBalance, westBalance, westRates, usdapRates] = values
 
     runInAction(() => {
-      this.vault = vault
-      this.eastBalance = eastBalance
-      this.westBalance = westBalance
-      this.westRate = westRate
-      this.westRatesHistory = westRates
-      this.usdapRate = usdapRate
+      if (vault.status === 'fulfilled') {
+        this.vault = vault.value as IVault
+      } else {
+        console.log('Cannot update vault:', vault.reason)
+      }
+      if (eastBalance.status === 'fulfilled') {
+        this.eastBalance = eastBalance.value as string
+      } else {
+        console.error('Cannot get eastBalance:', eastBalance.reason)
+      }
+      if (westBalance.status === 'fulfilled') {
+        this.westBalance = westBalance.value as string
+      } else {
+        console.error('Cannot get west balance:', westBalance.reason)
+      }
+      if (westRates.status === 'fulfilled') {
+        this.westRatesHistory = westRates.value as IOracleValue[]
+        const [{ value: westRate }] = westRates.value as IOracleValue[]
+        this.westRate = westRate
+      } else {
+        console.error('Cannot get westRates:', westRates.reason)
+      }
+      if (usdapRates.status === 'fulfilled') {
+        const [{ value: usdapRate }] = usdapRates.value as IOracleValue[]
+        this.usdapRate = usdapRate
+      } else {
+        console.error('Cannot get usdapRate:', usdapRates.reason)
+      }
     })
 
-    return {
-      westRate,
-      usdapRate,
-      eastBalance,
-      westBalance
+    const errorItem = values.find(value => value.status === 'rejected')
+    if (errorItem && errorItem.status === 'rejected') {
+      throw new Error(errorItem.reason)
     }
   }
 
@@ -197,8 +224,17 @@ export default class DataStore {
     } else {
       try {
         await this.pollData(address)
+        if (this.pollingFailCounter > 0) {
+          toast('User data is updated', {
+            hideProgressBar: true,
+            autoClose: 5 * 1000
+          })
+        }
+        this.setPollingFailCounter(0)
+        toast.dismiss(toastErrorId)
       } catch (e) {
         console.error('Polling error:', e.message)
+        this.setPollingFailCounter(this.pollingFailCounter + 1)
       } finally {
         runNextPoll()
       }
@@ -209,6 +245,19 @@ export default class DataStore {
     console.log('Stop polling user data')
     if (this.pollingId) {
       clearTimeout(this.pollingId)
+    }
+    this.setPollingFailCounter(0)
+  }
+
+  setPollingFailCounter (value: number) {
+    this.pollingFailCounter = value
+    if (value > 0 && value === 3) {
+      toast.dismiss(toastErrorId)
+      toast('Cannot update data. Retry in 5 seconds', {
+        toastId: toastErrorId,
+        hideProgressBar: true,
+        autoClose: 10 * 60 * 1000
+      })
     }
   }
 
