@@ -103,7 +103,7 @@ export default class DataStore {
     const westRate = +this.westRate
 
     const westAmount = +eastAmount * ((usdpPart / westRate) + ((1 - usdpPart) / westRate * westCollateral))
-    return roundNumber(westAmount, 7)
+    return roundNumber(westAmount, 8)
   }
 
   calculateEastAmount (westAmount: string | number ) {

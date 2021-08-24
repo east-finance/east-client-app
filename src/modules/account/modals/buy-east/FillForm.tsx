@@ -89,7 +89,7 @@ export const FillForm = observer((props: IProps) => {
   }
 
   const setWestByEastAmount = (value: string) => {
-    const westAmount = roundNumber(dataStore.calculateWestAmount(value), 8)
+    const westAmount = dataStore.calculateWestAmount(value)
     setWestAmount(westAmount > 0 ? westAmount.toString() : '')
   }
 
