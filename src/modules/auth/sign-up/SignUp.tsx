@@ -97,7 +97,7 @@ const SignUp = () => {
     throttleValidation(changedProp)
   }, [email.value, password.value, confirm.value])
 
-  const onChangeLogin = (e: ChangeEvent<HTMLInputElement>) => setEmail({...email, value: e.target.value.trim(), prevValue: email.value })
+  const onBlurLogin = (e: ChangeEvent<HTMLInputElement>) => setEmail({...email, value: e.target.value.trim(), prevValue: email.value })
   const onChangePassword = (e: ChangeEvent<HTMLInputElement>) => setPassword({...password, value: e.target.value.trim(), prevValue: password.value})
   const onChangeConfirm = (e: ChangeEvent<HTMLInputElement>) => setConfirm({...confirm, value: e.target.value.trim(), prevValue: confirm.value})
 
@@ -234,7 +234,7 @@ const SignUp = () => {
       ref={emailRef}
       placeholder={'Email'}
       status={email.error ? InputStatus.error : InputStatus.default}
-      onChange={onChangeLogin}
+      onBlur={onBlurLogin}
       onKeyDown={onSignUpPressed}
     />
     <Block24>
@@ -243,6 +243,7 @@ const SignUp = () => {
           ref={passwordRef}
           placeholder={'Password'}
           type={'password'}
+          autoComplete='new-password'
           status={password.error ? InputStatus.error : InputStatus.default}
           onChange={onChangePassword}
           onFocus={() => setPassword({...password, isFocused: true})}
@@ -260,6 +261,7 @@ const SignUp = () => {
           ref={confirmRef}
           placeholder={'Confirm password'}
           type={'password'}
+          autoComplete='new-password'
           status={confirm.error ? InputStatus.error : InputStatus.default}
           onChange={onChangeConfirm}
           onFocus={() => setConfirm({...confirm, isFocused: true})}

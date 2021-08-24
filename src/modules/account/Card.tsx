@@ -194,7 +194,7 @@ const TokenBalance = (props: ITokenBalanceProps) => {
 
 export const AccountCard = observer((props: { isShown: null | boolean, onClick: (e: any) => void }) => {
   const { router } = useRoute()
-  const { dataStore } = useStores()
+  const { dataStore, configStore } = useStores()
 
   const { eastBalance, vault } = dataStore
   const isPositiveBalance = +eastBalance > 0 || +vault.eastAmount > 0
@@ -235,12 +235,14 @@ export const AccountCard = observer((props: { isShown: null | boolean, onClick: 
                     <BottomItem>west in vault</BottomItem>
                   </Block>
                 </div>
-                <div>
-                  <TokenBalance type={BalanceType.small} value={vault.rwaAmount} />
-                  <Block marginTop={4}>
-                    <BottomItem>usdap in vault</BottomItem>
-                  </Block>
-                </div>
+                {configStore.getRwaPart() > 0 &&
+                  <div>
+                    <TokenBalance type={BalanceType.small} value={vault.rwaAmount} />
+                    <Block marginTop={4}>
+                      <BottomItem>usdap in vault</BottomItem>
+                    </Block>
+                  </div>
+                }
               </FlexColumnWrapper>
             </div>
           }
