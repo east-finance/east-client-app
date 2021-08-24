@@ -75,7 +75,9 @@ export const CloseVaultInfo = observer((props: IProps) => {
           <TextTableKey>You will unlock</TextTableKey>
           <TextTableSecondaryValue>
             <div>{vault.westAmount} WEST</div>
-            <div style={{marginTop: '8px'}}>{vault.rwaAmount} USDap</div>
+            {+vault.rwaAmount > 0 &&
+              <div style={{marginTop: '8px'}}>{vault.rwaAmount} USDap</div>
+            }
           </TextTableSecondaryValue>
         </TextTableRow>
       </TextTable>

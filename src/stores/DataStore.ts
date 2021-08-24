@@ -158,13 +158,18 @@ export default class DataStore {
       return rates
     }
 
-    const values = await Promise.allSettled([
+    const promises = [
       this.api.getVault(address),
       this.getEastBalance(address),
       this.getWestBalance(address),
-      getOracleRates(OracleStreamId.WestRate, 50),
-      getOracleRates(OracleStreamId.UsdapRate, 1)
-    ])
+      getOracleRates(OracleStreamId.WestRate, 50)
+    ]
+
+    if (+this.configStore.getRwaPart() > 0) {
+      promises.push(getOracleRates(OracleStreamId.UsdapRate, 1))
+    }
+
+    const values = await Promise.allSettled(promises)
 
     const [vault, eastBalance, westBalance, westRates, usdapRates] = values
 
@@ -191,11 +196,14 @@ export default class DataStore {
       } else {
         console.error('Cannot get westRates:', westRates.reason)
       }
-      if (usdapRates.status === 'fulfilled') {
-        const [{ value: usdapRate }] = usdapRates.value as IOracleValue[]
-        this.usdapRate = usdapRate
-      } else {
-        console.error('Cannot get usdapRate:', usdapRates.reason)
+
+      if (usdapRates) {
+        if (usdapRates.status === 'fulfilled') {
+          const [{ value: usdapRate }] = usdapRates.value as IOracleValue[]
+          this.usdapRate = usdapRate
+        } else {
+          console.error('Cannot get usdapRate:', usdapRates.reason)
+        }
       }
     })
 

@@ -48,7 +48,6 @@ const Link = styled.a`
 `
 
 export const FillForm = observer((props: IProps) => {
-  const { westRate, usdapRate } = props
   const { dataStore, configStore } = useStores()
   const [eastAmount, setEastAmount] = useState(props.eastAmount)
   const [westAmount, setWestAmount] = useState(props.westAmount)

@@ -71,7 +71,6 @@ export const FAQ = (props: IProps) => {
         <TextItem>How does EAST work?</TextItem>
         <TextItem>Why can I trust EAST?</TextItem>
         <TextItem>What is vault?</TextItem>
-        <TextItem>What is USDap?</TextItem>
       </ItemsContainer>
       <ItemsContainer>
         <Title>Practical stuff</Title>
