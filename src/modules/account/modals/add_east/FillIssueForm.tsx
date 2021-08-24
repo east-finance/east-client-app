@@ -95,7 +95,7 @@ export const FillIssueForm = observer((props: IProps) => {
       westAmount -= vaultFreeWest
     }
     if (westAmount > 0) {
-      setWestAmount(roundNumber(westAmount, 6).toString())
+      setWestAmount(roundNumber(westAmount, 8).toString())
     } else {
       setWestAmount('0')
     }
