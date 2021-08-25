@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import BgWater from '../resources/images/bg-water-test2.mp4'
+import BgWater from '../resources/images/east-nosoundloss.mp4'
 import React from 'react'
 
 // https://redstapler.co/responsive-css-video-background/
@@ -8,11 +8,6 @@ const VideoContainer = styled.video<{ isBlurred: boolean }>`
   position: fixed;
   top: 0;
   z-index: -1;
-  // transition: filter 1200ms ease;  
-  //  
-  // ${({ isBlurred }) => isBlurred && `
-  //   filter: blur(12px)
-  // `}
 
   @media (min-aspect-ratio: 16/9) {
     width:100%;
