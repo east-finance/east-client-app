@@ -178,10 +178,10 @@ export const AccountMenu = observer(() => {
       {isDesktop && <Tooltip>FAQ</Tooltip>}
       <MenuItemQuestion onClick={() => onMenuClicked(RouteName.Faq)} />
     </MenuItemContainer>
-    {(isUserHaveVault && isDesktop) &&
+    {(isUserHaveVault && !isVaultLiquidated && isDesktop) &&
       <Delimiter />
     }
-    {isUserHaveVault &&
+    {(isUserHaveVault && !isVaultLiquidated) &&
       <MenuItemContainer>
         {isDesktop && <Tooltip>Close</Tooltip>}
         <MenuItemClose onClick={() => onMenuClicked(RouteName.CloseVault)} />
