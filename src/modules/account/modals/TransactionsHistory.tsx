@@ -89,11 +89,11 @@ const TxItem = (props: { tx: ITransaction}) => {
 
   let explorerTxId = callTxId
 
-  let eastDiff = roundNumber(eastAmountDiff, 2).toString()
+  let eastDiff = roundNumber(eastAmountDiff, 8).toString()
   if (isReceived) {
     eastDiff = '+' + eastDiff
   }
-  let westDiff = roundNumber(westAmountDiff, 2).toString()
+  let westDiff = roundNumber(westAmountDiff, 8).toString()
   if (isReceivedWest) {
     westDiff = '+' + westDiff
   }
