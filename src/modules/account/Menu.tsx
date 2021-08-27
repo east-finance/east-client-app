@@ -135,7 +135,6 @@ export const AccountMenu = observer(() => {
   const isUserHaveEast = +dataStore.eastBalance > 0
   const isUserHaveVault = +dataStore.vault.eastAmount > 0
   const isVaultClosed = (dataStore.vault.id && !dataStore.vault.isActive)
-  const vaultProfit = -dataStore.supplyVaultWestDiff
   const isTransferAvailable = isUserHaveEast
   const isVaultLiquidated = isUserHaveVault && +dataStore.vault.westAmount === 0
 

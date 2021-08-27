@@ -53,8 +53,7 @@ export default class DataStore {
   get vaultCollateral () {
     const rwaPart = this.configStore.getRwaPart()
     const westPart = 1 - rwaPart
-    const usdapRate = rwaPart > 0 ? +this.usdapRate : 1
-    const currentVaultCollateral = (+this.vault.westAmount * +this.westRate) / (+this.vault.eastAmount * westPart * usdapRate)
+    const currentVaultCollateral = (+this.vault.westAmount * +this.westRate) / (+this.vault.eastAmount * westPart)
     return roundNumber(currentVaultCollateral, 2)
   }
 
