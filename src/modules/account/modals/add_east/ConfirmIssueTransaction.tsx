@@ -61,7 +61,10 @@ export const ConfirmIssueTransaction = (props: IProps) => {
 
     // Vault is over-supplied, and user want to convert FREE WEST to EAST and recalculate vault
     if (transferWestAmount <= 0) {
-      const maxWestToExchange = dataStore.exchangeEast(props.eastAmount)
+      const maxWestToExchange = dataStore.calculateWestAmount(props.eastAmount)
+      const reissueValue = maxWestToExchange > 0 ? {
+        maxWestToExchange: +maxWestToExchange
+      } : {}
       const reissueTx = {
         senderPublicKey: publicKey,
         authorPublicKey: publicKey,
@@ -71,9 +74,7 @@ export const ConfirmIssueTransaction = (props: IProps) => {
         params: [{
           type: 'string',
           key: 'reissue',
-          value: JSON.stringify({
-            maxWestToExchange: +maxWestToExchange
-          })
+          value: JSON.stringify(reissueValue)
         }],
         fee: configStore.getDockerCallFee(),
         // atomicBadge: {
@@ -99,7 +100,7 @@ export const ConfirmIssueTransaction = (props: IProps) => {
         tx: transferBody
       }
       const transferId = await signStore.getTransferId(transferBody)
-      console.log('transferId', transferId)
+      console.log('transferId:', transferId)
       const dockerCall = {
         type: TxTextType.dockerCallV4,
         tx: {

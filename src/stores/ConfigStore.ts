@@ -125,16 +125,22 @@ export default class ConfigStore {
     return this.nodeConfig.minimumFee['120']
   }
 
+  // Additional claim_overpay_init fee
+  // Hardcoded in EAST-contract
+  getClaimOverpayFee () {
+    return 0.2
+  }
+
   // Fee for UI interfaces
   getFeeByOpType (opType: EastOpType): string {
     const callFee = +this.getDockerCallFee()
     const transferFee = +this.getTransferFee()
     const atomicFee = +this.getAtomicFee()
-    const allTxsFee = (transferFee + callFee + atomicFee)
+    const atomicSumFee = (transferFee + callFee + atomicFee)
     let resultFee = '0'
     switch(opType) {
-    case EastOpType.mint: resultFee = allTxsFee.toString(); break
-    case EastOpType.supply: resultFee = (allTxsFee + callFee).toString(); break
+    case EastOpType.mint: resultFee = atomicSumFee.toString(); break
+    case EastOpType.supply: resultFee = (atomicSumFee).toString(); break
     case EastOpType.transfer: resultFee = callFee.toString(); break
     case EastOpType.close_init: resultFee = callFee.toString(); break
     }

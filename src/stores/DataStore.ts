@@ -86,6 +86,11 @@ export default class DataStore {
     return (+this.eastBalance - +this.vaultEastAmount).toString() || '0'
   }
 
+  // Available claim overpay profit
+  get claimOverpayAmount () {
+    return (-this.supplyVaultWestDiff - this.configStore.getClaimOverpayFee())
+  }
+
   async getEastBalance(address: string): Promise<string> {
     const { eastAmount } = await this.api.getUserEastBalance(address)
     return cutNumber(eastAmount, 8) || '0'
