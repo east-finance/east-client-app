@@ -119,17 +119,18 @@ export class Api {
   }
 
   public getTransactionsStatuses = async (address: string): Promise<TxCallStatus[]> => {
-    const { data } = await this._apiClient.get(`${API_ADDRESS}/v1/user/transactions/statuses?address=${address}&limit=10&offset=0`)
+    const { data } = await this._apiClient.get(`${API_ADDRESS}/v1/user/transactions/statuses?address=${address}&limit=1000&offset=0`)
     return data
   }
 
-  public sendTransactionBroadcast = async (
-    txId: string, address: string, type: string
+  public startWatchTxStatus = async (
+    txId: string, address: string, type: string, timestamp: number
   ): Promise<{ status: ContractExecutionStatus.success }> => {
     const { data } = await this._apiClient.post(`${API_ADDRESS}/v1/user/transactions/statuses`, {
       txId,
       address,
-      type
+      type,
+      timestamp
     })
     return data
   }

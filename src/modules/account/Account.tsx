@@ -73,6 +73,7 @@ const EastLogoContainer = styled.div`
   bottom: 48px;
   left: 37px;
   z-index: 1;
+  pointer-events: none;
   
   @media only screen 
   and (min-device-width: 375px) 

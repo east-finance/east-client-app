@@ -2,7 +2,7 @@ import { makeAutoObservable } from 'mobx'
 import { create, MAINNET_CONFIG, Seed, WeSdk } from '@wavesenterprise/js-sdk'
 import ConfigStore from './ConfigStore'
 import AuthStore from './AuthStore'
-import { ICallContractTx, ITransferTx, TxTextType } from '../interfaces'
+import { IBroadcastCallTx, ICallContractTx, ITransferTx, TxTextType, TxTypeNumber } from '../interfaces'
 import { Api } from '../api'
 
 export enum LSKeys {
@@ -158,23 +158,22 @@ export default class SignStore {
     }
   }
 
-  sendTxWatch (txId: string, address: string, type: string) {
-    return this.api.sendTransactionBroadcast(txId, address, type)
+  startWatchDockerCallStatus (broadcastTx: IBroadcastCallTx) {
+    const { id, sender, params, timestamp } = broadcastTx
+    let type = ''
+    if (params && params.length) {
+      type = params[0].key
+    }
+
+    return this.api.startWatchTxStatus(id, sender, type, timestamp)
   }
 
   async broadcastAtomic (txs: Array<{ type: TxTextType, tx: any }>) {
-    // const dockerCallTxs = txs.filter(tx => tx.type === TxTextType.dockerCallV4)
-    // if (dockerCallTxs.length > 0) {
-    //   await Promise.all(dockerCallTxs.map(async dockerCallTx => {
-    //     const txId = await this.getDockerCallId(dockerCallTx.tx)
-    //     const type = dockerCallTx.tx.params[0].key
-    //     await this.sendTxWatch(txId, this.authStore.address, type)
-    //   }))
-    // }
+    let broadcastAtomicResult = null
 
     if (this.signStrategy === SignStrategy.WeWallet) {
       const atomicFee = this.configStore.getAtomicFee()
-      return window.WEWallet.broadcastAtomic(txs, atomicFee)
+      broadcastAtomicResult = await window.WEWallet.broadcastAtomic(txs, atomicFee)
     } else if(this.currentSeed) {
       const transactions = txs.map(tx => {
         if (tx.type === TxTextType.transferV3) {
@@ -185,23 +184,48 @@ export default class SignStore {
           throw Error(`No TxTextType mapper available: ${tx.type}, cannot send atomic`)
         }
       })
-      return this.weSDK.API.Transactions.broadcastAtomic(
+      broadcastAtomicResult = await this.weSDK.API.Transactions.broadcastAtomic(
         this.weSDK.API.Transactions.Atomic.V1({ transactions }),
         this.currentSeed.keyPair
       )
     } else {
       throw Error('No current seed provided')
     }
+
+    if (broadcastAtomicResult) {
+      try {
+        const dockerCallTxs = broadcastAtomicResult.transactions.filter((tx: any) => tx.type === TxTypeNumber.CallContract)
+        if (dockerCallTxs.length > 0) {
+          await Promise.all(dockerCallTxs.map(async (dockerCallTx: IBroadcastCallTx) => {
+            await this.startWatchDockerCallStatus(dockerCallTx)
+          }))
+        }
+      } catch (e) {
+        console.error('Cannot start watch tx status:', e.message, 'Atomic tx body:', broadcastAtomicResult)
+      }
+    }
+
+    return broadcastAtomicResult
   }
 
-  broadcastDockerCall (dockerCallBody: ICallContractTx): Promise<any> {
+  async broadcastDockerCall (dockerCallBody: ICallContractTx): Promise<IBroadcastCallTx> {
+    let broadcastResult = null
     if (this.signStrategy === SignStrategy.WeWallet) {
-      return window.WEWallet.broadcast('dockerCallV3', dockerCallBody)
+      broadcastResult = await window.WEWallet.broadcast('dockerCallV3', dockerCallBody)
     } else if(this.currentSeed) {
       const tx = this.weSDK.API.Transactions.CallContract.V4(dockerCallBody)
-      return tx.broadcast(this.currentSeed.keyPair)
+      broadcastResult = await tx.broadcast(this.currentSeed.keyPair)
     } else {
       throw new Error('No current seed provided')
     }
+
+    if(broadcastResult) {
+      try {
+        await this.startWatchDockerCallStatus(broadcastResult)
+      } catch (e) {
+        console.error('Cannot start watch tx status:', e.message, 'Call tx body:', broadcastResult)
+      }
+    }
+    return broadcastResult
   }
 }

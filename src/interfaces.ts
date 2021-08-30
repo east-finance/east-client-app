@@ -1,3 +1,9 @@
+export enum TxTypeNumber {
+  Transfer = 4,
+  CreateContract = 103,
+  CallContract = 104
+}
+
 export interface ITokenPair {
   access_token: string;
   refresh_token: string;
@@ -89,6 +95,11 @@ export interface ICallContractTx extends IBlockchainTx {
   params: ICallContractParam[];
 }
 
+export interface IBroadcastCallTx extends ICallContractTx {
+  id: string;
+  sender: string;
+}
+
 export interface IWrappedBlockchainTx {
   type: TxTextType;
   tx: ICallContractTx | ITransferTx;
@@ -107,4 +118,5 @@ export interface TxCallStatus {
   status: ContractExecutionStatus;
   tx_id: string;
   type: EastOpType;
+  callTimestamp: string;
 }
