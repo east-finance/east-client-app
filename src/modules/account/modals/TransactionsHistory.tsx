@@ -96,9 +96,9 @@ const PrimaryModalContainer = styled(PrimaryModal)`
 
 const TxStatus = (props: { tx: TxCallStatus}) => {
   const { tx } = props
-  const { type, status, callTimestamp } = tx
-  const date = moment(callTimestamp).format('MMMM D')
-  const time = moment(callTimestamp).format('HH:mm')
+  const { type, status, timestamp } = tx
+  const date = moment(timestamp).format('MMMM D')
+  const time = moment(timestamp).format('HH:mm')
 
   const primaryText = status
   const description = getEastOpTypeName(type)

@@ -9,6 +9,7 @@ import { observer } from 'mobx-react'
 import { ITag, TagOption, Tags } from '../../../../components/Tags'
 import { EastOpType } from '../../../../interfaces'
 import { GradientText } from '../../../../components/Text'
+import { MaxTokenAmount } from '../../../../constants'
 
 export interface FillFormData {
   eastAmount: string;
@@ -151,6 +152,7 @@ export const FillIssueForm = observer((props: IProps) => {
     <Block marginTop={'2%'}>
       <SimpleInput
         type={'number'}
+        max={MaxTokenAmount}
         label={'Enter amount of EAST'}
         value={eastAmount}
         status={errors.east ? InputStatus.error : InputStatus.default}
@@ -174,6 +176,7 @@ export const FillIssueForm = observer((props: IProps) => {
         }
         <SimpleInput
           type={'number'}
+          max={MaxTokenAmount}
           label={`Enter amount of WEST (${westAvailable} available)`}
           value={westAmount}
           status={errors.west ? InputStatus.error : InputStatus.default}

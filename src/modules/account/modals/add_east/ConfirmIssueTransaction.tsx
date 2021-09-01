@@ -169,12 +169,12 @@ export const ConfirmIssueTransaction = (props: IProps) => {
       <TextTable>
         <TextTableRow>
           <TextTableKey>You will get</TextTableKey>
-          <TextTablePrimaryValue>~{roundNumber(props.eastAmount, 2)} EAST</TextTablePrimaryValue>
+          <TextTablePrimaryValue>~{roundNumber(props.eastAmount)} EAST</TextTablePrimaryValue>
         </TextTableRow>
         <TextTableRow>
           <TextTableKey>You will pay</TextTableKey>
           <div>
-            <TextTableSecondaryValue>{transferWestAmount} WEST</TextTableSecondaryValue>
+            <TextTableSecondaryValue>{roundNumber(transferWestAmount)} WEST</TextTableSecondaryValue>
             {vaultFreeWest < 0 &&
               <Block marginTop={8}>
                 <TextTableInfo>

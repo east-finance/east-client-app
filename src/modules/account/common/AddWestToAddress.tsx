@@ -4,9 +4,9 @@ import copy from 'copy-to-clipboard'
 import { Block } from '../../../components/Block'
 import useStores from '../../../hooks/useStores'
 import iconCopy from '../../../resources/images/icon-copy.png'
+import exchangeLogo from '../../../resources/images/waves-exchange-logo.png'
 import { toast } from 'react-toastify'
 import { InfoNotification, NotificationType, ToastCloseButton } from '../../../components/Notification'
-import { roundNumber } from '../../../utils'
 import { ButtonsContainer, NavigationLeftGradientButton } from '../../../components/Button'
 
 interface IProps {
@@ -83,6 +83,9 @@ const ExchangeItem = styled.a`
   background-repeat: no-repeat;
   cursor: pointer;
   border: 1px solid transparent;
+  background-image: url(${exchangeLogo});
+  background-size: 48px;
+  background-position: center;
 
   :hover {
     border-color: black;
@@ -115,9 +118,6 @@ export const AddWestToAddress = (props: IProps) => {
     </Block>
     <Block marginTop={24}>
       <ExchangeList>
-        <ExchangeItem href={'https://waves.exchange/withdraw/WEST'} target={'_blank'} />
-        <ExchangeItem href={'https://waves.exchange/withdraw/WEST'} target={'_blank'} />
-        <ExchangeItem href={'https://waves.exchange/withdraw/WEST'} target={'_blank'} />
         <ExchangeItem href={'https://waves.exchange/withdraw/WEST'} target={'_blank'} />
       </ExchangeList>
     </Block>

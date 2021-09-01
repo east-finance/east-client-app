@@ -8,6 +8,7 @@ import React, {
   useState
 } from 'react'
 import styled from 'styled-components'
+import BigNumber from 'bignumber.js'
 
 export enum InputStatus {
   default = 'default',
@@ -216,6 +217,7 @@ const SimpleInputComponent = styled.input`
 export interface SimpleInputProps extends InputProps {
   isFocused?: boolean;
   maxDecimals?: number;
+  max?: number;
 }
 
 export const SimpleInput = (props: SimpleInputProps) => {
@@ -251,6 +253,11 @@ export const SimpleInput = (props: SimpleInputProps) => {
       if (value.includes('-')) {
         value = value.replaceAll('-', '')
         setValue(value)
+      }
+      if (props.max) {
+        if(new BigNumber(value).isGreaterThan(new BigNumber(props.max))) {
+          value = new BigNumber(props.max).toString()
+        }
       }
     }
     if (props.onBlur) {

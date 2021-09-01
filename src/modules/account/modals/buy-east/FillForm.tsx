@@ -9,6 +9,7 @@ import { observer } from 'mobx-react'
 import { BeforeText, RelativeContainer, Spinner } from '../../../../components/Spinner'
 import { ITag, Tags } from '../../../../components/Tags'
 import { EastOpType } from '../../../../interfaces'
+import { MinimumMintEastAmount } from '../../../../constants'
 
 export interface FillFormData {
   eastAmount: string;
@@ -66,6 +67,8 @@ export const FillForm = observer((props: IProps) => {
       east = 'Empty east amount'
     } else if (+eastAmount < 0) {
       east = 'Negative east amount'
+    } else if (+eastAmount < MinimumMintEastAmount) {
+      east = `Minimum amount: ${MinimumMintEastAmount} EAST`
     }
     if (!westAmount || +westAmount === 0) {
       west = 'Empty east amount'
@@ -140,7 +143,7 @@ export const FillForm = observer((props: IProps) => {
     <Block marginTop={'15%'}>
       <SimpleInput
         type={'number'}
-        label={'Enter amount of EAST'}
+        label={`Enter amount of EAST (minimum: ${MinimumMintEastAmount} EAST)`}
         value={eastAmount}
         status={errors.east ? InputStatus.error : InputStatus.default}
         onChange={onChangeEast}

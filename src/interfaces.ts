@@ -118,5 +118,5 @@ export interface TxCallStatus {
   status: ContractExecutionStatus;
   tx_id: string;
   type: EastOpType;
-  callTimestamp: string;
+  timestamp: string;
 }

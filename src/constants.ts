@@ -6,4 +6,5 @@ export enum OracleStreamId {
 }
 
 export const FreeEastAccuracy = 0.1
-export const MinEastAmount = 1
+export const MinimumMintEastAmount = 1
+export const MaxTokenAmount = 1000000000

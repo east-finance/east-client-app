@@ -1,6 +1,10 @@
-export const roundNumber = (number: string | number, n = 2): number => {
-  const precision = Math.pow(10, n)
-  return Math.round((+number + Number.EPSILON) * precision ) / precision
+import { BigNumber } from 'bignumber.js'
+
+// TODO: remove 'any' and make calculations with BigNumber.js
+export const roundNumber = (number: string | number, n = 8): any => {
+  // const precision = Math.pow(10, n)
+  // return Math.round((+number + Number.EPSILON) * precision ) / precision
+  return new BigNumber(number).decimalPlaces(n).toString(10)
 }
 
 export const cutNumber = (number: string | number, maxFractional = 8): string => {

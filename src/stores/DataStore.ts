@@ -60,8 +60,8 @@ export default class DataStore {
   // How many west need to supply vault to 250%
   // If value < 0, vault is over-supplied and contains free west
   get supplyVaultWestDiff () {
-    const diff = roundNumber(this.expectedVaultWestAmount - +this.vault.westAmount, 6)
-    if (Math.abs(diff) > 0.01) {
+    const diff = roundNumber(this.expectedVaultWestAmount - +this.vault.westAmount, 8)
+    if (Math.abs(diff) > 0.0000001) {
       return diff
     }
     return 0
@@ -111,17 +111,15 @@ export default class DataStore {
   }
 
   calculateEastAmount (westAmount: string | number ) {
-    const usdpPart = this.configStore.getRwaPart()
+    const rwaPart = this.configStore.getRwaPart()
     const westCollateral = this.configStore.getWestCollateral()
     const westRate = +this.westRate
     const usdapRate = +this.usdapRate
 
-    const usdpPartInPosition = usdpPart / ((1 - usdpPart) * westCollateral + usdpPart)
+    const usdpPartInPosition = rwaPart / ((1 - rwaPart) * westCollateral + rwaPart)
     const westToUsdpAmount = usdpPartInPosition * +westAmount
 
-    // const eastAmount = (westToUsdpAmount * westRate) / usdpPart
-
-    const eastPriceInWest = (usdpPart / westRate) + ((1 - usdpPart) / westRate * westCollateral)
+    const eastPriceInWest = (rwaPart / westRate) + ((1 - rwaPart) / westRate * westCollateral)
     const eastAmount = +westAmount / eastPriceInWest
 
     const usdpAmount = westToUsdpAmount * westRate / usdapRate
