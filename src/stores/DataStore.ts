@@ -54,13 +54,13 @@ export default class DataStore {
     const rwaPart = this.configStore.getRwaPart()
     const westPart = 1 - rwaPart
     const currentVaultCollateral = (+this.vault.westAmount * +this.westRate) / (+this.vault.eastAmount * westPart)
-    return roundNumber(currentVaultCollateral, 2)
+    return +roundNumber(currentVaultCollateral, 2)
   }
 
   // How many west need to supply vault to 250%
   // If value < 0, vault is over-supplied and contains free west
   get supplyVaultWestDiff () {
-    const diff = roundNumber(this.expectedVaultWestAmount - +this.vault.westAmount, 8)
+    const diff = +roundNumber(this.expectedVaultWestAmount - +this.vault.westAmount, 8)
     if (Math.abs(diff) > 0.0000001) {
       return diff
     }
@@ -87,7 +87,7 @@ export default class DataStore {
 
   // Available claim overpay profit
   get claimOverpayAmount () {
-    return (-this.supplyVaultWestDiff - this.configStore.getClaimOverpayFee())
+    return +roundNumber(-this.supplyVaultWestDiff - this.configStore.getClaimOverpayFee())
   }
 
   async getEastBalance(address: string): Promise<string> {
@@ -107,7 +107,7 @@ export default class DataStore {
     const westRate = +this.westRate
 
     const westAmount = +eastAmount * ((usdpPart / westRate) + ((1 - usdpPart) / westRate * westCollateral))
-    return roundNumber(westAmount, 8)
+    return +roundNumber(westAmount, 8)
   }
 
   calculateEastAmount (westAmount: string | number ) {
@@ -124,9 +124,9 @@ export default class DataStore {
 
     const usdpAmount = westToUsdpAmount * westRate / usdapRate
     return {
-      eastAmount: roundNumber(eastAmount, 8),
-      usdpAmount: roundNumber(usdpAmount, 8),
-      westAmount: roundNumber(+westAmount - westToUsdpAmount, 8)
+      eastAmount: +roundNumber(eastAmount, 8),
+      usdpAmount: +roundNumber(usdpAmount, 8),
+      westAmount: +roundNumber(+westAmount - westToUsdpAmount, 8)
     }
   }
 

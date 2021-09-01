@@ -153,7 +153,7 @@ export const TransferEast = observer((props: IProps) => {
           key: 'transfer',
           value: JSON.stringify({
             to: userAddress,
-            amount: +roundNumber(eastAmount, 8)
+            amount: +roundNumber(eastAmount)
           })
         }],
         fee: configStore.getDockerCallFee(),
