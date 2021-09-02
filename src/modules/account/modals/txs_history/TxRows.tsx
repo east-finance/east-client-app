@@ -1,18 +1,13 @@
-import React, { useEffect, useState } from 'react'
-import styled from 'styled-components'
+import React from 'react'
 import moment from 'moment'
-import { PrimaryTitle } from '../../../components/PrimaryTitle'
-import { PrimaryModal } from '../Modal'
-import { Block } from '../../../components/Block'
-import { GradientText } from '../../../components/Text'
-import { ContractExecutionStatus, EastOpType, ITransaction, TxCallStatus } from '../../../interfaces'
-import useStores from '../../../hooks/useStores'
-import { shineBatch } from '../../../components/Animations'
-import { roundNumber } from '../../../utils'
+import { ContractExecutionStatus, EastOpType, ITransaction, TxCallStatus } from '../../../../interfaces'
+import useStores from '../../../../hooks/useStores'
+import { roundNumber } from '../../../../utils'
+import { Block } from '../../../../components/Block'
+import styled from 'styled-components'
+import { shineBatch } from '../../../../components/Animations'
+import { GradientText } from '../../../../components/Text'
 
-interface IProps {
-  onClose: () => void
-}
 
 const EastOpTypeName = {
   [EastOpType.mint]: 'Create vault',
@@ -34,13 +29,6 @@ const ItemColumn = styled.div`
   text-align: left;
 `
 
-const ItemsContainer = styled.div`
-  margin-top: 32px;
-  max-height: min(380px, 60vh);
-  height: min(380px, 60vh);
-  overflow-y: scroll;
-`
-
 const ItemContainer = styled.div`
   display: flex;
   height: min(76px, 10vh);
@@ -57,7 +45,7 @@ const ItemContainer = styled.div`
   }
 `
 
-const TxItemSkeleton = styled(ItemContainer)`
+export const TxItemSkeleton = styled(ItemContainer)`
   background-image: linear-gradient(90deg, #EDEDED 0px, #e8e8e8 40px, #EDEDED 80px);
   background-size: 576px;
   animation: ${shineBatch} 1.6s infinite linear;
@@ -91,20 +79,31 @@ const Time = styled.div`
   color: ${props => props.theme.darkBlue50};
 `
 
-const PrimaryModalContainer = styled(PrimaryModal)`
-`
+const TxStatusHOC = (props: { status: ContractExecutionStatus, children: JSX.Element[] }) => {
+  if (props.status !== ContractExecutionStatus.fail) {
+    return <TxItemSkeleton>
+      {props.children}
+    </TxItemSkeleton>
+  }
+  return <ItemContainer>
+    {props.children}
+  </ItemContainer>
+}
 
-const TxStatus = (props: { tx: TxCallStatus}) => {
+export const TxStatus = (props: { tx: TxCallStatus}) => {
   const { tx } = props
-  const { type, status, timestamp } = tx
+  const { type, status, timestamp, error } = tx
   const date = moment(timestamp).format('MMMM D')
   const time = moment(timestamp).format('HH:mm')
 
   const primaryText = status
-  const description = getEastOpTypeName(type)
-  return <TxItemSkeleton>
+  let description = getEastOpTypeName(type)
+  if (error) {
+    description += ` error: ${error}`
+  }
+  return <TxStatusHOC status={status}>
     <ItemColumn style={{ width: '25%', lineHeight: '16px' }}>
-      <PrimaryText>{primaryText}</PrimaryText>
+      <PrimaryText style={{ color: status === ContractExecutionStatus.fail ? '#F0222B' : 'unset' }}>{primaryText}</PrimaryText>
     </ItemColumn>
     <ItemColumn style={{ width: '55%' }}>
       <SecondaryText>{description}</SecondaryText>
@@ -113,10 +112,10 @@ const TxStatus = (props: { tx: TxCallStatus}) => {
       <Time>{date}</Time>
       <Time>{time}</Time>
     </ItemColumn>
-  </TxItemSkeleton>
+  </TxStatusHOC>
 }
 
-const TxItem = (props: { tx: ITransaction}) => {
+export const TxItem = (props: { tx: ITransaction}) => {
   const { configStore } = useStores()
   const { tx } = props
   const { transactionType, eastAmountDiff, westAmountDiff, callTimestamp, params, callTxId, requestTxId } = tx
@@ -182,75 +181,4 @@ const TxItem = (props: { tx: ITransaction}) => {
       <Time>{time}</Time>
     </ItemColumn>
   </ItemContainer>
-}
-
-export const TransactionsHistory = (props: IProps) => {
-  const { api, authStore } = useStores()
-  const { address } = authStore
-  const [transactions, setTransactions] = useState<ITransaction[]>([])
-  const [txStatuses, setTxStatuses] = useState<TxCallStatus[]>([])
-  const [inProgress, setInProgress] = useState(false)
-
-  const startCheckTxs = async (txs: ITransaction[], statuses: TxCallStatus[]) => {
-    try {
-      const txsHistory = await api.getTransactionsHistory(address)
-      const newTransactions = [...txs]
-      let newStatuses = [...statuses]
-      for(let i = 0; i < txsHistory.length; i++) {
-        const tx = txsHistory[i]
-        const statusMatched = statuses.find(status => status.tx_id === tx.callTxId)
-        if (statusMatched) {
-          newStatuses = newStatuses.filter(status => status.tx_id !== tx.callTxId)
-          newTransactions.unshift(tx)
-        }
-      }
-
-      setTransactions(newTransactions)
-      setTxStatuses(newStatuses)
-
-      if (newStatuses.length > 0) {
-        await new Promise(resolve => setTimeout(resolve, 5000))
-        startCheckTxs(newTransactions, newStatuses)
-      }
-    } catch (e) {
-      console.log('Error on compare txs and statuses', e.message)
-    }
-  }
-
-  useEffect(() => {
-    const loadTxs = async () => {
-      try {
-        setInProgress(true)
-        const txs = await api.getTransactionsHistory(address)
-        setTransactions(txs)
-
-        let statuses = await api.getTransactionsStatuses(address)
-        statuses = statuses.filter(item => item.status !== ContractExecutionStatus.success)
-        setTxStatuses(statuses)
-        if (statuses.length > 0) {
-          startCheckTxs(txs, statuses)
-        }
-      } catch(e) {
-        console.error('Load txs error:', e.message)
-      } finally {
-        setInProgress(false)
-      }
-    }
-    loadTxs()
-  }, [])
-
-  return <PrimaryModalContainer {...props} style={{ padding: '24px 24px 4px', overflow: 'hidden' }}>
-    <PrimaryTitle>Transaction history</PrimaryTitle>
-    <ItemsContainer>
-      {inProgress &&
-        Array(5).fill(null).map((_, index) => <TxItemSkeleton key={index} />)
-      }
-      {(!inProgress && txStatuses.length > 0) &&
-        txStatuses.map((txStatus, index) => <TxStatus key={index} tx={txStatus} />)
-      }
-      {(!inProgress && transactions.length > 0) &&
-        transactions.map((tx, index) => <TxItem key={index} tx={tx} />)
-      }
-    </ItemsContainer>
-  </PrimaryModalContainer>
 }

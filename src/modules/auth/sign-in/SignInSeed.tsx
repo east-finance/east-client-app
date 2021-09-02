@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useRoute } from 'react-router5'
-import { Block, Block32 } from '../../../components/Block'
+import { Block32 } from '../../../components/Block'
 import styled from 'styled-components'
 import useStores from '../../../hooks/useStores'
 import { Button } from '../../../components/Button'
