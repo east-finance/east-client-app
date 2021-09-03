@@ -216,7 +216,7 @@ export const Settings = (props: IProps) => {
     router.navigate(RouteName.SignInSeed)
   }
 
-  return <PrimaryModal {...props}>
+  return <PrimaryModal {...props} id={'settings-modal'}>
     <PrimaryTitle>Settings</PrimaryTitle>
     <div>
       <Container>

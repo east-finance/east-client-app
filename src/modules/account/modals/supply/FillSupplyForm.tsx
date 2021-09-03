@@ -100,6 +100,7 @@ export const FillSupplyForm = observer((props: IProps) => {
   return <Container>
     <Block marginTop={80}>
       <SimpleInput
+        id={'input-west'}
         type={'number'}
         label={`Enter amount of WEST (${westAvailable} available)`}
         value={westAmount}

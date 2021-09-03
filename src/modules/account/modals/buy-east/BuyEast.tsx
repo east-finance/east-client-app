@@ -134,8 +134,8 @@ export const BuyEast = observer((props: IProps) => {
     content = <BuyWestSuccess onClose={props.onClose} />
   }
 
-  return <PrimaryModal {...props} status={modalStatus}>
-    <PrimaryTitle>issue east stablecoin</PrimaryTitle>
+  return <PrimaryModal {...props} status={modalStatus} id={'mint-modal'}>
+    <PrimaryTitle>mint east stablecoin</PrimaryTitle>
     <div>{content}</div>
   </PrimaryModal>
 })

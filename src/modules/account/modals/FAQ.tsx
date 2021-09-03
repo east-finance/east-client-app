@@ -58,7 +58,7 @@ const supportEmail = 'mail@mail.ru'
 const telegramLink = 'https://t.me/wavesenterprisegroup'
 
 export const FAQ = (props: IProps) => {
-  return <PrimaryModal {...props}>
+  return <PrimaryModal {...props} id={'faq-modal'}>
     <PrimaryTitle>FAQ</PrimaryTitle>
     <Block marginTop={44} />
     <Description>

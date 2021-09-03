@@ -151,6 +151,7 @@ export const FillIssueForm = observer((props: IProps) => {
   return <Container>
     <Block marginTop={'2%'}>
       <SimpleInput
+        id={'input-east'}
         type={'number'}
         max={MaxTokenAmount}
         label={'Enter amount of EAST'}
@@ -175,6 +176,7 @@ export const FillIssueForm = observer((props: IProps) => {
           </WestPostfix>
         }
         <SimpleInput
+          id={'input-west'}
           type={'number'}
           max={MaxTokenAmount}
           label={`Enter amount of WEST (${westAvailable} available)`}

@@ -172,6 +172,7 @@ export const TransferEast = observer((props: IProps) => {
     content = <Container>
       <Block marginTop={'10%'}>
         <SimpleInput
+          id={'input-east'}
           type={'number'}
           status={formErrors.east ? InputStatus.error : InputStatus.default}
           label={`Enter amount of EAST (${eastAvailable} available)`}
@@ -185,6 +186,7 @@ export const TransferEast = observer((props: IProps) => {
         </Block>
       </Block>
       <SimpleInput
+        id={'input-address'}
         status={formErrors.address ? InputStatus.error : InputStatus.default}
         label={'Enter recipient’s address'}
         value={userAddress}
@@ -236,7 +238,7 @@ export const TransferEast = observer((props: IProps) => {
     />
   }
 
-  return <PrimaryModal {...props}>
+  return <PrimaryModal {...props} id={'transfer-east-modal'}>
     <PrimaryTitle>{title}</PrimaryTitle>
     {content}
   </PrimaryModal>

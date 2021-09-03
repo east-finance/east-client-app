@@ -120,6 +120,7 @@ export const TakeWest = observer((props: IProps) => {
       <Block marginTop={'20%'}>
         <Container>
           <SimpleInput
+            id={'input-west'}
             type={'number'}
             status={validationError ? InputStatus.error : InputStatus.default}
             label={`Enter amount of WEST (${westProfit} available)`}
@@ -147,7 +148,7 @@ export const TakeWest = observer((props: IProps) => {
 
   const title = isDesktop ? 'take west out of the vault' : 'take west'
 
-  return <PrimaryModal {...props}>
+  return <PrimaryModal {...props} id={'claim-overpay-modal'}>
     <PrimaryTitle>{title}</PrimaryTitle>
     {content}
   </PrimaryModal>

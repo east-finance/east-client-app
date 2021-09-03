@@ -54,7 +54,7 @@ export const SupplyVault = (props: IProps) => {
     />
   }
 
-  return <PrimaryModal {...props} status={ModalStatus.success}>
+  return <PrimaryModal {...props} status={ModalStatus.success} id={'supply-modal'}>
     <PrimaryTitle>Add WEST to the vault</PrimaryTitle>
     {content}
   </PrimaryModal>

@@ -142,6 +142,7 @@ export const FillForm = observer((props: IProps) => {
   return <Container>
     <Block marginTop={'15%'}>
       <SimpleInput
+        id={'input-east'}
         type={'number'}
         label={`Enter amount of EAST (minimum: ${MinimumMintEastAmount} EAST)`}
         value={eastAmount}
@@ -151,6 +152,7 @@ export const FillForm = observer((props: IProps) => {
       />
       <Block marginTop={4} />
       <SimpleInput
+        id={'input-west'}
         type={'number'}
         label={`Enter amount of WEST (${westAvailable} available)`}
         value={westAmount}

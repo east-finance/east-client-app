@@ -101,7 +101,7 @@ export const AddEast = observer((props: IProps) => {
     />
   }
 
-  return <PrimaryModal {...props} status={modalStatus}>
+  return <PrimaryModal {...props} status={modalStatus} id={'issue-modal'}>
     <PrimaryTitle>issue east stablecoin</PrimaryTitle>
     <div>
       {(isDesktop && !refillWestAmount && stepIndex !== IssueSteps.Success) &&

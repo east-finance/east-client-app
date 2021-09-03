@@ -122,7 +122,7 @@ export const TransactionsHistory = (props: IProps) => {
 
   const mergedTxs = mergeTxsWithStatuses(transactions, txStatuses)
 
-  return <PrimaryModalContainer {...props} style={{ padding: '24px 24px 4px', overflow: 'hidden' }}>
+  return <PrimaryModalContainer {...props} id={'txs-history-modal'} style={{ padding: '24px 24px 4px', overflow: 'hidden' }}>
     <PrimaryTitle>Transaction history</PrimaryTitle>
     <ItemsContainer>
       {inProgress &&

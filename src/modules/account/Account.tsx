@@ -192,7 +192,7 @@ const Account = observer( () => {
   }
   useOutsideAlerter(modalRef, onClickOutside)
 
-  return <Container>
+  return <Container id={'root-account'}>
     <BackgroundVideo isBlurred={!!primaryModal} />
     {primaryModal &&
       <PrimaryModalContainer ref={modalRef}>

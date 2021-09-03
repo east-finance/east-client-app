@@ -9,6 +9,7 @@ export enum ModalStatus {
 }
 
 interface ModalProps {
+  id?: string;
   status?: ModalStatus;
   children: JSX.Element | JSX.Element[];
   onClose?: () => void;
@@ -39,7 +40,7 @@ const IconContainer = styled.div`
 `
 
 export const PrimaryModal = (props: ModalProps) => {
-  return <Container status={props.status} style={{...props.style}}>
+  return <Container status={props.status} style={{...props.style}} id={props.id || ''}>
     {props.onClose &&
       <IconContainer>
         <CrossIcon color={'rgba(4, 53, 105, 0.5);'} onClick={props.onClose} />

@@ -27,12 +27,12 @@ export const CloseVault = (props: IProps) => {
     content =  <CloseVaultConfirmation onPrevClicked={() => setCurrentStep(Steps.info)} onSuccess={() => setCurrentStep(Steps.success)} />
   } else if (currentStep === Steps.success) {
     content = <TxSendSuccess
-      text={'Vault will be closed after the transaction is completed. It may take a few minutes.'}
+      text={'Vault will be closed after the transaction is completed. It may take a few minutes.'}
       onClose={props.onClose}
     />
   }
 
-  return <PrimaryModal {...props} status={modalStatus}>
+  return <PrimaryModal {...props} status={modalStatus} id={'close-vault-modal'}>
     <PrimaryTitle>{title}</PrimaryTitle>
     {content}
   </PrimaryModal>
