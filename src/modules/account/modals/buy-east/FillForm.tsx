@@ -9,7 +9,7 @@ import { observer } from 'mobx-react'
 import { BeforeText, RelativeContainer, Spinner } from '../../../../components/Spinner'
 import { ITag, Tags } from '../../../../components/Tags'
 import { EastOpType } from '../../../../interfaces'
-import { MinimumMintEastAmount } from '../../../../constants'
+import { MaxTokenAmount, MinimumMintEastAmount } from '../../../../constants'
 
 export interface FillFormData {
   eastAmount: string;
@@ -102,7 +102,8 @@ export const FillForm = observer((props: IProps) => {
   }
 
   const onBlurEast = (e: FocusEvent<HTMLInputElement>) => {
-    const { value } = e.target
+    let { value } = e.target
+    value = roundNumber(value)
     setEastAmount(value)
     setWestByEastAmount(value)
   }
@@ -114,7 +115,8 @@ export const FillForm = observer((props: IProps) => {
   }
 
   const onBlurWest = (e: FocusEvent<HTMLInputElement>) => {
-    const { value } = e.target
+    let { value } = e.target
+    value = roundNumber(value)
     setWestAmount(value)
     setEastByWestAmount(value)
   }
@@ -144,6 +146,7 @@ export const FillForm = observer((props: IProps) => {
       <SimpleInput
         id={'input-east'}
         type={'number'}
+        max={MaxTokenAmount}
         label={`Enter amount of EAST (minimum: ${MinimumMintEastAmount} EAST)`}
         value={eastAmount}
         status={errors.east ? InputStatus.error : InputStatus.default}
@@ -154,6 +157,7 @@ export const FillForm = observer((props: IProps) => {
       <SimpleInput
         id={'input-west'}
         type={'number'}
+        max={MaxTokenAmount}
         label={`Enter amount of WEST (${westAvailable} available)`}
         value={westAmount}
         status={errors.west ? InputStatus.error : InputStatus.default}

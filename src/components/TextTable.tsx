@@ -8,7 +8,7 @@ export const TextTable = styled.div`
 
 export const TextTableRow = styled.div`
   display: flex;
-  justify-content: end;
+  justify-content: left;
   align-items: baseline;
   
   &:not(:first-child) {
