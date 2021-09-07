@@ -8,12 +8,28 @@ import {
 } from '../interfaces'
 import { OracleStreamId } from '../constants'
 import { IEastBalanceResponse } from './ApiInterfaces'
+import moment from 'moment'
 
 const AUTH_SERVICE_ADDRESS = '/authServiceAddress'
 const NODE_ADDRESS = '/nodeAddress'
 const API_ADDRESS = '/apiAddress'
 const API_VERSION_PREFIX = '/v1'
 const source = 'east-client'
+
+const PendingStatusLimitMS = 10 * 60 * 1000 // 10 minutes
+
+const enrichTxStatuses = (statuses: TxCallStatus[]) => {
+  return statuses.map(item => {
+    if (item.status === ContractExecutionStatus.pending && (moment().valueOf() - moment(item.timestamp).valueOf() > PendingStatusLimitMS)) {
+      return {
+        ...item,
+        status: ContractExecutionStatus.fail,
+        error: `Cannot get tx status: timeout exceeded (${Math.floor(PendingStatusLimitMS / (60 * 1000))} minutes)`
+      }
+    }
+    return item
+  })
+}
 
 export class Api {
   private _unauthorizedClient: AxiosInstance = axios.create({
@@ -114,13 +130,14 @@ export class Api {
   }
 
   public getTransactionsHistory = async (address: string): Promise<ITransaction[]> => {
-    const { data } = await this._apiClient.get(`${API_ADDRESS}/v1/user/transactions?address=${address}`)
+    const { data } = await this._apiClient.get(`${API_ADDRESS}/v1/user/transactions?address=${address}&limit=1000&offset=0`)
     return data
   }
 
   public getTransactionsStatuses = async (address: string): Promise<TxCallStatus[]> => {
     const { data } = await this._apiClient.get(`${API_ADDRESS}/v1/user/transactions/statuses?address=${address}&limit=1000&offset=0`)
-    return data
+    const statuses: TxCallStatus[] = data
+    return enrichTxStatuses(statuses)
   }
 
   public startWatchTxStatus = async (
