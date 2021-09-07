@@ -15,6 +15,7 @@ import { EastOpType } from '../../../interfaces'
 import { useEffect } from 'react'
 import { toast } from 'react-toastify'
 import { ErrorNotification } from '../../../components/Notification'
+import BigNumber from 'bignumber.js'
 
 interface IProps {
   onClose: () => void
@@ -153,7 +154,7 @@ export const TransferEast = observer((props: IProps) => {
           key: 'transfer',
           value: JSON.stringify({
             to: userAddress,
-            amount: +roundNumber(eastAmount)
+            amount: new BigNumber(+eastAmount).multipliedBy(Math.pow(10, 8)).toNumber()
           })
         }],
         fee: configStore.getDockerCallFee(),

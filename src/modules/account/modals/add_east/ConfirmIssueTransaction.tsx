@@ -17,6 +17,7 @@ import useStores from '../../../../hooks/useStores'
 import { EastOpType, TxTextType } from '../../../../interfaces'
 import { GradientText } from '../../../../components/Text'
 import { roundNumber } from '../../../../utils'
+import BigNumber from 'bignumber.js'
 
 interface IProps {
   eastAmount: string;
@@ -63,7 +64,7 @@ export const ConfirmIssueTransaction = (props: IProps) => {
     if (transferWestAmount <= 0) {
       const maxWestToExchange = dataStore.calculateWestAmount(props.eastAmount)
       const reissueValue = maxWestToExchange > 0 ? {
-        maxWestToExchange: +maxWestToExchange
+        maxWestToExchange: new BigNumber(+maxWestToExchange).multipliedBy(Math.pow(10, 8)).toNumber()
       } : {}
       const reissueTx = {
         senderPublicKey: publicKey,

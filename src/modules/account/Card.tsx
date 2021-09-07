@@ -165,6 +165,7 @@ enum BalanceType {
 }
 
 interface ITokenBalanceProps {
+  id?: string;
   value: string;
   type?: BalanceType;
 }
@@ -184,7 +185,7 @@ const TokenBalance = (props: ITokenBalanceProps) => {
       fractionalPart = spacifyFractional(fractionalPart)
     }
   }
-  return <div>
+  return <div id={props.id || ''} data-value={value}>
     <IntegerPart type={props.type || BalanceType.small}>{integerPart}</IntegerPart>
     {fractionalPart &&
       <FracPart type={props.type || BalanceType.small}>,{fractionalPart}</FracPart>
@@ -212,7 +213,7 @@ export const AccountCard = observer((props: { isShown: null | boolean, onClick: 
     <ContentWrapper>
       {isPositiveBalance &&
         <TopContainer>
-          <TokenBalance type={BalanceType.large} value={eastBalance} />
+          <TokenBalance type={BalanceType.large} value={eastBalance} id={'east-balance'} />
           <Block marginTop={12}>
             <Description>EAST available</Description>
           </Block>
@@ -223,14 +224,14 @@ export const AccountCard = observer((props: { isShown: null | boolean, onClick: 
           {+vault.eastAmount > 0 &&
             <div>
               <div>
-                <TokenBalance type={BalanceType.small} value={vault.eastAmount} />
+                <TokenBalance type={BalanceType.small} value={vault.eastAmount} id={'east-vault-amount'} />
                 <Block marginTop={4}>
                   <BottomItem>EAST issued with vault</BottomItem>
                 </Block>
               </div>
               <FlexColumnWrapper style={{ marginTop: '16px' }}>
                 <div>
-                  <TokenBalance type={BalanceType.small} value={vault.westAmount} />
+                  <TokenBalance type={BalanceType.small} value={vault.westAmount} id={'west-vault-amount'} />
                   <Block marginTop={4}>
                     <BottomItem>west in vault</BottomItem>
                   </Block>

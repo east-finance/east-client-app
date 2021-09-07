@@ -4,7 +4,7 @@ import { BigNumber } from 'bignumber.js'
 import { OracleStreamId, WestDecimals } from '../constants'
 import { IOracleValue, IVault } from '../interfaces'
 import ConfigStore from './ConfigStore'
-import { roundNumber, cutNumber } from '../utils'
+import { roundNumber } from '../utils'
 import { PollingError } from '../api/apiErrors'
 import { toast } from 'react-toastify'
 
@@ -92,7 +92,7 @@ export default class DataStore {
 
   async getEastBalance(address: string): Promise<string> {
     const { eastAmount } = await this.api.getUserEastBalance(address)
-    return cutNumber(eastAmount, 8) || '0'
+    return new BigNumber(eastAmount).dividedBy(Math.pow(10, WestDecimals)).toString()
   }
 
   async getWestBalance(address: string): Promise<string> {
