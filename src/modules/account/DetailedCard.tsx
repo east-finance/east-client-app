@@ -287,7 +287,7 @@ export const DetailedCard = observer((props: { isShown: null | boolean, onClick:
       </div>
       <Block marginTop={24}>
         <div>
-          <PrimaryText>{spacifyNumber(westBalance)}</PrimaryText>
+          <PrimaryText id={'address-west-balance'} data-value={westBalance}>{spacifyNumber(westBalance)}</PrimaryText>
           <Block marginTop={0}>
             <Text>west balance</Text>
           </Block>
