@@ -7,6 +7,7 @@ import useStores from '../../../../hooks/useStores'
 import { roundNumber } from '../../../../utils'
 import { observer } from 'mobx-react'
 import { ITag, TagOption, Tags } from '../../../../components/Tags'
+import { EastOpType } from '../../../../interfaces'
 
 export interface FillFormData {
   westAmount: string;
@@ -71,10 +72,11 @@ export const FillSupplyForm = observer((props: IProps) => {
       })
     }
   }
-  const westAvailable = +roundNumber(dataStore.westBalance, 8)
+  const supplyFee = +configStore.getFeeByOpType(EastOpType.supply)
+  const westAvailable = Math.max(+roundNumber(+dataStore.westBalance - supplyFee, 8), 0)
   const buyOptions = [{text: '25%', value: '0.25' }, { text: '50%', value: '0.5' }, { text: '75%', value: '0.75' }, { text: '100%', value: '1' }]
   const onSelectOption = (tag: ITag) => {
-    const amount = roundNumber(+tag.value * +dataStore.westBalance, 8)
+    const amount = roundNumber(+tag.value * westAvailable, 8)
     setWestAmount(amount)
   }
   const onBlur = () => {
