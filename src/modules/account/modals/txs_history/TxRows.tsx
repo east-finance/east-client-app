@@ -119,8 +119,7 @@ export const TxStatus = (props: { tx: TxCallStatus}) => {
 export const TxItem = (props: { tx: ITransaction}) => {
   const { configStore } = useStores()
   const { tx } = props
-  const { transactionType, eastAmountDiff: _eastAmountDiff, westAmountDiff, callTimestamp, params, callTxId, requestTxId } = tx
-  const eastAmountDiff = new BigNumber(_eastAmountDiff).dividedBy(Math.pow(10, 8)).toString()
+  const { transactionType, eastAmountDiff, westAmountDiff, callTimestamp, params, callTxId, requestTxId } = tx
   const date = moment(callTimestamp).format('MMMM D')
   const time = moment(callTimestamp).format('HH:mm')
   const isReceived = +eastAmountDiff > 0

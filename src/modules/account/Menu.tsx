@@ -149,7 +149,7 @@ export const AccountMenu = observer(() => {
         onClick={() => onMenuClicked((isUserHaveVault && !isVaultLiquidated) ? RouteName.AddEast : RouteName.BuyEast)}
       />
     </MenuItemContainer>
-    {dataStore.claimOverpayAmount > 0.1 &&
+    {+dataStore.claimOverpayAmount >= 0.00000001 &&
       <MenuItemContainer>
         {isDesktop && <Tooltip>Take WEST</Tooltip>}
         <MenuItemLock onClick={() => onMenuClicked(RouteName.TakeWest)} />

@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import { Block } from '../../../../components/Block'
-import { Button, ButtonsContainer } from '../../../../components/Button'
+import { Button, ButtonsContainer, NavigationLeftGradientButton } from '../../../../components/Button'
 import { ButtonSpinner, RelativeContainer } from '../../../../components/Spinner'
 import { TextTable, TextTableKey, TextTablePrimaryValue, TextTableRow, TextTableSecondaryValue } from '../../../../components/TextTable'
 import useStores from '../../../../hooks/useStores'
@@ -54,6 +54,7 @@ export const CheckForm = (props: IProps) => {
     </Block>
     <Block marginTop={60}>
       <ButtonsContainer>
+        <NavigationLeftGradientButton onClick={props.onPrevClicked} />
         <Button type={'primary'} disabled={props.inProgress} style={{ width: '304px' }} onClick={props.onNextClicked}>
           <RelativeContainer>
             {props.inProgress && <ButtonSpinner />}

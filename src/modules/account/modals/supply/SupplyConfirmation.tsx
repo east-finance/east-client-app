@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Block } from '../../../../components/Block'
 import styled from 'styled-components'
-import { Button } from '../../../../components/Button'
+import { Button, NavigationLeftGradientButton } from '../../../../components/Button'
 import useStores from '../../../../hooks/useStores'
 import { observer } from 'mobx-react'
 import {
@@ -120,6 +120,7 @@ export const SupplyConfirmation = observer((props: IProps) => {
     </Block>
     <Block marginTop={80}>
       <ButtonsContainer>
+        <NavigationLeftGradientButton onClick={props.onPrevClicked} />
         <Button type={'primary'} disabled={inProgress} onClick={onAddWestClicked} style={{ width: '304px' }}>
           <RelativeContainer>
             {inProgress && <ButtonSpinner />}

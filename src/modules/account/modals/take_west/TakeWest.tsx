@@ -42,7 +42,7 @@ export const TakeWest = observer((props: IProps) => {
     let error = ''
     if(!value || +value === 0) {
       error = 'Empty value'
-    } else if(+value > westProfit) {
+    } else if(+value > +westProfit) {
       error = 'Not enough WEST to withdraw'
     } else if (+value < 0) {
       error = 'Negative value'
@@ -61,7 +61,7 @@ export const TakeWest = observer((props: IProps) => {
       params: [{
         type: 'string',
         key: 'claim_overpay_init',
-        value: JSON.stringify({ amount: +westAmount })
+        value: JSON.stringify({ amount: westAmount.toString() })
       }],
       fee: configStore.getDockerCallFee(),
     }
@@ -72,7 +72,9 @@ export const TakeWest = observer((props: IProps) => {
 
   const buyOptions = [{text: '25%', value: '0.25' }, { text: '50%', value: '0.5' }, { text: '75%', value: '0.75' }, { text: '100%', value: '1' }]
   const onSelectOption = (tag: ITag) => {
-    const amount = roundNumber(+tag.value * westProfit, 8)
+    const amount = (westProfit.toString() === '0.00000001' && +tag.value < 1)
+      ? 0
+      : roundNumber(+tag.value * +westProfit)
     setWestAmount(amount.toString())
     const error = validateForm(amount.toString())
     setValidationError(error)

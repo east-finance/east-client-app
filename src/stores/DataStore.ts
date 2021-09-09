@@ -87,12 +87,12 @@ export default class DataStore {
 
   // Available claim overpay profit
   get claimOverpayAmount () {
-    return +roundNumber(-this.supplyVaultWestDiff - this.configStore.getClaimOverpayFee())
+    return roundNumber(-this.supplyVaultWestDiff - this.configStore.getClaimOverpayFee())
   }
 
   async getEastBalance(address: string): Promise<string> {
     const { eastAmount } = await this.api.getUserEastBalance(address)
-    return new BigNumber(eastAmount).dividedBy(Math.pow(10, WestDecimals)).toString()
+    return eastAmount
   }
 
   async getWestBalance(address: string): Promise<string> {
@@ -179,7 +179,11 @@ export default class DataStore {
       if (vault.status === 'fulfilled') {
         this.vault = vault.value as IVault
       } else {
-        console.log('Cannot update vault:', vault.reason)
+        if (vault.reason && vault.reason.response && vault.reason.response.status === 404) {
+          values.shift()
+        } else {
+          console.log('Cannot update vault:', vault.reason)
+        }
       }
       if (eastBalance.status === 'fulfilled') {
         this.eastBalance = eastBalance.value as string
