@@ -164,7 +164,7 @@ export const AccountMenu = observer(() => {
     {(isUserHaveVault && isDesktop) &&
       <Delimiter />
     }
-    {(isUserHaveVault || isUserHaveEast || isVaultClosed) &&
+    {Boolean(isUserHaveVault || isUserHaveEast || isVaultClosed) &&
       <MenuItemContainer>
         {isDesktop && <Tooltip>History</Tooltip>}
         <MenuItemTime onClick={() => onMenuClicked(RouteName.TransactionsHistory)} />
