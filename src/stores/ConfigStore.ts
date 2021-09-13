@@ -11,6 +11,7 @@ export default class ConfigStore {
 
   config = {
     eastContractId: '',
+    eastContractVersion: 1,
     clientAddress: ''
   }
 
@@ -42,8 +43,13 @@ export default class ConfigStore {
       const start = Date.now()
       const { data } = await axios.get(`/app.config.json?t=${Date.now()}`)
       console.log('app.config.json loaded:', data, ', time elapsed:', Date.now() - start, 'ms')
+      let eastContractVersion = this.config.eastContractVersion
+      if (data && data.eastContractVersion) {
+        eastContractVersion = Number(data.eastContractVersion)
+      }
       this.config = {
-        ...data
+        ...data,
+        eastContractVersion
       }
     } catch (e) {
       console.error('Cannot get app config:', e.message)
@@ -85,7 +91,7 @@ export default class ConfigStore {
   }
 
   getEastContractVersion () {
-    return 1
+    return this.config.eastContractVersion || 1
   }
 
   getClientAddress () {

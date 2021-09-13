@@ -125,7 +125,7 @@ export const TakeWest = observer((props: IProps) => {
             id={'input-west'}
             type={'number'}
             status={validationError ? InputStatus.error : InputStatus.default}
-            label={`Enter amount of WEST (${westProfit} available)`}
+            label={`Enter amount of WEST (${westProfit} available), service fee: ${configStore.getClaimOverpayFee()}WEST`}
             value={westAmount}
             onChange={onChangeInput}
             onBlur={onBlur}
