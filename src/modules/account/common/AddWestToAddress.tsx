@@ -57,6 +57,10 @@ const AddressContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
+  
+  @media only screen and (min-width : 480px) and (max-width : 812px) {
+    font-size: 16px;
+  }
 `
 
 const Info = styled.div`

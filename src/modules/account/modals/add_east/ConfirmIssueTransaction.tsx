@@ -49,8 +49,8 @@ export const ConfirmIssueTransaction = (props: IProps) => {
   if (vaultFreeWest < 0) {
     transferWestAmount += Math.abs(vaultFreeWest)
   }
-  console.log('Transfer WEST amount: ', transferWestAmount, 'vault Free West:', vaultFreeWest)
-  console.log('Only Reissue:',  transferWestAmount <= 0)
+  console.log('Supply WEST amount: ', transferWestAmount, 'vault Free West:', vaultFreeWest)
+  console.log('Only Reissue tx:',  transferWestAmount <= 0)
   if (transferWestAmount <= 0) {
     console.log(`Reissue  west amount: ${dataStore.exchangeEast(props.eastAmount)}`)
   }
@@ -123,29 +123,34 @@ export const ConfirmIssueTransaction = (props: IProps) => {
           }
         }
       }
-      const dockerCallReissue = {
-        type: TxTextType.dockerCallV4,
-        tx: {
-          senderPublicKey: publicKey,
-          authorPublicKey: publicKey,
-          contractId: eastContractId,
-          contractVersion: configStore.getEastContractVersion(),
-          timestamp: Date.now(),
-          params: [{
-            type: 'string',
-            key: 'reissue',
-            value: ''
-            // value: JSON.stringify({
-            //   // maxWestToExchange: reissueWestAmount
-            // })
-          }],
-          fee: configStore.getDockerCallFee(),
-          atomicBadge: {
-            trustedSender: address
+
+      const transactions = [transfer, dockerCall]
+
+      if (!(vaultFreeWest < 0 && +transferWestAmount === Math.abs(vaultFreeWest))) {
+        const dockerCallReissue = {
+          type: TxTextType.dockerCallV4,
+          tx: {
+            senderPublicKey: publicKey,
+            authorPublicKey: publicKey,
+            contractId: eastContractId,
+            contractVersion: configStore.getEastContractVersion(),
+            timestamp: Date.now(),
+            params: [{
+              type: 'string',
+              key: 'reissue',
+              value: ''
+              // value: JSON.stringify({
+              //   // maxWestToExchange: reissueWestAmount
+              // })
+            }],
+            fee: configStore.getDockerCallFee(),
+            atomicBadge: {
+              trustedSender: address
+            }
           }
         }
+        transactions.push(dockerCallReissue)
       }
-      const transactions = [transfer, dockerCall, dockerCallReissue]
       const result = await signStore.broadcastAtomic(transactions)
       console.log('Broadcast Atomic(Transfer+Supply+Reissue) result:', result)
     }

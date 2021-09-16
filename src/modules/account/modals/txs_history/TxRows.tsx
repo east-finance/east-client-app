@@ -120,7 +120,7 @@ export const TxItem = (props: { tx: ITransaction}) => {
   const { configStore } = useStores()
   const { tx } = props
   const { transactionType, eastAmountDiff, westAmountDiff, callTimestamp, params, callTxId, requestTxId } = tx
-  const date = moment(callTimestamp).format('MMMM D')
+  const date = moment(callTimestamp).format('MMM D')
   const time = moment(callTimestamp).format('HH:mm')
   const isReceived = +eastAmountDiff > 0
   const isReceivedWest = +westAmountDiff > 0

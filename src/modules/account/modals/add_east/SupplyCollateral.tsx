@@ -24,7 +24,7 @@ const Container = styled.div`
 `
 
 const Centered = styled.div`
-  width: 388px;
+  max-width: 388px;
   margin: 0 auto;
   line-height: 24px;
   text-align: center;

@@ -30,10 +30,14 @@ const Container = styled.div`
 
 const WestPostfix = styled.div`
   position: absolute;
-  right: 20px;
+  right: 0;
   bottom: 8px;
   font-size: 16px;
   font-weight: 700;
+  z-index: 100;
+  background: whitesmoke;
+  border-radius: 4px;
+  padding: 0 2px;
 `
 
 export const FillIssueForm = observer((props: IProps) => {
@@ -136,7 +140,11 @@ export const FillIssueForm = observer((props: IProps) => {
       })
     }
   }
-  const westAvailable = roundNumber(+dataStore.westBalance - +totalFee, 8)
+  let westAvailable = roundNumber(+dataStore.westBalance - +totalFee, 8)
+  if (vaultFreeWest < 0) {
+    westAvailable -= -vaultFreeWest
+  }
+  westAvailable = Math.max(westAvailable, 0)
   const buyOptions = [{text: '25%', value: '0.25' }, { text: '50%', value: '0.5' }, { text: '75%', value: '0.75' }, { text: '100%', value: '1' }]
   const onSelectOption = (tag: ITag) => {
     const amount = roundNumber(+tag.value * westAvailable, 8).toString()
@@ -154,7 +162,7 @@ export const FillIssueForm = observer((props: IProps) => {
         id={'input-east'}
         type={'number'}
         max={MaxTokenAmount}
-        label={'Enter amount of EAST'}
+        label={'EAST amount'}
         value={eastAmount}
         status={errors.east ? InputStatus.error : InputStatus.default}
         onChange={onChangeEast}
@@ -179,7 +187,7 @@ export const FillIssueForm = observer((props: IProps) => {
           id={'input-west'}
           type={'number'}
           max={MaxTokenAmount}
-          label={`Enter amount of WEST (${westAvailable} available)`}
+          label={`WEST amount (${westAvailable} available)`}
           value={westAmount}
           status={errors.west ? InputStatus.error : InputStatus.default}
           onChange={onChangeWest}

@@ -10,4 +10,8 @@ export const PrimaryTitle = styled.div`
   text-align: center;
   letter-spacing: -1px;
   text-transform: uppercase;
+  
+  @media only screen and (min-width : 480px) and (max-width : 812px) {
+      font-size: 24px;
+  }
 `
