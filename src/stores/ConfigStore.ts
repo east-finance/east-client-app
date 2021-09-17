@@ -41,7 +41,10 @@ export default class ConfigStore {
   async loadInitialConfig () {
     try {
       const start = Date.now()
-      const { data } = await axios.get(`/app.config.json?t=${Date.now()}`)
+      let { data } = await axios.get(`/app.config.json?t=${Date.now()}`)
+      if (typeof data === 'string') {
+        data = JSON.parse(data)
+      }
       console.log('app.config.json loaded:', data, ', time elapsed:', Date.now() - start, 'ms')
       let eastContractVersion = this.config.eastContractVersion
       if (data && data.eastContractVersion) {
