@@ -6,6 +6,8 @@ import { ButtonSpinner, RelativeContainer } from '../../../../components/Spinner
 import { TextTable, TextTableKey, TextTablePrimaryValue, TextTableRow, TextTableSecondaryValue } from '../../../../components/TextTable'
 import useStores from '../../../../hooks/useStores'
 import { EastOpType } from '../../../../interfaces'
+import { GradientText } from '../../../../components/Text'
+import { isDesktop } from 'react-device-detect'
 
 interface IProps {
   westRate: string;
@@ -18,9 +20,16 @@ interface IProps {
 
 const Container = styled.div`
   @media screen and (min-width: 900px) {
-    width: 376px;
+    width: 426px;
   }
   margin: 0 auto;
+`
+
+const GradientTextPostfix = styled(GradientText)`
+  position: absolute;
+  margin-left: 16px;
+  font-size: 15px;
+  font-weight: 400;
 `
 
 export const CheckForm = (props: IProps) => {
@@ -31,7 +40,12 @@ export const CheckForm = (props: IProps) => {
       <TextTable>
         <TextTableRow>
           <TextTableKey>You will get</TextTableKey>
-          <TextTablePrimaryValue>~{props.eastAmount} EAST</TextTablePrimaryValue>
+          <TextTablePrimaryValue>
+            ~{props.eastAmount} EAST
+            {isDesktop &&
+              <GradientTextPostfix>Why approximate?</GradientTextPostfix>
+            }
+          </TextTablePrimaryValue>
         </TextTableRow>
         <TextTableRow>
           <TextTableKey>You will pay</TextTableKey>

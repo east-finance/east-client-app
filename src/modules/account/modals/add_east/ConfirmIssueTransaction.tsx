@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { toast } from 'react-toastify'
 import styled from 'styled-components'
+import { isDesktop } from 'react-device-detect'
 import { Block } from '../../../../components/Block'
 import { Button, NavigationLeftGradientButton } from '../../../../components/Button'
 import { ErrorNotification } from '../../../../components/Notification'
@@ -36,6 +37,13 @@ const Container = styled.div`
 const SendButtonsContainer = styled.div`
   display: flex;
   justify-content: space-between;
+`
+
+const GradientTextPostfix = styled(GradientText)`
+  position: absolute;
+  margin-left: 16px;
+  font-size: 15px;
+  font-weight: 400;
 `
 
 export const ConfirmIssueTransaction = (props: IProps) => {
@@ -175,7 +183,12 @@ export const ConfirmIssueTransaction = (props: IProps) => {
       <TextTable>
         <TextTableRow>
           <TextTableKey>You will get</TextTableKey>
-          <TextTablePrimaryValue>~{roundNumber(props.eastAmount)} EAST</TextTablePrimaryValue>
+          <TextTablePrimaryValue>
+            ~{roundNumber(props.eastAmount)} EAST
+            {isDesktop &&
+              <GradientTextPostfix>Why approximate?</GradientTextPostfix>
+            }
+          </TextTablePrimaryValue>
         </TextTableRow>
         <TextTableRow>
           <TextTableKey>You will pay</TextTableKey>
