@@ -38,6 +38,22 @@ export default class ConfigStore {
     this.loadInitialConfig()
   }
 
+  initMetrics (heapMetricsId: string, yandexMetricsId: string) {
+    if (heapMetricsId && window.heap) {
+      window.heap.load(heapMetricsId)
+      console.log(`Heap metrics initialized with id = ${heapMetricsId}`)
+    }
+    if (yandexMetricsId && window.ym) {
+      window.ym(yandexMetricsId, 'init', {
+        clickmap:true,
+        trackLinks:true,
+        accurateTrackBounce:true,
+        webvisor:true
+      })
+      console.log(`Yandex metrics initialized with id = ${yandexMetricsId}`)
+    }
+  }
+
   async loadInitialConfig () {
     try {
       const start = Date.now()
@@ -50,6 +66,9 @@ export default class ConfigStore {
       this.config = {
         ...data,
         eastContractVersion
+      }
+      if(data) {
+        this.initMetrics(data.heapMetricsId, data.yandexMetricsId)
       }
     } catch (e) {
       console.error('Cannot get app config:', e.message)

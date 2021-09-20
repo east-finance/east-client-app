@@ -42,4 +42,6 @@ declare namespace WEWallet {
 
 interface Window {
   WEWallet: WEWallet.TWalletApi;
+  heap: any;
+  ym: any;
 }
