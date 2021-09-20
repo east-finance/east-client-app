@@ -94,7 +94,7 @@ const TxStatusHOC = (props: { status: ContractExecutionStatus, children: JSX.Ele
 export const TxStatus = (props: { tx: TxCallStatus}) => {
   const { tx } = props
   const { type, status, timestamp, error } = tx
-  const date = moment(timestamp).format('MMMM D')
+  const date = moment(timestamp).format('MMM D')
   const time = moment(timestamp).format('HH:mm')
 
   const primaryText = status

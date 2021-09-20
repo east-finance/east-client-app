@@ -7,7 +7,11 @@ https://gitlab.wvservices.com/waves-enterprise/east-contract/-/blob/master/READM
 ### Config file example (public/app.config.json)
 ```json
 {
-  "eastContractId": "J1SW1oAJ89bQ7i8JmXHhocjAWHCdnk9MYVKXciQyV3YC",
-  "clientAddress": "https://carter.welocal.dev"
+  "eastContractId": "6egak5EZxg6xW5cpFVzFonXzC9NF1kTSynCzupfQiCNx",
+  "clientAddress": "https://carter.welocal.dev",
+  "eastContractVersion": "1",
+  "heapMetricsId": "3889900902",
+  "yandexMetricsId": "85383388"
 }
 ```
+heapMetricsId in production: `3072950031`
