@@ -166,6 +166,7 @@ export default class ConfigStore {
     switch(opType) {
     case EastOpType.mint: resultFee = atomicSumFee.toString(); break
     case EastOpType.supply: resultFee = (atomicSumFee).toString(); break
+    case EastOpType.reissue: resultFee = (transferFee + callFee + callFee + atomicFee).toString(); break
     case EastOpType.transfer: resultFee = callFee.toString(); break
     case EastOpType.close_init: resultFee = callFee.toString(); break
     }

@@ -17,6 +17,7 @@ import { roundNumber } from '../../../../utils'
 import { ButtonSpinner, RelativeContainer } from '../../../../components/Spinner'
 
 interface IProps {
+  inProgress: boolean;
   onPrevClicked: () => void;
   onSuccess: () => void;
 }
@@ -46,43 +47,9 @@ const ButtonsContainer = styled.div`
 `
 
 export const CloseVaultConfirmation = observer((props: IProps) => {
-  const { configStore, dataStore, signStore } = useStores()
+  const { dataStore } = useStores()
   const { vault } = dataStore
-
-  const [inProgress, setInProgress] = useState(false)
-
-  const sendCloseVault = async () => {
-    const { publicKey } = await signStore.getPublicData()
-    const closeTx = {
-      senderPublicKey: publicKey,
-      authorPublicKey: publicKey,
-      contractId: configStore.getEastContractId(),
-      contractVersion: configStore.getEastContractVersion(),
-      timestamp: Date.now(),
-      params: [{
-        type: 'string',
-        key: 'close_init',
-        value: ''
-      }],
-      fee: configStore.getDockerCallFee(),
-    }
-    console.log('Close vault Docker call tx:', closeTx)
-    const result = await signStore.broadcastDockerCall(closeTx)
-    console.log('Close vault broadcast result:', result)
-  }
-
-  const closePosition = async () => {
-    try {
-      setInProgress(true)
-      // await new Promise(resolve => setTimeout(resolve, 2000))
-      await sendCloseVault()
-      props.onSuccess()
-    } catch (e) {
-      console.error('Error on close vault', e.message)
-    } finally {
-      setInProgress(false)
-    }
-  }
+  const { inProgress } = props
 
   return <Container>
     <Centered>
@@ -118,7 +85,7 @@ export const CloseVaultConfirmation = observer((props: IProps) => {
     <Block marginTop={32}>
       <ButtonsContainer>
         <NavigationLeftGradientButton onClick={props.onPrevClicked} />
-        <Button type={'primary'} disabled={inProgress} onClick={closePosition} style={{ width: '304px' }}>
+        <Button type={'primary'} disabled={inProgress} onClick={props.onSuccess} style={{ width: '304px' }}>
           <RelativeContainer>
             {inProgress && <ButtonSpinner />}
             Yes, close my position

@@ -8,6 +8,7 @@ import exchangeLogo from '../../../resources/images/waves-exchange-logo.png'
 import { toast } from 'react-toastify'
 import { InfoNotification, NotificationType, ToastCloseButton } from '../../../components/Notification'
 import { ButtonsContainer, NavigationLeftGradientButton } from '../../../components/Button'
+import { roundNumber } from '../../../utils'
 
 interface IProps {
   westAmount: string;
@@ -107,7 +108,7 @@ export const AddWestToAddress = (props: IProps) => {
   }
   return <Container>
     <Description>
-      Add <Amount>{Math.ceil(+props.westAmount)} WEST</Amount> to your address{props.eastAmount && ` to get ${props.eastAmount} EAST`}.
+      Add <Amount>{roundNumber(props.westAmount)} WEST</Amount> to your address{props.eastAmount && ` to get ${props.eastAmount} EAST`}.
     </Description>
     <Block marginTop={40}>
       <Description>

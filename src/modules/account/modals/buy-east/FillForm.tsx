@@ -84,7 +84,7 @@ export const FillForm = observer((props: IProps) => {
   const setEastByWestAmount = (value: string) => {
     const { eastAmount } = dataStore.calculateEastAmount(value)
     if (eastAmount > 0) {
-      setEastAmount(roundNumber(eastAmount, 8).toString())
+      setEastAmount(roundNumber(eastAmount).toString())
     } else {
       setEastAmount('')
     }
@@ -134,7 +134,7 @@ export const FillForm = observer((props: IProps) => {
   const usdpPartPercent = configStore.getRwaPart() * 100
   const westPartPercent = configStore.getWestCollateral() * 100
   const totalFee = +configStore.getFeeByOpType(EastOpType.mint)
-  const westAvailable = Math.max(roundNumber(+dataStore.westBalance - +totalFee, 8), 0)
+  const westAvailable = Math.max(roundNumber(+dataStore.westBalance - +totalFee), 0)
   const buyOptions = [{text: '25%', value: '0.25' }, { text: '50%', value: '0.5' }, { text: '75%', value: '0.75' }, { text: '100%', value: '1' }]
   const onSelectOption = (tag: ITag) => {
     const amount = roundNumber(+tag.value * +westAvailable, 8).toString()

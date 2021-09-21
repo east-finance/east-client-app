@@ -49,7 +49,7 @@ export const FillIssueForm = observer((props: IProps) => {
   const { vaultFreeWest, vaultEastProfit } = dataStore
   const { eastAmount: vaultFreeEast } = vaultEastProfit
 
-  const totalFee = +configStore.getFeeByOpType(EastOpType.supply)
+  const totalFee = +configStore.getFeeByOpType(EastOpType.reissue)
 
   useEffect(() => {
     if (errors.east || errors.west) {
@@ -140,14 +140,14 @@ export const FillIssueForm = observer((props: IProps) => {
       })
     }
   }
-  let westAvailable = roundNumber(+dataStore.westBalance - +totalFee, 8)
+  let westAvailable = roundNumber(+dataStore.westBalance - +totalFee)
   if (vaultFreeWest < 0) {
     westAvailable -= -vaultFreeWest
   }
   westAvailable = Math.max(westAvailable, 0)
   const buyOptions = [{text: '25%', value: '0.25' }, { text: '50%', value: '0.5' }, { text: '75%', value: '0.75' }, { text: '100%', value: '1' }]
   const onSelectOption = (tag: ITag) => {
-    const amount = roundNumber(+tag.value * westAvailable, 8).toString()
+    const amount = roundNumber(+tag.value * westAvailable).toString()
     setWestAmount(amount)
     setEastByWestAmount(amount)
   }
