@@ -2,7 +2,7 @@
 
 East contract README:
 
-https://gitlab.wvservices.com/waves-enterprise/east-contract/-/blob/master/README.md
+https://github.com/east-finance/east-contract/blob/master/README.md
 
 ### Config file example (public/app.config.json)
 ```json
