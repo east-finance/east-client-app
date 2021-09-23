@@ -239,6 +239,7 @@ export default class DataStore {
       try {
         await this.pollData(address)
         if (this.pollingFailCounter > 0) {
+          toast.dismiss()
           toast('User data is updated', {
             hideProgressBar: true,
             autoClose: 5 * 1000

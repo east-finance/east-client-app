@@ -116,7 +116,7 @@ export const WestChart = observer( () => {
       />
     </LineChart>
     <WestPriceContainer>
-      <div>${roundNumber(dataStore.westRate, 4)}</div>
+      <div>${roundNumber(dataStore.westRate)}</div>
       <div>west</div>
     </WestPriceContainer>
   </Container>
