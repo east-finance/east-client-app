@@ -53,7 +53,7 @@ export const CloseVaultInfo = observer((props: IProps) => {
   return <Container>
     <Block marginTop={40}>
       <Description>
-        Give back your EAST to unlock WEST and USDp from your batch
+        Give back your EAST to unlock WEST from your vault
       </Description>
     </Block>
     <Block marginTop={60}>

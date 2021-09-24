@@ -131,7 +131,6 @@ export const FillForm = observer((props: IProps) => {
       })
     }
   }
-  const usdpPartPercent = configStore.getRwaPart() * 100
   const westPartPercent = configStore.getWestCollateral() * 100
   const totalFee = +configStore.getFeeByOpType(EastOpType.mint)
   const westAvailable = Math.max(roundNumber(+dataStore.westBalance - +totalFee), 0)
@@ -171,7 +170,7 @@ export const FillForm = observer((props: IProps) => {
       }
     </Block>
     <Block marginTop={'10%'}>
-      <Description>EAST is collateralized by {usdpPartPercent}% USDP and {westPartPercent}% WEST</Description>
+      <Description>EAST is collateralized by {westPartPercent}% WEST</Description>
       <Centered><Link href={'https://wavesenterprise.com/'} target={'_blank'}>Learn more</Link></Centered>
     </Block>
     <Block24>
