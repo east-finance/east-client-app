@@ -4,6 +4,7 @@ import { PrimaryTitle } from '../../../components/PrimaryTitle'
 import { PrimaryModal } from '../Modal'
 import { Block } from '../../../components/Block'
 import { GradientText } from '../../../components/Text'
+import { Link } from 'react-router5'
 
 interface IProps {
   onClose: () => void
@@ -68,16 +69,17 @@ export const FAQ = (props: IProps) => {
     <FlexContainer>
       <ItemsContainer>
         <Title>General stuff</Title>
-        <TextItem>How does EAST work?</TextItem>
-        <TextItem>Why can I trust EAST?</TextItem>
-        <TextItem>What is vault?</TextItem>
+        <TextItem><a href={'https://east.finance/faq#howitworks'} target={'_blank'} rel="noreferrer">How does EAST work?</a></TextItem>
+        <TextItem><a href={'https://east.finance/faq#whycanitrust'} target={'_blank'} rel="noreferrer">Why can I trust EAST?</a></TextItem>
+        <TextItem><a href={'https://east.finance/faq#howstablecourse'} target={'_blank'} rel="noreferrer">How stable course?</a></TextItem>
+        <TextItem><a href={'https://east.finance/faq#whatisvault'} target={'_blank'} rel="noreferrer">What is vault?</a></TextItem>
       </ItemsContainer>
       <ItemsContainer>
         <Title>Practical stuff</Title>
-        <TextItem>How to get EAST?</TextItem>
-        <TextItem>What happens if WEST price goes up or down?</TextItem>
-        <TextItem>How to trade with EAST?</TextItem>
-        <TextItem>How to get my WEST back?</TextItem>
+        <TextItem><a href={'https://east.finance/faq#howtoissue'} target={'_blank'} rel="noreferrer">How to get EAST?</a></TextItem>
+        <TextItem><a href={'https://east.finance/faq#westpricechange'} target={'_blank'} rel="noreferrer">What happens if WEST price goes up or down?</a></TextItem>
+        <TextItem><a href={'https://east.finance/faq#easttrading'} target={'_blank'} rel="noreferrer">How to trade with EAST?</a></TextItem>
+        <TextItem><a href={'https://east.finance/faq#withdrawwest'} target={'_blank'} rel="noreferrer">How to get my WEST back?</a></TextItem>
       </ItemsContainer>
     </FlexContainer>
   </PrimaryModal>

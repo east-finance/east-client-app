@@ -64,7 +64,7 @@ export const ConfirmIssueTransaction = (props: IProps) => {
   }
 
   const sendSupply = async () => {
-    const ownerAddress = configStore.getEastOwnerAddress()
+    const ownerAddress = configStore.getEastServiceAddress()
     const eastContractId = configStore.getEastContractId()
     const { address, publicKey } = await signStore.getPublicData()
 
