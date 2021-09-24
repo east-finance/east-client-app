@@ -51,13 +51,6 @@ export const CheckForm = (props: IProps) => {
           <TextTableKey>You will pay</TextTableKey>
           <TextTableSecondaryValue>{props.westAmount} WEST</TextTableSecondaryValue>
         </TextTableRow>
-        {/*<TextTableRow>*/}
-        {/*  <TextTableKey>Will be in batch</TextTableKey>*/}
-        {/*  <TextTableSecondaryValue>*/}
-        {/*    <div>300 WEST</div>*/}
-        {/*    <div>50 USDp</div>*/}
-        {/*  </TextTableSecondaryValue>*/}
-        {/*</TextTableRow>*/}
         <TextTableRow>
           <TextTableKey>Fee</TextTableKey>
           <TextTableSecondaryValue>
