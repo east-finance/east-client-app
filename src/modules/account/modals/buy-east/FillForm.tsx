@@ -171,7 +171,7 @@ export const FillForm = observer((props: IProps) => {
     </Block>
     <Block marginTop={'10%'}>
       <Description>EAST is collateralized by {westPartPercent}% WEST</Description>
-      <Centered><Link href={'https://wavesenterprise.com/'} target={'_blank'}>Learn more</Link></Centered>
+      <Centered><Link href={'https://east.finance/faq#howitworks'} target={'_blank'}>Learn more</Link></Centered>
     </Block>
     <Block24>
       <Button type={'primary'} disabled={props.inProgress} onClick={onNextClicked}>

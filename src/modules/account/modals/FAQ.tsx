@@ -64,7 +64,7 @@ export const FAQ = (props: IProps) => {
     <Block marginTop={44} />
     <Description>
       Here you can find articles about how EAST works, why is it safe and everything else.
-      If you have any questions, feel free to contact us: <a href={`mailto:${supportEmail}`}>{supportEmail}</a> or <a href={telegramLink} rel={'noreferrer'} target='_blank'>Telegram</a>
+      If you have any questions, feel free to contact us: <a href={telegramLink} rel={'noreferrer'} target='_blank'>Telegram</a>
     </Description>
     <FlexContainer>
       <ItemsContainer>
