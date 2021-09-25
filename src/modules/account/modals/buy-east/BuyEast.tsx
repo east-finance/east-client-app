@@ -24,7 +24,7 @@ export const BuyEast = observer((props: IProps) => {
 
   const sendAtomic = async () => {
     const { address, publicKey } = await signStore.getPublicData()
-    const ownerAddress = configStore.getEastOwnerAddress()
+    const ownerAddress = configStore.getEastServiceAddress()
     const eastContractId = configStore.getEastContractId()
 
     const transferBody = {

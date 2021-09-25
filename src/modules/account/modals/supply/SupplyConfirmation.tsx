@@ -42,7 +42,7 @@ export const SupplyConfirmation = observer((props: IProps) => {
   const sendSupply = async () => {
     const { address, publicKey } = await signStore.getPublicData()
     const transferBody = {
-      recipient: configStore.getEastOwnerAddress(),
+      recipient: configStore.getEastServiceAddress(),
       amount: Math.round(+props.westAmount * Math.pow(10, 8)),
       fee: configStore.getTransferFee(),
       attachment: '',

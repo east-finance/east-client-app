@@ -26,7 +26,7 @@ export default class ConfigStore {
 
   eastContractConfig = {
     oracleContractId: '',
-    adminAddress: '',
+    serviceAddress: '',
     rwaPart: 0,
     westCollateral: 2.5,
     liquidationCollateral: 1.3
@@ -117,8 +117,8 @@ export default class ConfigStore {
     return this.config.clientAddress || ''
   }
 
-  getEastOwnerAddress () {
-    return this.eastContractConfig.adminAddress || ''
+  getEastServiceAddress () {
+    return this.eastContractConfig.serviceAddress || ''
   }
 
   getOracleContractId () {

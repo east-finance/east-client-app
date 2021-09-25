@@ -64,7 +64,7 @@ export const ConfirmIssueTransaction = (props: IProps) => {
   }
 
   const sendSupply = async () => {
-    const ownerAddress = configStore.getEastOwnerAddress()
+    const ownerAddress = configStore.getEastServiceAddress()
     const eastContractId = configStore.getEastContractId()
     const { address, publicKey } = await signStore.getPublicData()
 
@@ -186,7 +186,9 @@ export const ConfirmIssueTransaction = (props: IProps) => {
           <TextTablePrimaryValue>
             ~{roundNumber(props.eastAmount)} EAST
             {isDesktop &&
-              <GradientTextPostfix>Why approximate?</GradientTextPostfix>
+              <GradientTextPostfix>
+                <a href={'https://east.finance/faq#howitworks'} target={'_blank'} rel="noreferrer">Why approximate?</a>
+              </GradientTextPostfix>
             }
           </TextTablePrimaryValue>
         </TextTableRow>
