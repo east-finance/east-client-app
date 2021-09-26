@@ -29,7 +29,7 @@ export enum SignStrategy {
 export default class SignStore {
   configStore: ConfigStore
   authStore: AuthStore
-  weSDK: WeSdk
+  weSDK: any
   api: Api
   signStrategy: SignStrategy = SignStrategy.WeWallet
   currentSeed: Seed | null = null
@@ -38,7 +38,6 @@ export default class SignStore {
     this.api = api
     this.configStore = configStore
     this.authStore = authStore
-    this.weSDK = this.createWeSDK()
     makeAutoObservable(this)
   }
 
@@ -49,7 +48,7 @@ export default class SignStore {
     }
   }
 
-  createWeSDK (): WeSdk {
+  initWeSDK (refresherFetch: typeof window.fetch): void {
     const config = {
       ...MAINNET_CONFIG,
       nodeAddress: '/nodeAddress',
@@ -57,16 +56,10 @@ export default class SignStore {
       networkByte: this.configStore.nodeConfig.chainId.charCodeAt(0),
       minimumFee: {...this.configStore.nodeConfig.minimumFee}
     }
-
-    const weSDKInstance = create({
+    this.weSDK = create({
       initialConfiguration: config,
-      fetchInstance: window.fetch
+      fetchInstance: refresherFetch
     })
-    return weSDKInstance
-  }
-
-  initWeSDK (): void {
-    this.weSDK = this.createWeSDK()
   }
 
   setSignStrategy (strategy: SignStrategy): void {

@@ -144,13 +144,15 @@ const SignIn = observer(() => {
         }
         try {
           setInProgress(true)
-          tokenPair = await authStore.signIn(username, password, onRefreshFailed)
+          tokenPair = await authStore.signIn(username, password)
+          const { axios: refresherAxios, fetch: refresherFetch } = authStore.createRefresherAxios(tokenPair, onRefreshFailed)
+          authStore.setupApi(refresherAxios)
           authStore.loginWithTokenPair(tokenPair)
           authStore.setPassword(password)
           signStore.initStore(username)
+          signStore.initWeSDK(refresherFetch)
           await configStore.loadEastContractConfig()
           await configStore.loadNodeConfig()
-          await signStore.initWeSDK()
         } catch (e) {
           tokenPair = null
           handleLoginError(e)

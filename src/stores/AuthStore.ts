@@ -100,10 +100,16 @@ export default class AuthStore {
     }
   }
 
-  async signIn (username: string, password: string, onRefreshFailed: () => void): Promise<ITokenPair> {
-    const tokenPair = await this.api.signIn(username, password)
-    await this.api.setupApi(tokenPair, onRefreshFailed)
-    return tokenPair
+  createRefresherAxios (tokenPair: ITokenPair, onRefreshFailed: () => void) {
+    return this.api.createAxiosWithRefresher(tokenPair, onRefreshFailed)
+  }
+
+  setupApi (refresherAxios: any) {
+    this.api.setupApi(refresherAxios)
+  }
+
+  async signIn (username: string, password: string): Promise<ITokenPair> {
+    return this.api.signIn(username, password)
   }
 
   logout (): void {

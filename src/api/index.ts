@@ -37,7 +37,7 @@ export class Api {
   })
   private _apiClient!: AxiosInstance
 
-  public setupApi = async (tokenPair: ITokenPair, onRefreshFailed: () => void) => {
+  public createAxiosWithRefresher (tokenPair: ITokenPair, onRefreshFailed: () => void) {
     const refreshCallback = async (token: string) => {
       try {
         const { data } = await axios.post(`${AUTH_SERVICE_ADDRESS}/v1/auth/refresh`, { token })
@@ -52,13 +52,16 @@ export class Api {
     const apiTokenRefresher: ApiTokenRefresher = new ApiTokenRefresher({
       authorization: tokenPair,
       refreshCallback,
-      // axiosRequestConfig: {
-      //   baseURL: API_ADDRESS + '/v1'
-      // }
     })
-    const { axios: refresherAxios } = apiTokenRefresher.init()
+    const { axios, fetch } = apiTokenRefresher.init()
+    return {
+      axios,
+      fetch
+    }
+  }
+
+  public setupApi (refresherAxios: any) {
     this._apiClient = refresherAxios
-    return tokenPair
   }
 
   // Auth requests
