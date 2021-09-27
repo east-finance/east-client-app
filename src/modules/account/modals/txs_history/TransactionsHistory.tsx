@@ -107,7 +107,13 @@ export const TransactionsHistory = (props: IProps) => {
         setInProgress(true)
         const txsLoaded = await api.getTransactionsHistory(address)
         let statusesLoaded = await api.getTransactionsStatuses(address)
-        statusesLoaded = statusesLoaded.filter(item => item.status !== ContractExecutionStatus.success)
+        statusesLoaded = statusesLoaded.filter(item => {
+          const isStatusTxMined = txsLoaded.find(tx => tx.callTxId === item.tx_id)
+          if (!isStatusTxMined) {
+            return true
+          }
+          return item.status !== ContractExecutionStatus.success
+        })
         const { txs, statuses } = mergeUniqueTxsWithStatuses(txsLoaded, statusesLoaded)
         setTransactions(txs)
         setTxStatuses(statuses)
