@@ -25,6 +25,11 @@ const ItemsContainer = styled.div`
   overflow-y: scroll;
 `
 
+const HistoryMessage = styled.div`
+  text-align: center;
+  font-size: 24px;
+`
+
 interface IProps {
   onClose: () => void
 }
@@ -122,6 +127,10 @@ export const TransactionsHistory = (props: IProps) => {
 
   const mergedTxs = mergeTxsWithStatuses(transactions, txStatuses)
 
+  const emptyHistory = <HistoryMessage>
+    History is empty
+  </HistoryMessage>
+
   return <PrimaryModalContainer {...props} id={'txs-history-modal'} style={{ padding: '24px 24px 4px', overflow: 'hidden' }}>
     <PrimaryTitle>Transaction history</PrimaryTitle>
     <ItemsContainer>
@@ -136,6 +145,9 @@ export const TransactionsHistory = (props: IProps) => {
             return <TxStatus key={index} tx={tx} />
           }
         })}
+      {(!inProgress && mergedTxs && mergedTxs.length === 0) &&
+        emptyHistory
+      }
     </ItemsContainer>
   </PrimaryModalContainer>
 }
