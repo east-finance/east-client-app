@@ -1,11 +1,6 @@
 import axios, { AxiosInstance } from 'axios'
 import { ApiTokenRefresher } from '@wavesenterprise/api-token-refresher'
-import {
-  ITokenPair,
-  ITransaction,
-  IVault,
-  IOracleValue, TxCallStatus, ContractExecutionStatus
-} from '../interfaces'
+import { ContractExecutionStatus, IOracleValue, ITokenPair, ITransaction, IVault, TxCallStatus } from '../interfaces'
 import { OracleStreamId } from '../constants'
 import { IEastBalanceResponse } from './ApiInterfaces'
 import moment from 'moment'
@@ -28,7 +23,9 @@ const enrichTxStatuses = (statuses: TxCallStatus[]) => {
       }
     }
     return item
-  })
+  }).filter(item => !(item.status === ContractExecutionStatus.success &&
+    (moment().valueOf() - moment(item.timestamp).valueOf() > PendingStatusLimitMS))
+  )
 }
 
 export class Api {
@@ -105,7 +102,7 @@ export class Api {
   }
 
   public getAddressBalance = async (address: string) => {
-    const { data } = await this._apiClient.get(`${NODE_ADDRESS}/addresses/balance/${address}`)
+    const { data } = await this._apiClient.get(`${NODE_ADDRESS}/addresses/balance/details/${address}`)
     return data
   }
 

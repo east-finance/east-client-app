@@ -108,7 +108,7 @@ export const TransactionsHistory = (props: IProps) => {
         const txsLoaded = await api.getTransactionsHistory(address)
         let statusesLoaded = await api.getTransactionsStatuses(address)
         statusesLoaded = statusesLoaded.filter(item => {
-          const isStatusTxMined = txsLoaded.find(tx => tx.callTxId === item.tx_id)
+          const isStatusTxMined = txsLoaded.find(tx => [tx.callTxId, tx.requestTxId].includes(item.tx_id))
           if (!isStatusTxMined) {
             return true
           }

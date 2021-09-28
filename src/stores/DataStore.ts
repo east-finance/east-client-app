@@ -96,8 +96,8 @@ export default class DataStore {
   }
 
   async getWestBalance(address: string): Promise<string> {
-    const { balance } = await this.api.getAddressBalance(address)
-    const westBalance = new BigNumber(balance).dividedBy(Math.pow(10, WestDecimals)).toString()
+    const { available } = await this.api.getAddressBalance(address)
+    const westBalance = new BigNumber(available).dividedBy(Math.pow(10, WestDecimals)).toString()
     return roundNumber(westBalance, 8).toString()
   }
 
