@@ -25,7 +25,7 @@ export const CloseVault = (props: IProps) => {
 
   const [inProgress, setInProgress] = useState(false)
 
-  const closeInitFee = +configStore.getFeeByOpType(EastOpType.close_init)
+  const closeInitFee = +configStore.getCloseTotalFee()
 
   const sendCloseVault = async () => {
     const { publicKey } = await signStore.getPublicData()

@@ -8,6 +8,7 @@ const VideoContainer = styled.video<{ isBlurred: boolean }>`
   position: fixed;
   top: 0;
   z-index: -1;
+  background-color: #94afc0;
 
   @media (min-aspect-ratio: 16/9) {
     width:100%;
@@ -31,7 +32,7 @@ export const BackgroundVideo = (props: IProps) => {
   //     videoRef.current.playbackRate = 0.5
   //   }
   // }, [])
-  return <VideoContainer id={'videoBG'} autoPlay muted loop playsInline={true} {...props}>
+  return <VideoContainer id={'videoBG'} poster="image.jpg" autoPlay muted loop playsInline={true} disablePictureInPicture={true} {...props}>
     <source src={BgWater} type="video/mp4" />
   </VideoContainer>
 }
