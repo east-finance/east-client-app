@@ -46,7 +46,6 @@ export const CloseVaultInfo = observer((props: IProps) => {
   const { eastBalance } = dataStore
   const vault: IVault = dataStore.vault
 
-  const totalFee = +configStore.getCloseTotalFee()
   const isDisabled = +eastBalance < +vault.eastAmount
   const buttonText = isDisabled ? 'Lack of EAST in vault' : 'Continue to confirmation'
 
@@ -67,7 +66,7 @@ export const CloseVaultInfo = observer((props: IProps) => {
           <TextTablePrimaryValue>
             <div>{vault.eastAmount} EAST</div>
             <Block marginTop={8}>
-              <Fee>+ {totalFee} WEST fee</Fee>
+              <Fee>+ {configStore.getFeeByOpType(EastOpType.close_init)} WEST fee</Fee>
             </Block>
           </TextTablePrimaryValue>
         </TextTableRow>
@@ -78,6 +77,9 @@ export const CloseVaultInfo = observer((props: IProps) => {
             {+vault.rwaAmount > 0 &&
               <div style={{marginTop: '8px'}}>{vault.rwaAmount} USDap</div>
             }
+            <Block marginTop={8}>
+              <Fee>- {configStore.getCloseAdditionalFee()} WEST service fee</Fee>
+            </Block>
           </TextTableSecondaryValue>
         </TextTableRow>
       </TextTable>
