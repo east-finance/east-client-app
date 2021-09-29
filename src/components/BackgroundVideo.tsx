@@ -8,7 +8,6 @@ const VideoContainer = styled.video<{ isBlurred: boolean }>`
   position: fixed;
   top: 0;
   z-index: -1;
-  background-color: #94afc0;
 
   @media (min-aspect-ratio: 16/9) {
     width:100%;
