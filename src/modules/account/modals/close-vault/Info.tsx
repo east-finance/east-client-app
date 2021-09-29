@@ -46,7 +46,7 @@ export const CloseVaultInfo = observer((props: IProps) => {
   const { eastBalance } = dataStore
   const vault: IVault = dataStore.vault
 
-  const totalFee = +configStore.getFeeByOpType(EastOpType.close_init)
+  const totalFee = +configStore.getCloseTotalFee()
   const isDisabled = +eastBalance < +vault.eastAmount
   const buttonText = isDisabled ? 'Lack of EAST in vault' : 'Continue to confirmation'
 

@@ -47,9 +47,11 @@ const ButtonsContainer = styled.div`
 `
 
 export const CloseVaultConfirmation = observer((props: IProps) => {
-  const { dataStore } = useStores()
+  const { dataStore, configStore } = useStores()
   const { vault } = dataStore
   const { inProgress } = props
+
+  const totalFee = +configStore.getCloseTotalFee()
 
   return <Container>
     <Centered>
@@ -78,6 +80,12 @@ export const CloseVaultConfirmation = observer((props: IProps) => {
             {+vault.rwaAmount > 0 &&
               <div>{vault.rwaAmount} USDap</div>
             }
+          </TextTableSecondaryValue>
+        </TextTableRow>
+        <TextTableRow>
+          <TextTableKey>Fee</TextTableKey>
+          <TextTableSecondaryValue>
+            <div>{totalFee} WEST</div>
           </TextTableSecondaryValue>
         </TextTableRow>
       </TextTable>

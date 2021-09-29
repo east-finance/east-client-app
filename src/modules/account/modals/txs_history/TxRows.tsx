@@ -67,17 +67,25 @@ const PrimaryText = styled.div`
 `
 
 const SecondaryText = styled.div`
+  max-height: 70px;
+  overflow: hidden;
   font-weight: normal;
   font-size: 15px;
   line-height: 18px;
   color: #000000;
-  word-break: break-word;
+  word-break: break-all;
 `
 
 const Time = styled.div`
   font-size: 15px;
   line-height: 24px;
   color: ${props => props.theme.darkBlue50};
+`
+
+const StatusErrorMessage = styled.span`
+  opacity: 0.4;
+  font-size: 80%;
+  line-height: 16px;
 `
 
 const TxStatusHOC = (props: { status: ContractExecutionStatus, children: JSX.Element[] }) => {
@@ -98,9 +106,12 @@ export const TxStatus = (props: { tx: TxCallStatus}) => {
   const time = moment(timestamp).format('HH:mm')
 
   const primaryText = status
-  let description = getEastOpTypeName(type)
+  let description: any = getEastOpTypeName(type)
   if (error) {
-    description += ` error: ${error}`
+    // description += ` error: ${error}`
+    description = <span>
+      {description} error: <StatusErrorMessage>{error}</StatusErrorMessage>
+    </span>
   }
   return <TxStatusHOC status={status}>
     <ItemColumn style={{ width: '25%', lineHeight: '16px' }}>
