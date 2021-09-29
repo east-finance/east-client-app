@@ -9,7 +9,7 @@ export const TextTable = styled.div`
 export const TextTableRow = styled.div`
   display: flex;
   justify-content: left;
-  align-items: baseline;
+  align-items: flex-start;
   
   &:not(:first-child) {
       margin-top: 24px;

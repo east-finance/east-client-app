@@ -15,6 +15,7 @@ import {
 } from '../../../../components/TextTable'
 import { roundNumber } from '../../../../utils'
 import { ButtonSpinner, RelativeContainer } from '../../../../components/Spinner'
+import { EastOpType } from '../../../../interfaces'
 
 interface IProps {
   inProgress: boolean;
@@ -46,6 +47,13 @@ const ButtonsContainer = styled.div`
   }
 `
 
+const Fee = styled.div`
+  font-weight: 600;
+  font-size: 18px;
+  line-height: 18px;
+  color: ${props => props.theme.darkBlue50}
+`
+
 export const CloseVaultConfirmation = observer((props: IProps) => {
   const { dataStore, configStore } = useStores()
   const { vault } = dataStore
@@ -71,7 +79,12 @@ export const CloseVaultConfirmation = observer((props: IProps) => {
       <TextTable>
         <TextTableRow>
           <TextTableKey>You will pay</TextTableKey>
-          <TextTablePrimaryValue>{roundNumber(dataStore.vaultEastAmount, 8)} EAST</TextTablePrimaryValue>
+          <TextTablePrimaryValue>
+            {roundNumber(dataStore.vaultEastAmount, 8)} EAST
+            <Block marginTop={8}>
+              <Fee>+ {configStore.getFeeByOpType(EastOpType.close_init)} WEST fee</Fee>
+            </Block>
+          </TextTablePrimaryValue>
         </TextTableRow>
         <TextTableRow>
           <TextTableKey>You will unlock</TextTableKey>
@@ -80,12 +93,9 @@ export const CloseVaultConfirmation = observer((props: IProps) => {
             {+vault.rwaAmount > 0 &&
               <div>{vault.rwaAmount} USDap</div>
             }
-          </TextTableSecondaryValue>
-        </TextTableRow>
-        <TextTableRow>
-          <TextTableKey>Fee</TextTableKey>
-          <TextTableSecondaryValue>
-            <div>{totalFee} WEST</div>
+            <Block marginTop={8}>
+              <Fee>- {configStore.getCloseAdditionalFee()} WEST service fee</Fee>
+            </Block>
           </TextTableSecondaryValue>
         </TextTableRow>
       </TextTable>
