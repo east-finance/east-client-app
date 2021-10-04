@@ -12,7 +12,7 @@ export const BrutalTitle = styled.div`
 `
 
 export const GradientText = styled.span`
-  background: linear-gradient(90deg,#514EFF 0%, #1D87D6 35%, #1D87D6 100%);
+  background: linear-gradient(90deg, #514EFF 0%, #1D87D6 35%, #1D87D6 100%);
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;

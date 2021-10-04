@@ -1,26 +1,12 @@
 import React from 'react'
 import moment from 'moment'
-import { ContractExecutionStatus, EastOpType, ITransaction, TxCallStatus } from '../../../../interfaces'
+import { ContractExecutionStatus, EastOpType, EastOpTypeName, ITransaction, TxCallStatus } from '../../../../interfaces'
 import useStores from '../../../../hooks/useStores'
 import { roundNumber } from '../../../../utils'
 import { Block } from '../../../../components/Block'
 import styled from 'styled-components'
 import { shineBatch } from '../../../../components/Animations'
 import { GradientText } from '../../../../components/Text'
-import BigNumber from 'bignumber.js'
-
-
-const EastOpTypeName = {
-  [EastOpType.mint]: 'Create vault',
-  [EastOpType.transfer]: 'Transfer',
-  [EastOpType.close_init]: 'Initialize vault close',
-  [EastOpType.close]: 'Close vault',
-  [EastOpType.supply]: 'Supply vault',
-  [EastOpType.reissue]: 'Reissue vault',
-  [EastOpType.claim_overpay_init]: 'Claim overpay init',
-  [EastOpType.claim_overpay]: 'Claim overpay',
-  [EastOpType.liquidate]: 'Liquidate vault',
-}
 
 const getEastOpTypeName  = (opType: EastOpType) => {
   return EastOpTypeName[opType] || opType
