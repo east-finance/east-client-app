@@ -4,6 +4,8 @@ import { observer } from 'mobx-react'
 import styled, { keyframes } from 'styled-components'
 import { GradientText } from '../../components/Text'
 import { IWatchTxRequest } from '../../interfaces'
+import iconClock from '../../resources/images/clock.png'
+import { Icon } from '../../components/Icons'
 
 const fadeIn = keyframes`
   from {
@@ -12,14 +14,14 @@ const fadeIn = keyframes`
   }
   to {
     opacity: 1;
-    top: -72px;
+    top: -64px;
   }
 `
 
 const fadeOut = keyframes`
   from {
     opacity: 1;
-    top: -72px;
+    top: -64px;
   }
   to {
     opacity: 0;
@@ -39,19 +41,29 @@ const Container = styled.div<{ isVisible: boolean }>`
 `
 
 const Notification = styled.div`
+  display: flex;
+  align-items: center;
   box-sizing: border-box;
-  width: 317px;
   text-align: center;
-  padding: 16px 24px;
+  padding: 8px 24px;
   background: rgba(255, 255, 255, 0.5);
   backdrop-filter: blur(12px);
   border-radius: 24px;
 `
 
+const ClockIcon = styled(Icon)`
+  margin-left: -8px;
+`
+
 const Text = styled(GradientText)`
+  background: linear-gradient(90deg, #5352B8 0%, #323177 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
   font-weight: bold;
   font-size: 16px;
-  line-height: 16px;
+  line-height: 24px;
+  margin-left: 4px;
 `
 
 export const TxsProgressBar = observer( () => {
@@ -75,6 +87,7 @@ export const TxsProgressBar = observer( () => {
   return <Container isVisible={isVisible}>
     {tx &&
       <Notification>
+        <ClockIcon backgroundImage={iconClock} size={32} />
         <Text>Transaction in progress: EAST {tx.type}</Text>
       </Notification>
     }

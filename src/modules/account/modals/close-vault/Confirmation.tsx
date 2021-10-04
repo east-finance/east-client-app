@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Block, Block24 } from '../../../../components/Block'
 import styled from 'styled-components'
 import { Button, NavigationLeftGradientButton } from '../../../../components/Button'
