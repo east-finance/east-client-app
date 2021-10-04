@@ -192,7 +192,6 @@ const Account = observer( () => {
     const checkPendingTxs = async () => {
       try {
         const statuses = await api.getTransactionsStatuses(authStore.address, 1)
-        console.log('statuses', statuses)
         if (statuses.length > 0 && statuses[0].status === ContractExecutionStatus.pending) {
           const { tx_id, type } = statuses[0]
           dataStore.watchTxStatus(tx_id, type)
