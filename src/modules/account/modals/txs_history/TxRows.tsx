@@ -7,7 +7,6 @@ import { Block } from '../../../../components/Block'
 import styled from 'styled-components'
 import { shineBatch } from '../../../../components/Animations'
 import { GradientText } from '../../../../components/Text'
-import BigNumber from 'bignumber.js'
 
 
 const EastOpTypeName = {

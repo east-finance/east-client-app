@@ -120,3 +120,8 @@ export interface TxCallStatus {
   type: EastOpType;
   timestamp: string;
 }
+
+export interface IWatchTxRequest {
+  id: string;
+  type: EastOpType;
+}

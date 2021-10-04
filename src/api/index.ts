@@ -129,13 +129,15 @@ export class Api {
     return data
   }
 
-  public getTransactionsHistory = async (address: string): Promise<ITransaction[]> => {
-    const { data } = await this._apiClient.get(`${API_ADDRESS}/v1/user/transactions?address=${address}&limit=1000&offset=0`)
+  public getTransactionsHistory = async (address: string, limit = 1000, offset = 0): Promise<ITransaction[]> => {
+    const { data } = await this._apiClient.get(`${API_ADDRESS}/v1/user/transactions?address=${address}&limit=${limit}&offset=${offset}`)
     return data
   }
 
-  public getTransactionsStatuses = async (address: string): Promise<TxCallStatus[]> => {
-    const { data } = await this._apiClient.get(`${API_ADDRESS}/v1/user/transactions/statuses?address=${address}&limit=1000&offset=0`)
+  public getTransactionsStatuses = async (address: string, limit = 1000, offset = 0): Promise<TxCallStatus[]> => {
+    const { data } = await this._apiClient.get(`
+      ${API_ADDRESS}/v1/user/transactions/statuses?address=${address}&limit=${limit}&offset=${offset}
+    `)
     const statuses: TxCallStatus[] = data
     return enrichTxStatuses(statuses)
   }

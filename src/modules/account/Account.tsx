@@ -21,6 +21,7 @@ import { DetailedCard } from './DetailedCard'
 import useStores from '../../hooks/useStores'
 import { SupplyVault } from './modals/supply/SupplyVault'
 import { BackgroundVideo } from '../../components/BackgroundVideo'
+import { TxsProgressBar } from './TxsProgressBar'
 
 const Container = styled.div`
 `
@@ -173,6 +174,7 @@ const AccountCards = observer(() => {
   }
   return <CardsContainer>
     <div style={{ position: 'relative' }}>
+      <TxsProgressBar />
       <AccountCard isShown={isFrontShown} onClick={onClick} />
       {isPositiveBalance &&
       <DetailedCard isShown={isFrontShown === null ? null : !isFrontShown} onClick={onClick} />
