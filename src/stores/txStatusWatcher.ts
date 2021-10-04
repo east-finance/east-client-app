@@ -12,7 +12,7 @@ const sleep = (timeout = 5000) => new Promise(resolve => setTimeout(resolve, tim
 
 const waitForServiceReceiveTx = async (api: Api, params: IWatchTxParams) => {
   let txReceived = null
-  for(let i=0; i < 40; i++) {
+  for(let i=0; i < 60; i++) {
     try {
       const txs = await api.getTransactionsHistory(params.address)
       const tx = txs.find(item => [item.requestTxId, item.callTxId].includes(params.id))
@@ -33,7 +33,7 @@ const waitForServiceReceiveTx = async (api: Api, params: IWatchTxParams) => {
 
 const waitForStatusMined = async ( api: Api, params: IWatchTxParams) => {
   let txStatus = null
-  for(let i=0; i < 20; i++) {
+  for(let i=0; i < 60; i++) {
     try {
       const statuses = await api.getTransactionsStatuses(params.address, 5)
       const completedTx = statuses.find(item => item.tx_id === params.id && item.status !== ContractExecutionStatus.pending)
