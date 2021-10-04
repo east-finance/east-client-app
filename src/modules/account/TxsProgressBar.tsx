@@ -3,7 +3,7 @@ import useStores from '../../hooks/useStores'
 import { observer } from 'mobx-react'
 import styled, { keyframes } from 'styled-components'
 import { GradientText } from '../../components/Text'
-import { IWatchTxRequest } from '../../interfaces'
+import { EastOpTypeName, IWatchTxRequest } from '../../interfaces'
 import iconClock from '../../resources/images/clock.png'
 import { Icon } from '../../components/Icons'
 
@@ -91,7 +91,7 @@ export const TxsProgressBar = observer( () => {
     {tx &&
       <Notification>
         <ClockIcon backgroundImage={iconClock} size={32} />
-        <Text>Transaction in progress: EAST {tx.type}</Text>
+        <Text>Transaction in progress: EAST {EastOpTypeName[tx.type]}</Text>
       </Notification>
     }
   </Container>

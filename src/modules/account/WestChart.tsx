@@ -93,7 +93,7 @@ export const WestChart = observer( () => {
     const { value } = item
     return {
       ...item,
-      value: roundNumber(value, 4),
+      value: roundNumber(value),
       [RelativeValueProp]: ((+value - min) / (max - min))
     }
   })
