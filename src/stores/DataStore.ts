@@ -290,7 +290,7 @@ export default class DataStore {
   }
 
   async watchTxStatus (id: string, type: EastOpType) {
-    console.log('this.txRequestAbortController', this.txRequestAbortController)
+    console.log('Start watching tx status:', id, type)
     if (this.txRequestAbortController !== null) {
       this.txRequestAbortController.abort()
     }

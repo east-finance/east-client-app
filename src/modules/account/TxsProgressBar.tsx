@@ -72,15 +72,18 @@ export const TxsProgressBar = observer( () => {
 
   const [isVisible, setIsVisible] = useState(false)
   const [tx, setTx] = useState<null | IWatchTxRequest>(null)
+  const [timeoutId, setTimeoutId] = useState<number | undefined>()
 
   useEffect(() => {
     const request = dataStore.txRequests.length > 0 ? dataStore.txRequests[0] : null
+    clearTimeout(timeoutId)
     if (request) {
       setTx(request)
       setIsVisible(true)
     } else {
       setIsVisible(false)
-      setTimeout(() => setTx(null), fadeInMs)
+      const id = setTimeout(() => setTx(null), fadeInMs)
+      setTimeoutId(id)
     }
   }, [dataStore.txRequests])
 
