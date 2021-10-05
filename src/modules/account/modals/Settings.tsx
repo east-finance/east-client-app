@@ -213,7 +213,7 @@ export const Settings = (props: IProps) => {
   const onChangeSeedClicked = () => {
     dataStore.logout()
     authStore.logout()
-    router.navigate(RouteName.SignInSeed)
+    router.navigate(RouteName.SignInSelectType)
   }
 
   return <PrimaryModal {...props} id={'settings-modal'}>

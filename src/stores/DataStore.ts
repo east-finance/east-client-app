@@ -2,11 +2,12 @@ import { makeAutoObservable, runInAction } from 'mobx'
 import { Api } from '../api'
 import { BigNumber } from 'bignumber.js'
 import { OracleStreamId, WestDecimals } from '../constants'
-import { IOracleValue, IVault } from '../interfaces'
+import { EastOpType, IOracleValue, ITransaction, IVault, IWatchTxRequest } from '../interfaces'
 import ConfigStore from './ConfigStore'
 import { roundNumber } from '../utils'
 import { PollingError } from '../api/apiErrors'
 import { toast } from 'react-toastify'
+import { AbortWatcherError, watchTx } from './txStatusWatcher'
 
 const toastErrorId = 'pollingErrorId'
 
@@ -28,6 +29,7 @@ const emptyUserVault: IVault = {
 export default class DataStore {
   api
   configStore
+  address = ''
   vault: IVault = {...emptyUserVault}
   westBalance = '0.0'
   eastBalance = '0.0'
@@ -36,6 +38,9 @@ export default class DataStore {
   westRatesHistory: IOracleValue[] = []
   pollingId: number | null = null
   pollingFailCounter = 0
+
+  txRequests: IWatchTxRequest[] = []
+  txRequestAbortController: AbortController | null = null
 
   constructor(api: Api, configStore: ConfigStore) {
     makeAutoObservable(this)
@@ -96,8 +101,8 @@ export default class DataStore {
   }
 
   async getWestBalance(address: string): Promise<string> {
-    const { balance } = await this.api.getAddressBalance(address)
-    const westBalance = new BigNumber(balance).dividedBy(Math.pow(10, WestDecimals)).toString()
+    const { available } = await this.api.getAddressBalance(address)
+    const westBalance = new BigNumber(available).dividedBy(Math.pow(10, WestDecimals)).toString()
     return roundNumber(westBalance, 8).toString()
   }
 
@@ -147,11 +152,12 @@ export default class DataStore {
   }
 
 
-  sleep(timeout: number) {
+  sleep(timeout = 5000) {
     return new Promise(resolve => setTimeout(resolve, timeout))
   }
 
   async pollData (address: string): Promise<void> {
+    this.address = address
     const getOracleRates = async (streamId: OracleStreamId, limit: number) => {
       const rates = await this.api.getOracleValues(streamId, limit)
       if(!rates || (rates && rates.length === 0)) {
@@ -282,4 +288,36 @@ export default class DataStore {
       this.vault = {...emptyUserVault}
     })
   }
+
+  async watchTxStatus (id: string, type: EastOpType) {
+    console.log('Start watching tx status:', id, type)
+    if (this.txRequestAbortController !== null) {
+      this.txRequestAbortController.abort()
+    }
+    // Support only one tx status at the moment
+    this.txRequests = [{ id, type }]
+
+    const onResultReceived = (result: null | ITransaction | AbortWatcherError) => {
+      console.log(`Tx '${id}' (${type}) status result received: ${JSON.stringify(result)}`)
+      if (!(result instanceof AbortWatcherError)) {
+        this.txRequestAbortController = null
+        this.txRequests = []
+      }
+    }
+
+    try {
+      const params = {
+        address: this.address,
+        id,
+        type,
+        onResultReceived
+      }
+      const abortController = new AbortController()
+      this.txRequestAbortController = abortController
+      await watchTx(abortController, this.api, params)
+    } catch (e) {
+      console.error('Watch tx status error:', e.message)
+    }
+  }
 }
+

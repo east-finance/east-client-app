@@ -16,6 +16,7 @@ import { useEffect } from 'react'
 import { toast } from 'react-toastify'
 import { ErrorNotification } from '../../../components/Notification'
 import BigNumber from 'bignumber.js'
+import { MaxTokenAmount } from '../../../constants'
 
 interface IProps {
   onClose: () => void
@@ -175,6 +176,7 @@ export const TransferEast = observer((props: IProps) => {
         <SimpleInput
           id={'input-east'}
           type={'number'}
+          max={MaxTokenAmount}
           status={formErrors.east ? InputStatus.error : InputStatus.default}
           label={`Enter amount of EAST (${eastAvailable} available)`}
           value={eastAmount}

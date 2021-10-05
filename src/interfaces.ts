@@ -22,6 +22,18 @@ export enum EastOpType {
   liquidate = 'liquidate'
 }
 
+export const EastOpTypeName = {
+  [EastOpType.mint]: 'Mint',
+  [EastOpType.transfer]: 'Transfer',
+  [EastOpType.close_init]: 'Init close vault',
+  [EastOpType.close]: 'Close vault',
+  [EastOpType.supply]: 'Supply vault',
+  [EastOpType.reissue]: 'Reissue vault',
+  [EastOpType.claim_overpay_init]: 'Claim overpay init',
+  [EastOpType.claim_overpay]: 'Claim overpay',
+  [EastOpType.liquidate]: 'Liquidate vault',
+}
+
 export interface IVault {
   id: number;
   isActive:  boolean;
@@ -119,4 +131,9 @@ export interface TxCallStatus {
   tx_id: string;
   type: EastOpType;
   timestamp: string;
+}
+
+export interface IWatchTxRequest {
+  id: string;
+  type: EastOpType;
 }
