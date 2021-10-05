@@ -12,6 +12,7 @@ import { RouteName } from '../../router/segments'
 import { useRoute } from 'react-router5'
 import useStores from '../../hooks/useStores'
 import { observer } from 'mobx-react'
+import moment from 'moment'
 
 const Container = styled.div`
   display: inline-flex;
@@ -130,17 +131,19 @@ const Delimiter = styled.div`
 `
 
 export const AccountMenu = observer(() => {
-  const { dataStore } = useStores()
+  const { dataStore, configStore } = useStores()
   const { router } = useRoute()
   const isUserHaveEast = +dataStore.eastBalance > 0
   const isUserHaveVault = +dataStore.vault.eastAmount > 0
-  const isVaultClosed = (dataStore.vault.id && !dataStore.vault.isActive)
+  // const isVaultClosed = (dataStore.vault.id && !dataStore.vault.isActive)
   const isTransferAvailable = isUserHaveEast
   const isVaultLiquidated = isUserHaveVault && +dataStore.vault.westAmount === 0
 
-  const onMenuClicked = (routeName: string) => {
-    router.navigate(routeName)
-  }
+  const closeEnabledTimestamp = +configStore.getContractCreateTx().timestamp + configStore.getMinHoldTime()
+  const contractCreatedDiff = Date.now() - closeEnabledTimestamp
+  const isCloseEnabled = contractCreatedDiff > 0
+
+  const onMenuClicked = (routeName: string) => router.navigate(routeName)
 
   return <Container>
     <MenuItemContainer>
@@ -181,8 +184,8 @@ export const AccountMenu = observer(() => {
     }
     {(isUserHaveVault && !isVaultLiquidated) &&
       <MenuItemContainer>
-        {isDesktop && <Tooltip>Close</Tooltip>}
-        <MenuItemClose onClick={() => onMenuClicked(RouteName.CloseVault)} />
+        {isDesktop && <Tooltip>{isCloseEnabled ? 'Close' : `Disabled until ${moment(closeEnabledTimestamp).format('HH:mm')}`}</Tooltip>}
+        <MenuItemClose disabled={!isCloseEnabled} onClick={() => onMenuClicked(RouteName.CloseVault)} />
       </MenuItemContainer>
     }
   </Container>
