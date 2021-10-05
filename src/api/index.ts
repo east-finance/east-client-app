@@ -111,6 +111,11 @@ export class Api {
     return data
   }
 
+  public getTransactionInfo = async (txId: string) => {
+    const { data } = await this._apiClient.get(`${NODE_ADDRESS}/transactions/info/${txId}`)
+    return data
+  }
+
   // API requests
   public getOracleValues = async (streamId: OracleStreamId, limit = 1): Promise<IOracleValue[]> => {
     const { data } = await this._apiClient.get(`

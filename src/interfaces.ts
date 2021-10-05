@@ -22,6 +22,16 @@ export enum EastOpType {
   liquidate = 'liquidate'
 }
 
+export interface DockerCreateNodeTx {
+  id: string;
+  type: number;
+  version: number;
+  contractName: string;
+  image: string;
+  imageHash: string;
+  timestamp: number;
+}
+
 export const EastOpTypeName = {
   [EastOpType.mint]: 'Mint',
   [EastOpType.transfer]: 'Transfer',

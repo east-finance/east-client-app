@@ -3,7 +3,7 @@ import axios from 'axios'
 import { Api } from '../api'
 import { BigNumber } from 'bignumber.js'
 import { WestDecimals } from '../constants'
-import { EastOpType } from '../interfaces'
+import { DockerCreateNodeTx, EastOpType } from '../interfaces'
 import { AuthCustomError } from '../modules/auth/utils'
 import { roundNumber } from '../utils'
 
@@ -25,12 +25,17 @@ export default class ConfigStore {
     }
   }
 
+  eastContractCreateTx: DockerCreateNodeTx | Record<string, string | number> = {
+    timestamp: Date.now()
+  }
+
   eastContractConfig = {
     oracleContractId: '',
     serviceAddress: '',
     rwaPart: 0,
     westCollateral: 2.5,
-    liquidationCollateral: 1.3
+    liquidationCollateral: 1.3,
+    minHoldTime: 60 * 1000
   }
 
   constructor(api: Api) {
@@ -89,9 +94,23 @@ export default class ConfigStore {
     return { ...this.nodeConfig }
   }
 
+  async getCreateEastTx (contractId: string) {
+    const lsKey = 'east_contract_create_tx'
+    let tx = window.localStorage.getItem(lsKey)
+    const txId = tx ? JSON.parse(tx).id : null
+    if (!tx || (tx && txId !== contractId)) {
+      tx = await this.api.getTransactionInfo(contractId)
+      localStorage.setItem(lsKey, JSON.stringify(tx))
+    } else {
+      return JSON.parse(tx)
+    }
+    return tx
+  }
+
   async loadEastContractConfig () {
     try {
       const eastContractId = this.getEastContractId()
+      this.eastContractCreateTx = await this.getCreateEastTx(eastContractId)
       const [{ value }] = await this.api.getContractState(this.getEastContractId(), 'config')
       const remoteConfig = JSON.parse(value)
       console.log(`East Contract (id: "${eastContractId}") config:`, remoteConfig)
@@ -136,6 +155,16 @@ export default class ConfigStore {
 
   getLiquidationCollateral () {
     return +this.eastContractConfig['liquidationCollateral'] || 1.3
+  }
+
+  getMinHoldTime () {
+    return +this.eastContractConfig['minHoldTime'] || 60 * 1000
+  }
+
+  getContractCreateTx () {
+    return {
+      ...this.eastContractCreateTx
+    }
   }
 
   // Fee for transactions
