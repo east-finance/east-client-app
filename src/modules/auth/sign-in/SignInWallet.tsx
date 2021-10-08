@@ -100,12 +100,15 @@ const SignInWallet = observer(() => {
       authStore.setLoggedIn(true)
       router.navigate(RouteName.Account)
     } catch (e) {
-      console.error('Cannot get remote data', e.message)
+      console.error('Cannot get remote data: ', e.message)
       setInProgress(false)
       let title = 'Sign in error'
       const message = 'Try again later'
-      if ((e.message && e.response && e.response.status) || (e.message === PollingError.EmptyOracleData)) {
+      if ((e.message && e.response && e.response.status)) {
         title = 'Cannot get user data'
+      }
+      if (e.message && e.message.includes(PollingError.EmptyOracleData)) {
+        title = 'Cannot get oracle contract rates'
       }
       toast(<ErrorNotification title={title} message={message} />, {
         hideProgressBar: true,
