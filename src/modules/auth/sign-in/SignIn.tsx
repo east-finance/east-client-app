@@ -11,7 +11,7 @@ import { RouteName } from '../../../router/segments'
 import { AuthCustomError, validateEmail } from '../utils'
 import { ErrorNotification } from '../../../components/Notification'
 import { FormErrors } from '../../../components/PasswordRules'
-import { AuthError } from '../../../api/apiErrors'
+import { AuthError, PollingError } from '../../../api/apiErrors'
 import { ButtonSpinner, RelativeContainer } from '../../../components/Spinner'
 import { observer } from 'mobx-react'
 import { SignStrategy } from '../../../stores/SignStore'
@@ -172,7 +172,12 @@ const SignIn = observer(() => {
                   try {
                     await signInWithExistedSeed(decryptedPhrase)
                   } catch (e) {
-                    toast(<ErrorNotification title={'Cannot get initial data'} message={'Try again later'} />, {
+                    let title = 'Cannot get initial data'
+                    const message = 'Try again later'
+                    if (e.message && e.message.includes(PollingError.EmptyOracleData)) {
+                      title = 'Cannot get oracle contract rates'
+                    }
+                    toast(<ErrorNotification title={title} message={message} />, {
                       hideProgressBar: true,
                       autoClose: 100000
                     })
