@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react'
 import { AccountCard } from './Card'
@@ -21,6 +21,8 @@ import { DetailedCard } from './DetailedCard'
 import useStores from '../../hooks/useStores'
 import { SupplyVault } from './modals/supply/SupplyVault'
 import { BackgroundVideo } from '../../components/BackgroundVideo'
+import { TxsProgressBar } from './TxsProgressBar'
+import { ContractExecutionStatus } from '../../interfaces'
 
 const Container = styled.div`
 `
@@ -173,6 +175,7 @@ const AccountCards = observer(() => {
   }
   return <CardsContainer>
     <div style={{ position: 'relative' }}>
+      <TxsProgressBar />
       <AccountCard isShown={isFrontShown} onClick={onClick} />
       {isPositiveBalance &&
       <DetailedCard isShown={isFrontShown === null ? null : !isFrontShown} onClick={onClick} />
@@ -183,6 +186,23 @@ const AccountCards = observer(() => {
 
 const Account = observer( () => {
   const { router } = useRoute()
+  const { authStore, api, dataStore } = useStores()
+
+  useEffect(() => {
+    const checkPendingTxs = async () => {
+      try {
+        const statuses = await api.getTransactionsStatuses(authStore.address, 1)
+        if (statuses.length > 0 && statuses[0].status === ContractExecutionStatus.pending) {
+          const { tx_id, type } = statuses[0]
+          dataStore.watchTxStatus(tx_id, type)
+        }
+      } catch (e) {
+        console.error('Cannot get user statuses on mount: ', e.message)
+      }
+    }
+
+    checkPendingTxs()
+  }, [])
 
   const primaryModal = getPrimaryModalByRoute()
 
@@ -193,7 +213,7 @@ const Account = observer( () => {
   useOutsideAlerter(modalRef, onClickOutside)
 
   return <Container id={'root-account'}>
-    <BackgroundVideo isBlurred={!!primaryModal} />
+    <BackgroundVideo />
     {primaryModal &&
       <PrimaryModalContainer ref={modalRef}>
         {primaryModal}

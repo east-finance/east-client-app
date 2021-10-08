@@ -2,8 +2,9 @@ import { makeAutoObservable } from 'mobx'
 import { create, MAINNET_CONFIG, Seed, WeSdk } from '@wavesenterprise/js-sdk'
 import ConfigStore from './ConfigStore'
 import AuthStore from './AuthStore'
-import { IBroadcastCallTx, ICallContractTx, ITransferTx, TxTextType, TxTypeNumber } from '../interfaces'
+import { EastOpType, IBroadcastCallTx, ICallContractTx, ITransferTx, TxTextType, TxTypeNumber } from '../interfaces'
 import { Api } from '../api'
+import DataStore from './DataStore'
 
 export enum LSKeys {
   userAccounts = 'user_accounts'
@@ -29,15 +30,17 @@ export enum SignStrategy {
 export default class SignStore {
   configStore: ConfigStore
   authStore: AuthStore
+  dataStore: DataStore
   weSDK: any
   api: Api
   signStrategy: SignStrategy = SignStrategy.WeWallet
   currentSeed: Seed | null = null
 
-  constructor(api: Api,configStore: ConfigStore, authStore: AuthStore) {
+  constructor(api: Api, configStore: ConfigStore, authStore: AuthStore, dataStore: DataStore) {
     this.api = api
     this.configStore = configStore
     this.authStore = authStore
+    this.dataStore = dataStore
     makeAutoObservable(this)
   }
 
@@ -157,6 +160,8 @@ export default class SignStore {
     if (params && params.length) {
       type = params[0].key
     }
+
+    this.dataStore.watchTxStatus(id, type as EastOpType)
 
     return this.api.startWatchTxStatus(id, sender, type, timestamp)
   }

@@ -5,6 +5,7 @@ import { BigNumber } from 'bignumber.js'
 import { WestDecimals } from '../constants'
 import { EastOpType } from '../interfaces'
 import { AuthCustomError } from '../modules/auth/utils'
+import { roundNumber } from '../utils'
 
 export default class ConfigStore {
   api
@@ -154,6 +155,16 @@ export default class ConfigStore {
   // Hardcoded in EAST-contract
   getClaimOverpayFee () {
     return 0.2
+  }
+
+  // Additional close_init fee
+  // Hardcoded in EAST-contract and EAST-service
+  getCloseAdditionalFee () {
+    return 0.2
+  }
+
+  getCloseTotalFee () {
+    return roundNumber(+this.getFeeByOpType(EastOpType.close_init) + this.getCloseAdditionalFee())
   }
 
   // Fee for UI interfaces

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Block, Block24 } from '../../../../components/Block'
 import styled from 'styled-components'
 import { Button, NavigationLeftGradientButton } from '../../../../components/Button'
@@ -15,6 +15,7 @@ import {
 } from '../../../../components/TextTable'
 import { roundNumber } from '../../../../utils'
 import { ButtonSpinner, RelativeContainer } from '../../../../components/Spinner'
+import { EastOpType } from '../../../../interfaces'
 
 interface IProps {
   inProgress: boolean;
@@ -46,10 +47,19 @@ const ButtonsContainer = styled.div`
   }
 `
 
+const Fee = styled.div`
+  font-weight: 600;
+  font-size: 18px;
+  line-height: 18px;
+  color: ${props => props.theme.darkBlue50}
+`
+
 export const CloseVaultConfirmation = observer((props: IProps) => {
-  const { dataStore } = useStores()
+  const { dataStore, configStore } = useStores()
   const { vault } = dataStore
   const { inProgress } = props
+
+  const totalFee = +configStore.getCloseTotalFee()
 
   return <Container>
     <Centered>
@@ -69,7 +79,12 @@ export const CloseVaultConfirmation = observer((props: IProps) => {
       <TextTable>
         <TextTableRow>
           <TextTableKey>You will pay</TextTableKey>
-          <TextTablePrimaryValue>{roundNumber(dataStore.vaultEastAmount, 8)} EAST</TextTablePrimaryValue>
+          <TextTablePrimaryValue>
+            {roundNumber(dataStore.vaultEastAmount, 8)} EAST
+            <Block marginTop={8}>
+              <Fee>+ {configStore.getFeeByOpType(EastOpType.close_init)} WEST fee</Fee>
+            </Block>
+          </TextTablePrimaryValue>
         </TextTableRow>
         <TextTableRow>
           <TextTableKey>You will unlock</TextTableKey>
@@ -78,6 +93,9 @@ export const CloseVaultConfirmation = observer((props: IProps) => {
             {+vault.rwaAmount > 0 &&
               <div>{vault.rwaAmount} USDap</div>
             }
+            <Block marginTop={8}>
+              <Fee>- {configStore.getCloseAdditionalFee()} WEST service fee</Fee>
+            </Block>
           </TextTableSecondaryValue>
         </TextTableRow>
       </TextTable>
