@@ -89,6 +89,13 @@ export default class SignStore {
     return accounts[email]
   }
 
+  getAccountKeyValue (key: LSAccountProps) {
+    const email = this.authStore.email
+    const accounts = JSON.parse(localStorage.getItem(LSKeys.userAccounts) || '{}')
+    const existedEmailData = accounts[email] ? accounts[email] : {}
+    return existedEmailData[key]
+  }
+
   writeAccountKey (key: string, value: string): void {
     const email = this.authStore.email
     let accounts = JSON.parse(localStorage.getItem(LSKeys.userAccounts) || '{}')
@@ -111,6 +118,20 @@ export default class SignStore {
 
   decryptSeedPhrase(encryptedSeed: string, password: string, address: string): string {
     return this.weSDK.Seed.decryptSeedPhrase(encryptedSeed, password, address)
+  }
+
+  onChangePassword = (oldPassword: string, newPassword: string) => {
+    const encryptedSeed = this.getAccountKeyValue(LSAccountProps.EncryptedSeed)
+    if(encryptedSeed) {
+      try {
+        const phrase = this.decryptSeedPhrase(encryptedSeed, oldPassword, this.authStore.address)
+        const seed = this.weSDK.Seed.fromExistingPhrase(phrase)
+        this.writeAccountKey(LSAccountProps.EncryptedSeed, seed.encrypt(newPassword))
+        console.log(`Encrypted address '${seed.address}' data successfully migrated to a new password`)
+      } catch (e) {
+        console.error('Cannot migrate encrypted seed to new password: ', e.message)
+      }
+    }
   }
 
   async getPublicData (): Promise<{ address: string, publicKey: string }> {
