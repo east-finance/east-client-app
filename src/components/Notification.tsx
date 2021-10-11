@@ -1,6 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import iconCross from '../resources/images/icon-cross.svg'
+import { GradientText } from './Text'
 
 export enum NotificationType {
   default = 'default',
@@ -93,3 +94,38 @@ export const ErrorNotification = (props: IProps) => <Container type={Notificatio
 export const InfoNotification = (props: IProps) => <Container type={NotificationType.default}>
   <div>{props.children || props.title}</div>
 </Container>
+
+const PromptContainer = styled.div`
+  max-width: 200px;
+  color: #0A0606;
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 400;
+`
+
+const PromptLine = styled.div`
+  margin-top: 4px;
+`
+
+const PromptButtons = styled.div`
+  margin-top: 24px;
+  font-weight: bold;
+  font-size: 16px;
+`
+
+export interface IPromptProps {
+  onSuccess: () => void;
+  onCancel: () => void;
+}
+
+export const PromptNotification = (props: IPromptProps) => {
+  return <PromptContainer>
+    <PromptLine>Are you sure?</PromptLine>
+    <PromptLine>Encrypted Seeds in other WE clients will require recovery.</PromptLine>
+    <PromptLine>Make sure that you keep all Seed phrases.</PromptLine>
+    <PromptButtons>
+      <div><GradientText onClick={props.onSuccess}>Yes, change password</GradientText></div>
+      <div style={{ marginTop: '16px' }}><GradientText onClick={props.onCancel}>Cancel</GradientText></div>
+    </PromptButtons>
+  </PromptContainer>
+}
