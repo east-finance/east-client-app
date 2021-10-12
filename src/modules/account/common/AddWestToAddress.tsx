@@ -59,7 +59,7 @@ const AddressContainer = styled.div`
   align-items: center;
   justify-content: space-between;
   
-  @media only screen and (min-width : 480px) and (max-width : 812px) {
+  @media screen and (max-width: 767px) {
     font-size: 16px;
   }
 `
