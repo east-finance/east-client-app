@@ -3,10 +3,9 @@ import useStores from '../../hooks/useStores'
 import { observer } from 'mobx-react'
 import { toJS } from 'mobx'
 import moment from 'moment'
-import { LineChart, Line, Tooltip } from 'recharts'
+import { LineChart, Line, Tooltip, TooltipProps } from 'recharts'
 import styled from 'styled-components'
 import { roundNumber } from '../../utils'
-import CursorImg from '../../resources/images/cursor-pointer.png'
 import useWindowSize from '../../hooks/useWindowSize'
 import { Block } from '../../components/Block'
 import { IOracleValue } from '../../interfaces'
@@ -47,10 +46,20 @@ const TooltipTimestamp = styled(TooltipValue)`
   opacity: 0.7;
 `
 
-const CustomTooltip = (props: any) => {
+const CustomTooltip = (props: TooltipProps<any, any> & { chartData: IOracleValue[] }) => {
+  const { chartData } = props
   if (props.active && props.payload && props.payload.length) {
     const { value, timestamp } = props.payload[0].payload
-    return <TooltipContainer>
+    let isLastItem = false
+    if (chartData && chartData.length > 0) {
+      const lastItem = chartData[chartData.length - 1]
+      isLastItem = lastItem.value === value && lastItem.timestamp === timestamp
+    }
+    const customStyle: any = {}
+    if (isLastItem) {
+      customStyle.marginLeft = '-90px'
+    }
+    return <TooltipContainer style={customStyle}>
       <TooltipValue>{value}</TooltipValue>
       <Block marginTop={4}>
         <TooltipTimestamp>
@@ -61,14 +70,6 @@ const CustomTooltip = (props: any) => {
   }
   return null
 }
-
-const CustomCursor = styled.div`
-  width: 64px;
-  height: 55px;
-  background-image: url(${CursorImg});
-  background-size: 100% 100%;
-  cursor: pointer;
-`
 
 const getMinMax = (points: IOracleValue[]) => {
   let min = 0
@@ -109,7 +110,7 @@ export const WestChart = observer( () => {
         activeDot={false}
       />
       <Tooltip
-        content={CustomTooltip}
+        content={<CustomTooltip chartData={chartData} />}
         offset={-45}
         wrapperStyle={{ marginTop: '45px' }}
         // cursor={<CustomCursor />}
