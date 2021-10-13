@@ -3,3 +3,8 @@ export interface IEastBalanceResponse {
     eastAmount: string;
     eastAmountDiff: string;
 }
+
+export interface IServiceConfigResponse {
+    eastContractId: string;
+    eastContractVersion: number;
+}
