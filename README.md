@@ -1,4 +1,4 @@
-# EAST Client v1.0
+# EAST Client
 
 East contract README:
 
@@ -7,9 +7,7 @@ https://github.com/east-finance/east-contract/blob/master/README.md
 ### Config file example (public/app.config.json)
 ```json
 {
-  "eastContractId": "6egak5EZxg6xW5cpFVzFonXzC9NF1kTSynCzupfQiCNx",
   "clientAddress": "https://carter.welocal.dev",
-  "eastContractVersion": "1",
   "heapMetricsId": "3889900902",
   "yandexMetricsId": "85383388"
 }
