@@ -65,14 +65,7 @@ export default class ConfigStore {
       const start = Date.now()
       const { data } = await axios.get(`/app.config.json?t=${Date.now()}`)
       console.log('app.config.json loaded:', data, ', time elapsed:', Date.now() - start, 'ms')
-      let eastContractVersion = this.config.eastContractVersion
-      if (data && data.eastContractVersion) {
-        eastContractVersion = Number(data.eastContractVersion)
-      }
-      this.config = {
-        ...data,
-        eastContractVersion
-      }
+      this.config = data
       if(data) {
         this.initMetrics(data.heapMetricsId, data.yandexMetricsId)
       }
@@ -83,7 +76,7 @@ export default class ConfigStore {
 
   async loadNodeConfig () {
     const nodeConfig = await this.api.getNodeConfig()
-    console.log('Node config:', nodeConfig)
+    console.log('Node config loaded:', nodeConfig)
     this.nodeConfig = {
       ...this.nodeConfig,
       minimumFee: {
@@ -107,13 +100,29 @@ export default class ConfigStore {
     return tx
   }
 
+  async loadEastServiceConfig () {
+    const serviceConfig = await this.api.getServiceConfig()
+    console.log('Service config loaded: ', serviceConfig)
+    if (serviceConfig.eastContractId) {
+      this.config.eastContractId = serviceConfig.eastContractId
+    } else {
+      throw new AuthCustomError('Cannot get eastContractId from service config')
+    }
+
+    if (serviceConfig.eastContractVersion) {
+      this.config.eastContractVersion = serviceConfig.eastContractVersion
+    } else {
+      throw new AuthCustomError('Cannot get eastContractVersion from service config')
+    }
+  }
+
   async loadEastContractConfig () {
     try {
       const eastContractId = this.getEastContractId()
       this.eastContractCreateTx = await this.getCreateEastTx(eastContractId)
       const [{ value }] = await this.api.getContractState(this.getEastContractId(), 'config')
       const remoteConfig = JSON.parse(value)
-      console.log(`East Contract (id: "${eastContractId}") config:`, remoteConfig)
+      console.log(`East Contract config loaded (${eastContractId}):`, remoteConfig)
       this.eastContractConfig = {
         ...this.eastContractConfig,
         ...remoteConfig

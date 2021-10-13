@@ -151,6 +151,7 @@ const SignIn = observer(() => {
           authStore.setPassword(password)
           signStore.initStore(username)
           signStore.initWeSDK(refresherFetch)
+          await configStore.loadEastServiceConfig()
           await configStore.loadEastContractConfig()
           await configStore.loadNodeConfig()
         } catch (e) {
