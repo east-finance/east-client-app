@@ -149,19 +149,23 @@ export const AccountMenu = observer(() => {
     <MenuItemContainer>
       {isDesktop && <Tooltip>Issue EAST</Tooltip>}
       <MenuItemPlus
-        onClick={() => onMenuClicked((isUserHaveVault && !isVaultLiquidated) ? RouteName.AddEast : RouteName.BuyEast)}
+        data-attr={'menu_issueEast'}
+        onClick={() => onMenuClicked((isUserHaveVault && !isVaultLiquidated) ? RouteName.IssueEast : RouteName.Mint)}
       />
     </MenuItemContainer>
     {+dataStore.claimOverpayAmount >= 0.00000001 &&
       <MenuItemContainer>
         {isDesktop && <Tooltip>Take WEST</Tooltip>}
-        <MenuItemLock onClick={() => onMenuClicked(RouteName.TakeWest)} />
+        <MenuItemLock
+          data-attr={'menu_unlockWest'}
+          onClick={() => onMenuClicked(RouteName.TakeWest)}
+        />
       </MenuItemContainer>
     }
     {isTransferAvailable &&
       <MenuItemContainer>
         {isDesktop && <Tooltip>Transfer</Tooltip>}
-        <MenuItemExport onClick={() => onMenuClicked(RouteName.TransferEast)} />
+        <MenuItemExport data-attr={'menu_transferEast'} onClick={() => onMenuClicked(RouteName.TransferEast)} />
       </MenuItemContainer>
     }
     {(isUserHaveVault && isDesktop) &&
@@ -169,23 +173,23 @@ export const AccountMenu = observer(() => {
     }
     <MenuItemContainer>
       {isDesktop && <Tooltip>History</Tooltip>}
-      <MenuItemTime onClick={() => onMenuClicked(RouteName.TransactionsHistory)} />
+      <MenuItemTime data-attr={'menu_history'} onClick={() => onMenuClicked(RouteName.TransactionsHistory)} />
     </MenuItemContainer>
     <MenuItemContainer>
       {isDesktop && <Tooltip>Settings</Tooltip>}
-      <MenuItemSettings onClick={() => onMenuClicked(RouteName.AccountSettings)} />
+      <MenuItemSettings data-attr={'menu_settings'} onClick={() => onMenuClicked(RouteName.AccountSettings)} />
     </MenuItemContainer>
     <MenuItemContainer>
       {isDesktop && <Tooltip>FAQ</Tooltip>}
-      <MenuItemQuestion onClick={() => onMenuClicked(RouteName.Faq)} />
+      <MenuItemQuestion data-attr={'menu_faq'} onClick={() => onMenuClicked(RouteName.Faq)} />
     </MenuItemContainer>
     {(isUserHaveVault && !isVaultLiquidated && isDesktop) &&
       <Delimiter />
     }
     {(isUserHaveVault && !isVaultLiquidated) &&
       <MenuItemContainer>
-        {isDesktop && <Tooltip>{isCloseEnabled ? 'Close' : `Disabled until ${moment(closeEnabledTimestamp).format('HH:mm')}`}</Tooltip>}
-        <MenuItemClose disabled={!isCloseEnabled} onClick={() => onMenuClicked(RouteName.CloseVault)} />
+        {isDesktop && <Tooltip>{isCloseEnabled ? 'Close' : `Locked until ${moment(closeEnabledTimestamp).format('HH:mm')}`}</Tooltip>}
+        <MenuItemClose disabled={!isCloseEnabled} data-attr={'menu_closeVault'} onClick={() => onMenuClicked(RouteName.CloseVault)} />
       </MenuItemContainer>
     }
   </Container>

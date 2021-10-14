@@ -224,9 +224,10 @@ export const ConfirmIssueTransaction = (props: IProps) => {
     </Block>
     <Block marginTop={'15%'}>
       <SendButtonsContainer>
-        <NavigationLeftGradientButton onClick={props.onPrevClicked} />
+        <NavigationLeftGradientButton data-attr={'issueEast-2_back'} onClick={props.onPrevClicked} />
         <Button
           type={'primary'}
+          data-attr={'issueEast-2_continueButton'}
           disabled={inProgress}
           style={{ width: '300px' }}
           onClick={onIssueClicked}

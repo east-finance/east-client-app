@@ -120,8 +120,8 @@ export const SupplyConfirmation = observer((props: IProps) => {
     </Block>
     <Block marginTop={80}>
       <ButtonsContainer>
-        <NavigationLeftGradientButton onClick={props.onPrevClicked} />
-        <Button type={'primary'} disabled={inProgress} onClick={onAddWestClicked} style={{ width: '304px' }}>
+        <NavigationLeftGradientButton data-attr={'supply-2_back'} onClick={props.onPrevClicked} />
+        <Button type={'primary'} data-attr={'supply-2_continueButton'} disabled={inProgress} onClick={onAddWestClicked} style={{ width: '304px' }}>
           <RelativeContainer>
             {inProgress && <ButtonSpinner />}
             Add WEST

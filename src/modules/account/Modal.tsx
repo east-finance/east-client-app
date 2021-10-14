@@ -3,19 +3,6 @@ import styled from 'styled-components'
 import { CrossIcon } from '../../components/Icons'
 import gradientBackground from '../../resources/images/gradient-bg2.png'
 
-export enum ModalStatus {
-  success = 'success',
-  warning = 'warning'
-}
-
-interface ModalProps {
-  id?: string;
-  status?: ModalStatus;
-  children: JSX.Element | JSX.Element[];
-  onClose?: () => void;
-  style?: any;
-}
-
 const Container = styled.div<{ status?: ModalStatus }>`
   background-color: rgba(255, 255, 255, 0.8);
   background-image: linear-gradient(0deg, rgba(248, 249, 250, 0) 85%, ${props => props.status === ModalStatus.warning ? props.theme.yellow : props.theme.greenToxic} 100%);
@@ -39,6 +26,19 @@ const IconContainer = styled.div`
     transform: scale(1.1);
   }
 `
+
+export enum ModalStatus {
+  success = 'success',
+  warning = 'warning'
+}
+
+export interface ModalProps {
+  id?: string;
+  status?: ModalStatus;
+  children: JSX.Element | JSX.Element[];
+  onClose?: () => void;
+  style?: any;
+}
 
 export const PrimaryModal = (props: ModalProps) => {
   return <Container status={props.status} style={{...props.style}} id={props.id || ''}>

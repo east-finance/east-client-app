@@ -196,7 +196,13 @@ export const TransferEast = observer((props: IProps) => {
         onChange={(e:  any) => setUserAddress(e.target.value)}
       />
       <Block marginTop={'15%'}>
-        <Button style={{ width: '304px', margin: '0 auto' }} type={'primary'} onClick={onClickContinue}>Continue</Button>
+        <Button
+          style={{ width: '304px', margin: '0 auto' }}
+          type={'primary'}
+          data-attr={'transferEast-1_continueButton'}
+          onClick={onClickContinue}>
+          Continue
+        </Button>
       </Block>
     </Container>
   } else if(currentStep === Steps.confirm) {
@@ -224,8 +230,8 @@ export const TransferEast = observer((props: IProps) => {
       </Block>
       <Block marginTop={'10%'}>
         <ButtonsContainer style={{ width: '80%', margin: '0 auto' }}>
-          <NavigationLeftGradientButton onClick={() => setCurrentStep(Steps.fill)} />
-          <Button type={'primary'} disabled={inProgress} onClick={onConfirmTransfer}>
+          <NavigationLeftGradientButton data-attr={'transferEast-2_back'} onClick={() => setCurrentStep(Steps.fill)} />
+          <Button type={'primary'} data-attr={'transferEast-2_continueButton'} disabled={inProgress} onClick={onConfirmTransfer}>
             <RelativeContainer>
               {inProgress && <ButtonSpinner />}
               Confirm and continue
@@ -236,6 +242,7 @@ export const TransferEast = observer((props: IProps) => {
     </Container>
   } else {
     content = <TxSendSuccess
+      closeAttr={'transferEast-2_close'}
       text={'EAST will be transferred after the transaction is completed. It may take a few minutes.'}
       onClose={props.onClose}
     />

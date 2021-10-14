@@ -114,6 +114,7 @@ export const TakeWest = observer((props: IProps) => {
   let content = null
   if (isTxSent) {
     content = <TxSendSuccess
+      closeAttr={'withdrawWest-2_close'}
       text={'WEST will be transferred after the transaction is completed. It may take a few minutes.'}
       onClose={props.onClose}
     />
@@ -137,7 +138,7 @@ export const TakeWest = observer((props: IProps) => {
       </Block>
       <Block marginTop={'20%'}>
         <Centered>
-          <Button type={'primary'} disabled={inProgress} onClick={onWithdrawClicked}>
+          <Button type={'primary'} data-attr={'withdrawWest-1_continueButton'} disabled={inProgress} onClick={onWithdrawClicked}>
             <RelativeContainer>
               {inProgress && <ButtonSpinner />}
               Withdraw WEST

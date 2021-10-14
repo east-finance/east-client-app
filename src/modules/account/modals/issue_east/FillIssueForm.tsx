@@ -203,7 +203,7 @@ export const FillIssueForm = observer((props: IProps) => {
     </Block>
     <Block marginTop={'10%'}>
       <ButtonsContainer>
-        <Button type={'primary'} onClick={onNextClicked} style={{ width: '304px' }}>
+        <Button type={'primary'} data-attr={'issueEast-1_continueButton'} onClick={onNextClicked} style={{ width: '304px' }}>
           Continue to confirmation
         </Button>
       </ButtonsContainer>

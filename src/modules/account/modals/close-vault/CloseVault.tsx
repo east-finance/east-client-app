@@ -13,17 +13,21 @@ interface IProps {
 }
 
 enum Steps {
-  info = 0,
-  confirmation = 1,
-  rechargeWest = 2,
-  success = 3
+  info = 'info',
+  confirmation = 'confirmation',
+  insufficientWest = 'insufficientWest',
+  success = 'success'
 }
 
 export const CloseVault = (props: IProps) => {
   const { configStore, dataStore, signStore } = useStores()
   const [currentStep, setCurrentStep] = useState(Steps.info)
-
   const [inProgress, setInProgress] = useState(false)
+
+  const changeStep = (step: Steps) => {
+    setCurrentStep(step)
+    dataStore.heapTrack(`${EastOpType.close}_changeStep_${step}`)
+  }
 
   const closeInitFee = +configStore.getCloseTotalFee()
 
@@ -51,7 +55,7 @@ export const CloseVault = (props: IProps) => {
     try {
       setInProgress(true)
       await sendCloseVault()
-      setCurrentStep(Steps.success)
+      changeStep(Steps.success)
     } catch (e) {
       console.error('Cannot close vault: ', e.message)
     } finally {
@@ -61,7 +65,7 @@ export const CloseVault = (props: IProps) => {
 
   let modalStatus = ModalStatus.success
   let title = 'close vault'
-  let content = <CloseVaultInfo onNextClicked={() => setCurrentStep(Steps.confirmation)} />
+  let content = <CloseVaultInfo onNextClicked={() => changeStep(Steps.confirmation)} />
   if (currentStep === Steps.confirmation) {
     modalStatus = ModalStatus.warning
     title = 'are you sure?'
@@ -69,18 +73,19 @@ export const CloseVault = (props: IProps) => {
       if (+dataStore.westBalance >= +closeInitFee) {
         await closePosition()
       } else {
-        setCurrentStep(Steps.rechargeWest)
+        changeStep(Steps.insufficientWest)
       }
     }
-    content =  <CloseVaultConfirmation inProgress={inProgress} onPrevClicked={() => setCurrentStep(Steps.info)} onSuccess={onSuccess} />
-  } else if(currentStep === Steps.rechargeWest) {
+    content = <CloseVaultConfirmation inProgress={inProgress} onPrevClicked={() => changeStep(Steps.info)} onSuccess={onSuccess} />
+  } else if(currentStep === Steps.insufficientWest) {
     content = <AddWestToAddress
       westAmount={configStore.getFeeByOpType(EastOpType.close_init)}
       eastAmount={''}
-      onPrevClicked={() => setCurrentStep(Steps.confirmation)}
+      onPrevClicked={() => changeStep(Steps.confirmation)}
     />
   } else if (currentStep === Steps.success) {
     content = <TxSendSuccess
+      data-attr={'closeVault-3_close'}
       text={'Vault will be closed after the transaction is completed. It may take a few minutes.'}
       onClose={props.onClose}
     />
