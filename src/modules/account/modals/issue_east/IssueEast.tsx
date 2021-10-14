@@ -49,7 +49,7 @@ export const IssueEast = observer((props: IProps) => {
 
   const changeStep = (step: IssueSteps) => {
     setStepIndex(step)
-    dataStore.heapTrack(`issue_changeStep_${step}`)
+    dataStore.heapTrack(`issue_changeStep_${step}`, formData)
   }
 
   let content = <div />
