@@ -78,6 +78,11 @@ export const TransferEast = observer((props: IProps) => {
   const [currentStep, setCurrentStep] = useState(Steps.fill)
   const [inProgress, setInProgress] = useState(false)
 
+  const changeStep = (step: Steps) => {
+    setCurrentStep(step)
+    dataStore.heapTrack(`${EastOpType.transfer}_changeStep_${step}`)
+  }
+
   let content = null
   let title = 'transfer east'
 
@@ -123,7 +128,7 @@ export const TransferEast = observer((props: IProps) => {
     const { east, address } = validateForm()
     setFormErrors({ east, address })
     if (!east && !address) {
-      setCurrentStep(Steps.confirm)
+      changeStep(Steps.confirm)
     }
     if (address) {
       toast.dismiss()
@@ -162,7 +167,7 @@ export const TransferEast = observer((props: IProps) => {
       }
       const result = await signStore.broadcastDockerCall(transferTx)
       console.log('Broadcast TRANSFER east result:', result)
-      setCurrentStep(Steps.success)
+      changeStep(Steps.success)
     } catch(e) {
       console.error('Broadcast transfer EAST error: ', e.message)
     } finally {
@@ -230,7 +235,7 @@ export const TransferEast = observer((props: IProps) => {
       </Block>
       <Block marginTop={'10%'}>
         <ButtonsContainer style={{ width: '80%', margin: '0 auto' }}>
-          <NavigationLeftGradientButton data-attr={'transferEast-2_back'} onClick={() => setCurrentStep(Steps.fill)} />
+          <NavigationLeftGradientButton data-attr={'transferEast-2_back'} onClick={() => changeStep(Steps.fill)} />
           <Button type={'primary'} data-attr={'transferEast-2_continueButton'} disabled={inProgress} onClick={onConfirmTransfer}>
             <RelativeContainer>
               {inProgress && <ButtonSpinner />}
