@@ -1,22 +1,23 @@
 import React, { ChangeEvent, FocusEvent, useState } from 'react'
 import styled from 'styled-components'
-import { PrimaryTitle } from '../../../components/PrimaryTitle'
-import { PrimaryModal } from '../Modal'
-import { Block, Block16, Block24 } from '../../../components/Block'
-import { InputStatus, SimpleInput } from '../../../components/Input'
-import { Button, ButtonsContainer, NavigationLeftGradientButton } from '../../../components/Button'
-import useStores from '../../../hooks/useStores'
-import { ITag, Tags } from '../../../components/Tags'
-import { roundNumber } from '../../../utils'
-import { TxSendSuccess } from '../common/TxSendSuccess'
-import { ButtonSpinner, RelativeContainer } from '../../../components/Spinner'
+import { PrimaryTitle } from '../../../../components/PrimaryTitle'
+import { PrimaryModal } from '../../Modal'
+import { Block } from '../../../../components/Block'
+import { InputStatus, SimpleInput } from '../../../../components/Input'
+import { Button } from '../../../../components/Button'
+import useStores from '../../../../hooks/useStores'
+import { ITag, Tags } from '../../../../components/Tags'
+import { roundNumber } from '../../../../utils'
+import { TxSendSuccess } from '../../common/TxSendSuccess'
 import { observer } from 'mobx-react'
-import { EastOpType } from '../../../interfaces'
+import { EastOpType } from '../../../../interfaces'
 import { useEffect } from 'react'
 import { toast } from 'react-toastify'
-import { ErrorNotification } from '../../../components/Notification'
+import { ErrorNotification } from '../../../../components/Notification'
 import BigNumber from 'bignumber.js'
-import { MaxTokenAmount } from '../../../constants'
+import { MaxTokenAmount } from '../../../../constants'
+import { TransferConfirmation } from './Confirmation'
+import { AddWestToAddress } from '../../common/AddWestToAddress'
 
 interface IProps {
   onClose: () => void
@@ -29,44 +30,14 @@ const Container = styled.div`
   }
 `
 
-const SubTitle = styled.div`
-  text-align: center;
-  font-weight: bold;
-  font-size: 16px;
-`
-
-const ConfirmTitle = styled.div`
-  opacity: 0.6;
-  font-size: 15px;
-`
-
-const SendAmount = styled.div`
-  font-weight: bold;
-  font-size: 24px;
-  line-height: 24px;
-`
-
-const SendAddress = styled.div`
-  font-weight: 600;
-  font-size: 18px;
-  line-height: 22px;
-  line-break: anywhere;
-`
-
-const Fee = styled.div`
-  color: #043569;
-  font-weight: bold;
-  font-size: 16px;
-  line-height: 16px;
-`
-
 enum Steps {
   fill = 'fill',
   confirm = 'confirm',
+  refillWest = 'refillWest',
   success = 'success'
 }
 
-export const TransferEast = observer((props: IProps) => {
+export const Transfer = observer((props: IProps) => {
   const { configStore, dataStore, signStore } = useStores()
 
   const totalFee = +configStore.getFeeByOpType(EastOpType.transfer)
@@ -146,6 +117,10 @@ export const TransferEast = observer((props: IProps) => {
   }
 
   const onConfirmTransfer = async () => {
+    if (totalFee > +dataStore.westBalance) {
+      changeStep(Steps.refillWest)
+      return
+    }
     try {
       setInProgress(true)
       const { publicKey } = await signStore.getPublicData()
@@ -211,39 +186,20 @@ export const TransferEast = observer((props: IProps) => {
       </Block>
     </Container>
   } else if(currentStep === Steps.confirm) {
-    content = <Container>
-      <Block16>
-        <SubTitle>Confirmation</SubTitle>
-      </Block16>
-      <Block marginTop={'5%'} style={{ 'textAlign': 'center' }}>
-        <ConfirmTitle>You will send</ConfirmTitle>
-        <Block marginTop={8}>
-          <SendAmount>{eastAmount} EAST</SendAmount>
-        </Block>
-        <Block24 />
-        <ConfirmTitle>To the address</ConfirmTitle>
-        <Block marginTop={8}>
-          <SendAddress>{userAddress}</SendAddress>
-        </Block>
-        <Block marginTop={24}>
-          <ConfirmTitle>Fee</ConfirmTitle>
-          <Block marginTop={8}>
-            <Fee>{totalFee} WEST</Fee>
-          </Block>
-        </Block>
-      </Block>
-      <Block marginTop={'10%'}>
-        <ButtonsContainer style={{ width: '80%', margin: '0 auto' }}>
-          <NavigationLeftGradientButton data-attr={'transferEast-2_back'} onClick={() => changeStep(Steps.fill)} />
-          <Button type={'primary'} data-attr={'transferEast-2_continueButton'} disabled={inProgress} onClick={onConfirmTransfer}>
-            <RelativeContainer>
-              {inProgress && <ButtonSpinner />}
-              Confirm and continue
-            </RelativeContainer>
-          </Button>
-        </ButtonsContainer>
-      </Block>
-    </Container>
+    content = <TransferConfirmation
+      inProgress={inProgress}
+      totalFee={totalFee}
+      eastAmount={eastAmount}
+      userAddress={userAddress}
+      onPrevClicked={() => changeStep(Steps.fill)}
+      onSuccess={onConfirmTransfer}
+    />
+  } else if(currentStep === Steps.refillWest) {
+    content = <AddWestToAddress
+      westAmount={configStore.getFeeByOpType(EastOpType.transfer)}
+      eastAmount={''}
+      onPrevClicked={() => changeStep(Steps.confirm)}
+    />
   } else {
     content = <TxSendSuccess
       closeAttr={'transferEast-2_close'}

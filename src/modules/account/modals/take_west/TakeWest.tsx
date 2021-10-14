@@ -12,6 +12,8 @@ import { TxSendSuccess } from '../../common/TxSendSuccess'
 import { observer } from 'mobx-react'
 import { isDesktop } from 'react-device-detect'
 import { roundNumber } from '../../../../utils'
+import { EastOpType } from '../../../../interfaces'
+import { AddWestToAddress } from '../../common/AddWestToAddress'
 
 interface IProps {
   onClose: () => void
@@ -29,13 +31,25 @@ const Centered = styled.div`
   margin: 0 auto;
 `
 
+enum Steps {
+  fill = 'fill',
+  refillWest = 'refillWest',
+}
+
 export const TakeWest = observer((props: IProps) => {
   const { dataStore, configStore, signStore } = useStores()
   const [isTxSent, setTxSent] = useState(false)
   const [westAmount, setWestAmount] = useState('')
   const [validationError, setValidationError] = useState('')
   const [inProgress, setInProgress] = useState(false)
+  const [currentStep, setCurrentStep] = useState(Steps.fill)
 
+  const changeStep = (step: Steps) => {
+    setCurrentStep(step)
+    dataStore.heapTrack(`${EastOpType.claim_overpay_init}_changeStep_${step}`)
+  }
+
+  const txFee = +configStore.getFeeByOpType(EastOpType.claim_overpay_init)
   const westProfit = dataStore.claimOverpayAmount
 
   const validateForm = (value: string) => {
@@ -95,6 +109,10 @@ export const TakeWest = observer((props: IProps) => {
   }
 
   const onWithdrawClicked = async () => {
+    if (txFee > +dataStore.westBalance) {
+      changeStep(Steps.refillWest)
+      return
+    }
     const error = validateForm(westAmount)
     setValidationError(error)
     if (!error) {
@@ -117,6 +135,12 @@ export const TakeWest = observer((props: IProps) => {
       closeAttr={'withdrawWest-2_close'}
       text={'WEST will be transferred after the transaction is completed. It may take a few minutes.'}
       onClose={props.onClose}
+    />
+  } else if(currentStep === Steps.refillWest) {
+    content = <AddWestToAddress
+      westAmount={txFee.toString()}
+      eastAmount={''}
+      onPrevClicked={() => changeStep(Steps.fill)}
     />
   } else {
     content = <div>

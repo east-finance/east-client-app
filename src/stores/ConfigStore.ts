@@ -218,6 +218,7 @@ export default class ConfigStore {
     case EastOpType.reissue: resultFee = (transferFee + callFee + callFee + atomicFee).toString(); break
     case EastOpType.transfer: resultFee = callFee.toString(); break
     case EastOpType.close_init: resultFee = callFee.toString(); break
+    case EastOpType.claim_overpay_init: resultFee = callFee.toString(); break
     }
     return new BigNumber(resultFee).dividedBy(Math.pow(10, WestDecimals)).toString()
   }
