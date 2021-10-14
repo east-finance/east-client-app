@@ -84,7 +84,7 @@ export const TransferEast = observer((props: IProps) => {
   }
 
   let content = null
-  let title = 'transfer east'
+  const title = 'transfer east'
 
   useEffect(() => {
     if (formErrors.east || formErrors.address) {
@@ -211,7 +211,6 @@ export const TransferEast = observer((props: IProps) => {
       </Block>
     </Container>
   } else if(currentStep === Steps.confirm) {
-    title = 'send east'
     content = <Container>
       <Block16>
         <SubTitle>Confirmation</SubTitle>
