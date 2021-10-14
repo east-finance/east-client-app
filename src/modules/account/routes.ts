@@ -4,10 +4,10 @@ export default {
   name: RouteSegment.account,
   path: '/account',
   children: [{
-    name: RouteSegment.buyEast,
-    path: '/buy-east'
+    name: RouteSegment.mint,
+    path: '/mint'
   }, {
-    name: RouteSegment.addEast,
+    name: RouteSegment.issueEast,
     path: '/add-east?eastAmount&westAmount&step'
   }, {
     name: RouteSegment.supply,

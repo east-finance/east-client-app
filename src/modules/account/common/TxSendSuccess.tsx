@@ -6,6 +6,7 @@ import iconSuccess from '../../../resources/images/success.png'
 
 interface IProps {
   text: string;
+  closeAttr?: string;
   onClose: () => void;
 }
 
@@ -46,7 +47,7 @@ export const TxSendSuccess = (props: IProps) => {
     </Block>
     <Block marginTop={'15%'}>
       <ButtonsContainer>
-        <Button type={'primary'} onClick={props.onClose}>Close this window</Button>
+        <Button type={'primary'} data-attr={props.closeAttr || 'closeButton'} onClick={props.onClose}>Close this window</Button>
       </ButtonsContainer>
     </Block>
   </Container>

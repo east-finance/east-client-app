@@ -86,7 +86,7 @@ export const CloseVaultInfo = observer((props: IProps) => {
     </Block>
     <Block marginTop={60}>
       <ButtonsContainer>
-        <Button type={'primary'} disabled={isDisabled} onClick={props.onNextClicked}>
+        <Button type={'primary'} data-attr={'closeVault-1_continueButton'} disabled={isDisabled} onClick={props.onNextClicked}>
           {buttonText}
         </Button>
       </ButtonsContainer>

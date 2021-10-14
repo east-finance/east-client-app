@@ -136,7 +136,7 @@ export const FillSupplyForm = observer((props: IProps) => {
     </Block>
     <Block marginTop={80}>
       <ButtonsContainer>
-        <Button type={'primary'} onClick={onNextClicked} style={{ width: '304px' }}>
+        <Button type={'primary'} data-attr={'supply-1_continueButton'} onClick={onNextClicked} style={{ width: '304px' }}>
           Continue to confirmation
         </Button>
       </ButtonsContainer>

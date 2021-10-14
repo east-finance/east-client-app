@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { PrimaryTitle } from '../../../../components/PrimaryTitle'
 import { ModalStatus, PrimaryModal } from '../../Modal'
 import { CheckForm } from './CheckForm'
@@ -7,20 +7,25 @@ import { FillForm, FillFormData } from './FillForm'
 import useStores from '../../../../hooks/useStores'
 import { RechargeWest } from './RechargeWest'
 import { BuyWestSuccess } from './Success'
-import { TxTextType } from '../../../../interfaces'
+import { EastOpType, TxTextType } from '../../../../interfaces'
 import { observer } from 'mobx-react'
 
 interface IProps {
   onClose: () => void
 }
 
-export const BuyEast = observer((props: IProps) => {
+export const Mint = observer((props: IProps) => {
   const { configStore, dataStore, authStore, signStore } = useStores()
   const [currentStep, setCurrentStep] = useState(Steps.fill)
   const [eastAmount, setEastAmount] = useState('')
   const [westAmount, setWestAmount] = useState('')
   const [westBalance, setWestBalance] = useState('0')
   const [inProgress, setInProgress] = useState(false)
+
+  const changeStep = (step: Steps) => {
+    setCurrentStep(step)
+    dataStore.heapTrack(`${EastOpType.mint}_changeStep_${step}`, { eastAmount, westAmount })
+  }
 
   const sendAtomic = async () => {
     const { address, publicKey } = await signStore.getPublicData()
@@ -83,7 +88,7 @@ export const BuyEast = observer((props: IProps) => {
     // const onNextClicked = (data: FillFormData) => {
     //   setEastAmount(data.eastAmount)
     //   setWestAmount(data.westAmount)
-    //   setCurrentStep(Steps.check)
+    //   changeStep(Steps.check)
     // }
     const onNextClicked = async (data: FillFormData) => {
       try {
@@ -93,9 +98,9 @@ export const BuyEast = observer((props: IProps) => {
         const westBalance = await dataStore.getWestBalance(authStore.address)
         setWestBalance(westBalance)
         if (+data.westAmount > +westBalance) {
-          setCurrentStep(Steps.rechargeWest)
+          changeStep(Steps.rechargeWest)
         } else {
-          setCurrentStep(Steps.check)
+          changeStep(Steps.check)
         }
       } catch (e) {
         console.error('sendAtomic Error:', e)
@@ -105,17 +110,17 @@ export const BuyEast = observer((props: IProps) => {
     }
     content = <FillForm {...formProps} onNextClicked={onNextClicked} />
   } else if (currentStep === Steps.check) {
-    // const onNextClicked = () => setCurrentStep(Steps.selectExchange)
+    // const onNextClicked = () => changeStep(Steps.selectExchange)
     const onNextClicked = async () => {
       try {
         setInProgress(true)
         const westBalance = await dataStore.getWestBalance(authStore.address)
         setWestBalance(westBalance)
         if (+westAmount > +westBalance) {
-          setCurrentStep(Steps.rechargeWest)
+          changeStep(Steps.rechargeWest)
         } else {
           await sendAtomic()
-          setCurrentStep(Steps.success)
+          changeStep(Steps.success)
         }
       } catch (e) {
         console.error('sendAtomic Error:', e)
@@ -123,10 +128,10 @@ export const BuyEast = observer((props: IProps) => {
         setInProgress(false)
       }
     }
-    const onPrevClicked = () => setCurrentStep(Steps.fill)
+    const onPrevClicked = () => changeStep(Steps.fill)
     content = <CheckForm {...formProps} onNextClicked={onNextClicked} onPrevClicked={onPrevClicked} />
   } else if (currentStep === Steps.rechargeWest) {
-    const onPrevClicked = () => setCurrentStep(Steps.fill)
+    const onPrevClicked = () => changeStep(Steps.fill)
     const rechargeWestAmount = (+westAmount - +westBalance).toString()
     content = <RechargeWest rechargeWestAmount={rechargeWestAmount} eastAmount={eastAmount} westAmount={westAmount} onPrevClicked={onPrevClicked} />
     modalStatus = ModalStatus.warning
