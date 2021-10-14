@@ -98,7 +98,6 @@ const Text = styled.span<{ isShown?: null | boolean }>`
   opacity: 0.5;
   letter-spacing: 3px;
   font-weight: 300;
-  text-transform: uppercase;
 `
 
 const PrimaryText = styled(Text)`
