@@ -6,7 +6,7 @@ import { AccountMenu } from './Menu'
 import EastLogo from '../../resources/images/east-logo.svg'
 import { FAQ } from './modals/FAQ'
 import { Settings } from './modals/Settings'
-import { TransferEast } from './modals/TransferEast'
+import { Transfer } from './modals/transfer/Transfer'
 import { Mint } from './modals/mint/Mint'
 import { useRoute } from 'react-router5'
 import { RouteName } from '../../router/segments'
@@ -146,7 +146,7 @@ const getPrimaryModalByRoute = () => {
   } else if (name.startsWith(RouteName.TransactionsHistory)) {
     return <TransactionsHistory onClose={onCloseModal} />
   } else if (name.startsWith(RouteName.TransferEast)) {
-    return <TransferEast onClose={onCloseModal} />
+    return <Transfer onClose={onCloseModal} />
   } else if (name.startsWith(RouteName.AccountSettings)) {
     return <Settings onClose={onCloseModal} />
   } else if (name.startsWith(RouteName.Faq)) {
