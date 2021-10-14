@@ -32,6 +32,7 @@ const ButtonsContainer = styled.div`
 const Description = styled.div`
   font-size: 15px;
   line-height: 20px;
+  text-align: center;
 `
 
 const Fee = styled.div`
