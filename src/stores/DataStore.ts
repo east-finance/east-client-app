@@ -321,7 +321,7 @@ export default class DataStore {
   }
 
   heapTrack (eventName: string, payload: Record<string, string | number> = {}) {
-    if (window.heap) {
+    if (window.heap && window.heap.track) {
       window.heap.track(eventName, {
         ...payload,
         address: this.address
