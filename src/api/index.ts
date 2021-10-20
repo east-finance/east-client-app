@@ -2,7 +2,7 @@ import axios, { AxiosInstance } from 'axios'
 import { ApiTokenRefresher } from '@wavesenterprise/api-token-refresher'
 import { ContractExecutionStatus, IOracleValue, ITokenPair, ITransaction, IVault, TxCallStatus } from '../interfaces'
 import { OracleStreamId } from '../constants'
-import { IEastBalanceResponse } from './ApiInterfaces'
+import { IEastBalanceResponse, IServiceConfigResponse } from './ApiInterfaces'
 import moment from 'moment'
 
 const AUTH_SERVICE_ADDRESS = '/authServiceAddress'
@@ -111,7 +111,17 @@ export class Api {
     return data
   }
 
+  public getTransactionInfo = async (txId: string) => {
+    const { data } = await this._apiClient.get(`${NODE_ADDRESS}/transactions/info/${txId}`)
+    return data
+  }
+
   // API requests
+  public getServiceConfig = async (): Promise<IServiceConfigResponse> => {
+    const { data } = await this._apiClient.get(`${API_ADDRESS}/config`)
+    return data
+  }
+
   public getOracleValues = async (streamId: OracleStreamId, limit = 1): Promise<IOracleValue[]> => {
     const { data } = await this._apiClient.get(`
       ${API_ADDRESS}/v1/user/oracles?streamId=${streamId}&limit=${limit}

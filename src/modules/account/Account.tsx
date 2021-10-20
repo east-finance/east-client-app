@@ -6,15 +6,15 @@ import { AccountMenu } from './Menu'
 import EastLogo from '../../resources/images/east-logo.svg'
 import { FAQ } from './modals/FAQ'
 import { Settings } from './modals/Settings'
-import { TransferEast } from './modals/TransferEast'
-import { BuyEast } from './modals/buy-east/BuyEast'
+import { Transfer } from './modals/transfer/Transfer'
+import { Mint } from './modals/mint/Mint'
 import { useRoute } from 'react-router5'
 import { RouteName } from '../../router/segments'
 import useOutsideAlerter from '../../hooks/useOutsideHandler'
 import { fadeIn, fadeInControls, fadeOut } from '../../components/Animations'
 import { WestChart } from './WestChart'
 import { TransactionsHistory } from './modals/txs_history/TransactionsHistory'
-import { AddEast } from './modals/add_east/AddEast'
+import { IssueEast } from './modals/issue_east/IssueEast'
 import { TakeWest } from './modals/take_west/TakeWest'
 import { CloseVault } from './modals/close-vault/CloseVault'
 import { DetailedCard } from './DetailedCard'
@@ -110,7 +110,7 @@ const PrimaryModalContainer = styled.div`
   display: block;
   position: absolute;
   z-index: 9999;
-  width: min(625px, 90vw);
+  min-width: min(625px, 90vw);
   max-height: 100vh;
   top: 50%;
   left: 50%;
@@ -126,16 +126,19 @@ const PrimaryModalContainer = styled.div`
 `
 
 const getPrimaryModalByRoute = () => {
+  const { dataStore } = useStores()
   const { route: { name }, router } = useRoute()
 
   const onCloseModal = () => {
     router.navigate(RouteName.Account)
+    const segment = name.split('.').pop()
+    dataStore.heapTrack(`${segment}_closeCross`)
   }
 
-  if (name.startsWith(RouteName.BuyEast)) {
-    return <BuyEast onClose={onCloseModal} />
-  } else if (name.startsWith(RouteName.AddEast)) {
-    return <AddEast onClose={onCloseModal} />
+  if (name.startsWith(RouteName.Mint)) {
+    return <Mint onClose={onCloseModal} />
+  } else if (name.startsWith(RouteName.IssueEast)) {
+    return <IssueEast onClose={onCloseModal} />
   } else if (name.startsWith(RouteName.TakeWest)) {
     return <TakeWest onClose={onCloseModal} />
   } else if (name.startsWith(RouteName.SupplyVault)) {
@@ -143,7 +146,7 @@ const getPrimaryModalByRoute = () => {
   } else if (name.startsWith(RouteName.TransactionsHistory)) {
     return <TransactionsHistory onClose={onCloseModal} />
   } else if (name.startsWith(RouteName.TransferEast)) {
-    return <TransferEast onClose={onCloseModal} />
+    return <Transfer onClose={onCloseModal} />
   } else if (name.startsWith(RouteName.AccountSettings)) {
     return <Settings onClose={onCloseModal} />
   } else if (name.startsWith(RouteName.Faq)) {
@@ -185,7 +188,7 @@ const AccountCards = observer(() => {
 })
 
 const Account = observer( () => {
-  const { router } = useRoute()
+  const { route: { name }, router } = useRoute()
   const { authStore, api, dataStore } = useStores()
 
   useEffect(() => {
@@ -209,6 +212,8 @@ const Account = observer( () => {
   const modalRef = useRef(null)
   const onClickOutside = () => {
     router.navigate(RouteName.Account)
+    const segment = name.split('.').pop()
+    dataStore.heapTrack(`${segment}_closeOutside`)
   }
   useOutsideAlerter(modalRef, onClickOutside)
 

@@ -21,10 +21,10 @@ interface IProps {
 }
 
 export enum IssueSteps {
-  SupplyCollateral = 0,
-  FillForm = 1,
-  ConfirmTransaction = 2,
-  Success = 3
+  SupplyCollateral = 'SupplyCollateral',
+  FillForm = 'FillForm',
+  ConfirmTransaction = 'ConfirmTransaction',
+  Success = 'Success'
 }
 
 const Centered = styled.div`
@@ -32,7 +32,7 @@ const Centered = styled.div`
   justify-content: center;
 `
 
-export const AddEast = observer((props: IProps) => {
+export const IssueEast = observer((props: IProps) => {
   const { dataStore, configStore } = useStores()
   const { route: { params } } = useRoute()
   const { vaultCollateral, supplyVaultWestDiff } = dataStore
@@ -47,13 +47,18 @@ export const AddEast = observer((props: IProps) => {
   const [formData, setFormData] = useState({ eastAmount: params.eastAmount || '', westAmount: params.westAmount || '' })
   const totalFee = +configStore.getFeeByOpType(EastOpType.supply)
 
+  const changeStep = (step: IssueSteps) => {
+    setStepIndex(step)
+    dataStore.heapTrack(`issue_changeStep_${step}`, formData)
+  }
+
   let content = <div />
   let modalStatus = ModalStatus.success
   if (refillWestAmount) {
     modalStatus = ModalStatus.warning
     const onPrevClicked = () => {
       setRefillWestAmount('')
-      setStepIndex(IssueSteps.FillForm)
+      changeStep(IssueSteps.FillForm)
     }
     content = <Block marginTop={64}>
       <AddWestToAddress
@@ -65,7 +70,7 @@ export const AddEast = observer((props: IProps) => {
   } else if (stepIndex === IssueSteps.SupplyCollateral) {
     modalStatus = ModalStatus.warning
     const onSuccess = () => {
-      setStepIndex(IssueSteps.FillForm)
+      changeStep(IssueSteps.FillForm)
     }
     content = <SupplyCollateral
       vaultCollateral={vaultCollateral}
@@ -75,7 +80,7 @@ export const AddEast = observer((props: IProps) => {
   } else if (stepIndex === IssueSteps.FillForm) {
     const onNextClicked = (formData: FillFormData) => {
       setFormData(formData)
-      setStepIndex(IssueSteps.ConfirmTransaction)
+      changeStep(IssueSteps.ConfirmTransaction)
       const addWestAmount = roundNumber((+formData.westAmount + totalFee + supplyVaultWestDiff), 8)
       const westDelta = roundNumber(addWestAmount - +dataStore.westBalance, 8)
       if (westDelta > 0) {
@@ -91,11 +96,12 @@ export const AddEast = observer((props: IProps) => {
     content = <ConfirmIssueTransaction
       eastAmount={formData.eastAmount}
       westAmount={formData.westAmount}
-      onNextClicked={() => setStepIndex(IssueSteps.Success)}
-      onPrevClicked={() => setStepIndex(IssueSteps.FillForm)}
+      onNextClicked={() => changeStep(IssueSteps.Success)}
+      onPrevClicked={() => changeStep(IssueSteps.FillForm)}
     />
   } else if(stepIndex === IssueSteps.Success) {
     content = <TxSendSuccess
+      data-attr={'issueEast-3_close'}
       text={'You will receive your EAST after the transaction is completed. It may take a few minutes.'}
       onClose={props.onClose}
     />
@@ -113,7 +119,7 @@ export const AddEast = observer((props: IProps) => {
               text: '2. Issue EAST'
             }, {
               text: '3. Confirm transaction'
-            }]} currentStepIndex={stepIndex} />
+            }]} currentStepIndex={Object.values(IssueSteps).indexOf(stepIndex)} />
           </Centered>
         </Block>
       }

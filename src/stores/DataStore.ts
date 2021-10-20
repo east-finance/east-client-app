@@ -319,5 +319,14 @@ export default class DataStore {
       console.error('Watch tx status error:', e.message)
     }
   }
+
+  heapTrack (eventName: string, payload: Record<string, string | number> = {}) {
+    if (window.heap && window.heap.track) {
+      window.heap.track(eventName, {
+        ...payload,
+        address: this.address
+      })
+    }
+  }
 }
 

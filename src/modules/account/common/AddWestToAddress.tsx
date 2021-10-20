@@ -29,7 +29,7 @@ const IconCopy = styled(IconCommon)`
 `
 
 const Container = styled.div`
-  margin: 0 auto;
+  margin: 16px auto;
   font-family: Cairo,sans-serif;
   color: ${props => props.theme.darkBlue};
 `
@@ -59,7 +59,7 @@ const AddressContainer = styled.div`
   align-items: center;
   justify-content: space-between;
   
-  @media only screen and (min-width : 480px) and (max-width : 812px) {
+  @media screen and (max-width: 767px) {
     font-size: 16px;
   }
 `
@@ -108,7 +108,7 @@ export const AddWestToAddress = (props: IProps) => {
   }
   return <Container>
     <Description>
-      Add <Amount>{roundNumber(props.westAmount)} WEST</Amount> to your address{props.eastAmount && ` to get ${props.eastAmount} EAST`}.
+      Add <Amount>{roundNumber(props.westAmount)} WEST</Amount> to your address{props.eastAmount && ` to get ${props.eastAmount} EAST`}
     </Description>
     <Block marginTop={40}>
       <Description>

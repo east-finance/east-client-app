@@ -63,8 +63,8 @@ export const CheckForm = (props: IProps) => {
     </Block>
     <Block marginTop={60}>
       <ButtonsContainer>
-        <NavigationLeftGradientButton onClick={props.onPrevClicked} />
-        <Button type={'primary'} disabled={props.inProgress} style={{ width: '304px' }} onClick={props.onNextClicked}>
+        <NavigationLeftGradientButton data-attr={'mintEast-2_back'} onClick={props.onPrevClicked} />
+        <Button type={'primary'} data-attr={'mintEast-2_continueButton'} disabled={props.inProgress} style={{ width: '304px' }} onClick={props.onNextClicked}>
           <RelativeContainer>
             {props.inProgress && <ButtonSpinner />}
             Issue EAST

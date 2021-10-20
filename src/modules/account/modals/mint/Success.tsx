@@ -1,6 +1,6 @@
-import React, { useState } from 'react'
+import React from 'react'
 import styled from 'styled-components'
-import { Block, Block16 } from '../../../../components/Block'
+import { Block } from '../../../../components/Block'
 import { Button } from '../../../../components/Button'
 import iconSuccess from '../../../../resources/images/success.png'
 
@@ -50,7 +50,7 @@ export const BuyWestSuccess = (props: IProps) => {
     </Block>
     <Block marginTop={80}>
       <SendButtonsContainer>
-        <Button type={'primary'} onClick={props.onClose}>Close this window</Button>
+        <Button type={'primary'} data-attr={'mintEast-3_close'} onClick={props.onClose}>Close this window</Button>
       </SendButtonsContainer>
     </Block>
   </Container>

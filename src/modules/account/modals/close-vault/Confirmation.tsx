@@ -102,8 +102,8 @@ export const CloseVaultConfirmation = observer((props: IProps) => {
     </Block>
     <Block marginTop={32}>
       <ButtonsContainer>
-        <NavigationLeftGradientButton onClick={props.onPrevClicked} />
-        <Button type={'primary'} disabled={inProgress} onClick={props.onSuccess} style={{ width: '304px' }}>
+        <NavigationLeftGradientButton data-attr={'closeVault-2_back'} onClick={props.onPrevClicked} />
+        <Button type={'primary'} data-attr={'closeVault-2_continueButton'} disabled={inProgress} onClick={props.onSuccess} style={{ width: '304px' }}>
           <RelativeContainer>
             {inProgress && <ButtonSpinner />}
             Yes, close my position

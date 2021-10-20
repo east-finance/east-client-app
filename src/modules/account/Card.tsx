@@ -200,13 +200,13 @@ export const AccountCard = observer((props: { isShown: null | boolean, onClick: 
   const { eastBalance, vault } = dataStore
   const isPositiveBalance = +eastBalance > 0 || +vault.eastAmount > 0
 
-  return <Container {...props}>
+  return <Container {...props} data-attr={'cardFront'}>
     <EastLogoSmall backgroundImage={eastLogoSmall} size={50} />
     {!isPositiveBalance &&
       <PlusContainer>
-        <PlusImage onClick={() => router.navigate(RouteName.BuyEast)}/>
+        <PlusImage onClick={() => router.navigate(RouteName.Mint)}/>
         <Block24>
-          <AddEast onClick={() => router.navigate(RouteName.BuyEast)}>Issue East</AddEast>
+          <AddEast onClick={() => router.navigate(RouteName.Mint)}>Issue East</AddEast>
         </Block24>
       </PlusContainer>
     }

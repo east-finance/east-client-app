@@ -98,7 +98,6 @@ const Text = styled.span<{ isShown?: null | boolean }>`
   opacity: 0.5;
   letter-spacing: 3px;
   font-weight: 300;
-  text-transform: uppercase;
 `
 
 const PrimaryText = styled(Text)`
@@ -277,9 +276,9 @@ export const DetailedCard = observer((props: { isShown: null | boolean, onClick:
     }
   }
 
-  return <Container {...props}>
+  return <Container {...props} data-attr={'cardBack'}>
     <DetailsBody>
-      <div>
+      <div data-attr={'cardBack_address'}>
         <PrimaryText>{address}</PrimaryText>
         <Block marginTop={0}>
           <Text>current address</Text>
@@ -298,6 +297,7 @@ export const DetailedCard = observer((props: { isShown: null | boolean, onClick:
           <SmallButtonContainer>
             <Button
               size={'small'}
+              data-attr={'cardBack_addWest'}
               style={getAddWestButtonStyles()}
               onClick={(e: any) => {
                 e.stopPropagation()
@@ -312,13 +312,14 @@ export const DetailedCard = observer((props: { isShown: null | boolean, onClick:
         <SmallButtonContainer>
           <Button
             size={'small'}
+            data-attr={'cardBack_issueEast'}
             style={getAddEastButtonStyles()}
             onClick={(e: any) => {
               e.stopPropagation()
               if (isVaultLiquidated) {
-                router.navigate(RouteName.BuyEast)
+                router.navigate(RouteName.Mint)
               } else {
-                router.navigate(RouteName.AddEast)
+                router.navigate(RouteName.IssueEast)
               }
             }}
           >

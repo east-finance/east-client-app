@@ -174,7 +174,7 @@ export const FillForm = observer((props: IProps) => {
       <Centered><Link href={'https://east.finance/faq#howitworks'} target={'_blank'}>Learn more</Link></Centered>
     </Block>
     <Block24>
-      <Button type={'primary'} disabled={props.inProgress} onClick={onNextClicked}>
+      <Button type={'primary'} data-attr={'mintEast-1_continueButton'} disabled={props.inProgress} onClick={onNextClicked}>
         <RelativeContainer>
           {props.inProgress &&
             <BeforeText>

@@ -13,6 +13,12 @@ import { GradientText } from '../../../components/Text'
 import { SignStrategy } from '../../../stores/SignStore'
 import { useRoute } from 'react-router5'
 import { RouteName } from '../../../router/segments'
+import {
+  InfoNotification,
+  NotificationType,
+  PromptNotification,
+  ToastCloseButton
+} from '../../../components/Notification'
 
 interface IProps {
   onClose: () => void
@@ -90,7 +96,7 @@ interface IPassChangeProps {
 }
 
 const PasswordChange = (props: IPassChangeProps) => {
-  const { api, authStore } = useStores()
+  const { api, authStore, signStore } = useStores()
 
   const [oldPassword, setOldPassword] = useState('')
   const [oldPasswordError, setOldPasswordError] = useState('')
@@ -99,6 +105,14 @@ const PasswordChange = (props: IPassChangeProps) => {
   const [passwordError, setPasswordError] = useState('')
 
   const [confirm, setConfirm] = useState('')
+
+  const showToastInfo = (message: string, autoClose = 0) => {
+    toast(<InfoNotification title={message} />, {
+      hideProgressBar: true,
+      closeButton: <ToastCloseButton type={NotificationType.default} closeToast={() => toast.dismiss()} />,
+      autoClose
+    })
+  }
 
   const onChangeClicked = async () => {
     let errorOldPass = '', errorPass = ''
@@ -113,7 +127,25 @@ const PasswordChange = (props: IPassChangeProps) => {
         }
       }
     }
+
     if (!errorOldPass && !errorPass) {
+      const onSuccess = async () => {
+        toast.dismiss()
+        try {
+          await api.changePassword(password)
+          authStore.setPassword(password)
+          signStore.onChangePassword(oldPassword, password)
+          showToastInfo('Password successfully changed', 5000)
+        } catch (e) {
+          console.error('Error on change password: ', e.message)
+          showToastInfo('Unknown error, try again later')
+        }
+      }
+
+      const onCancel = () => {
+        toast.dismiss()
+      }
+
       let oldPasswordCorrect = false
       try {
         await api.signIn(authStore.email, oldPassword)
@@ -125,13 +157,15 @@ const PasswordChange = (props: IPassChangeProps) => {
           errorOldPass = 'Unknown error. Try again later'
         }
       }
+
+      // Show prompt if old password is correct
       if (oldPasswordCorrect) {
-        try {
-          await api.changePassword(password)
-          toast('Password changed!')
-        } catch (e) {
-          errorPass = 'Unknown error. Try again later'
-        }
+        toast.dismiss()
+        toast(<PromptNotification onSuccess={onSuccess} onCancel={onCancel} />, {
+          hideProgressBar: true,
+          closeButton: <ToastCloseButton type={NotificationType.default} closeToast={() => toast.dismiss()} />,
+          autoClose: false
+        })
       }
     }
     setOldPasswordError(errorOldPass)

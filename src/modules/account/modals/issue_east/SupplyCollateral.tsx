@@ -70,7 +70,7 @@ export const SupplyCollateral = (props: IProps) => {
     </Block32>
     <Block marginTop={28}>
       <ButtonContainer>
-        <Button type={'primary'} onClick={props.onSuccess}>
+        <Button type={'primary'} data-attr={'issueEast-0_continueButton'} onClick={props.onSuccess}>
           Continue
         </Button>
       </ButtonContainer>

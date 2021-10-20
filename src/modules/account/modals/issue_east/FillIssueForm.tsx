@@ -10,6 +10,7 @@ import { ITag, TagOption, Tags } from '../../../../components/Tags'
 import { EastOpType } from '../../../../interfaces'
 import { GradientText } from '../../../../components/Text'
 import { MaxTokenAmount } from '../../../../constants'
+import { isDesktop } from 'react-device-detect'
 
 export interface FillFormData {
   eastAmount: string;
@@ -178,7 +179,7 @@ export const FillIssueForm = observer((props: IProps) => {
       </Block>
       }
       <Block marginTop={4} style={{ position: 'relative' }}>
-        {vaultFreeWest < 0 &&
+        {(isDesktop && vaultFreeWest) < 0 &&
           <WestPostfix>
             <GradientText>+{Math.abs(vaultFreeWest)} WEST</GradientText>
           </WestPostfix>
@@ -202,7 +203,7 @@ export const FillIssueForm = observer((props: IProps) => {
     </Block>
     <Block marginTop={'10%'}>
       <ButtonsContainer>
-        <Button type={'primary'} onClick={onNextClicked} style={{ width: '304px' }}>
+        <Button type={'primary'} data-attr={'issueEast-1_continueButton'} onClick={onNextClicked} style={{ width: '304px' }}>
           Continue to confirmation
         </Button>
       </ButtonsContainer>

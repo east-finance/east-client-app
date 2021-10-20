@@ -11,7 +11,7 @@ export const PrimaryTitle = styled.div`
   letter-spacing: -1px;
   text-transform: uppercase;
   
-  @media only screen and (min-width : 480px) and (max-width : 812px) {
-      font-size: 24px;
+  @media screen and (max-width: 767px) {
+    font-size: 24px;
   }
 `

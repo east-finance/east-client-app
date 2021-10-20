@@ -32,6 +32,7 @@ const ButtonsContainer = styled.div`
 const Description = styled.div`
   font-size: 15px;
   line-height: 20px;
+  text-align: center;
 `
 
 const Fee = styled.div`
@@ -86,7 +87,7 @@ export const CloseVaultInfo = observer((props: IProps) => {
     </Block>
     <Block marginTop={60}>
       <ButtonsContainer>
-        <Button type={'primary'} disabled={isDisabled} onClick={props.onNextClicked}>
+        <Button type={'primary'} data-attr={'closeVault-1_continueButton'} disabled={isDisabled} onClick={props.onNextClicked}>
           {buttonText}
         </Button>
       </ButtonsContainer>

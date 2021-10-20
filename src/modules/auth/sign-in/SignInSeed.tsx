@@ -58,9 +58,12 @@ const SignInSeed = observer(() => {
       if (e.message && e.message.includes('minimum length')) {
         message = 'Minimum length: 15 characters'
       }
-      if (e.message && e.response && e.response.status || (e.message === PollingError.EmptyOracleData)) {
+      if (e.message && e.response && e.response.status) {
         title = 'Cannot get initial data'
         message = 'Try again later'
+      }
+      if (e.message && e.message.includes(PollingError.EmptyOracleData)) {
+        title = 'Cannot get oracle contract rates'
       }
       toast(<ErrorNotification title={title} message={message} />, {
         hideProgressBar: true,
